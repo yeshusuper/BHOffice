@@ -9,6 +9,7 @@ namespace BHOffice.Core.Business.Bill
     public interface IBillManager
     {
         IBill Create(IUser user, IBillArgs args);
+        IBill GetBill(long bid);
     }
 
     class BillManager : IBillManager
@@ -50,9 +51,15 @@ namespace BHOffice.Core.Business.Bill
                 remarks = args.Remarks.SafeTrim(),
                 updated = DateTime.Now,
                 created = DateTime.Now,
+                enabled = true,
+                state = BillStates.None,
             };
-            if (String.IsNullOrWhiteSpace(entity.no))
-                entity.no = CreateBillNo();
+
+            if (user.Role >= UserRoles.Agent)
+            {
+                entity.confirmed = true;
+                entity.confirmer = user.Uid;
+            }
 
             _BillRepository.Add(entity);
             _BillRepository.SaveChanges();
@@ -60,9 +67,16 @@ namespace BHOffice.Core.Business.Bill
             return new BillService(entity);
         }
 
-        private string CreateBillNo()
+        //private string CreateBillNo()
+        //{
+        //    return String.Format("{0:yyyyMMddHHmmssfff}{1}", DateTime.Now, new Random().Next(1, 100000).ToString().PadLeft(5, '0'));
+        //}
+
+
+        public IBill GetBill(long bid)
         {
-            return String.Format("{0:yyyyMMddHHmmssfff}{1}", DateTime.Now, new Random().Next(1, 100000).ToString().PadLeft(5, '0'));
+            ExceptionHelper.ThrowIfNotId(bid, "bid");
+            return new BillService(bid);
         }
     }
 

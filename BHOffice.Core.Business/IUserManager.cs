@@ -16,9 +16,9 @@ namespace BHOffice.Core.Business
 
     class UserManager : IUserManager
     {
-        private readonly Data.IRepository<Data.User> _UserRepository;
+        private readonly Core.Data.IRepository<Data.User> _UserRepository;
 
-        public UserManager(Data.IRepository<Data.User> userRepository)
+        public UserManager(Core.Data.IRepository<Data.User> userRepository)
         {
             _UserRepository = userRepository;
         }
@@ -35,7 +35,7 @@ namespace BHOffice.Core.Business
                 throw new BHException(ErrorCore.NotExists, "账号不存在");
             if (!entity.enabled)
                 throw new BHException(ErrorCore.Locked, "账号被锁定");
-            if (!new Security.MD5().Verify(password, entity.pwd))
+            if (!VerifyPassword(password, entity.pwd))
                 throw new BHException(ErrorCore.ErrorUserNoOrPwd, "账号或密码错误");
 
             return new UserService(entity);
@@ -62,7 +62,7 @@ namespace BHOffice.Core.Business
                 email = userNo,
                 enabled = true,
                 name = username,
-                pwd = new Security.MD5().Encrypt(password),
+                pwd = EncryptPassword(password),
                 registed = DateTime.Now,
                 role = UserRoles.User,
             };
@@ -80,6 +80,15 @@ namespace BHOffice.Core.Business
             userNo = userNo.Trim();
             var un = userNo;
             return !_UserRepository.Entities.Any(u => u.email == un);
+        }
+
+        internal static string EncryptPassword(string input)
+        {
+            return new Security.MD5().Encrypt(input);
+        }
+        internal static bool VerifyPassword(string input, string password)
+        {
+            return new Security.MD5().Verify(input, password);
         }
     }
 

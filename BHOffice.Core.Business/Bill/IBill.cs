@@ -17,6 +17,7 @@ namespace BHOffice.Core.Business.Bill
 
     class BillService : IBill
     {
+        public BillService(long bid) { }
         public BillService(Data.Bill entity) { }
 
         public string No
