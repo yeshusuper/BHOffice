@@ -47,6 +47,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Security\Digest.cs" />
     <Compile Include="Security\MD5.cs" />
+    <Compile Include="StringHelper.cs" />
     <Compile Include="StringRule.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

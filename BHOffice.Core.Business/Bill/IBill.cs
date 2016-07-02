@@ -14,4 +14,35 @@ namespace BHOffice.Core.Business.Bill
         void UpdateInfo(BillArgs args);
         void UpdateState(BillStates state, string remarks, DateTime? date = null);
     }
+
+    class BillService : IBill
+    {
+        public BillService(Data.Bill entity) { }
+
+        public string No
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public BillStates State
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public DateTime LastStateDate
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public void UpdateInfo(BillArgs args)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void UpdateState(BillStates state, string remarks, DateTime? date = null)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
 }

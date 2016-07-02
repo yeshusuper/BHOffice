@@ -6,7 +6,52 @@ using System.Threading.Tasks;
 
 namespace BHOffice.Core.Business.Bill
 {
-    public class BillArgs
+    public interface IBillArgs
+    {
+        string Sender { get; }
+        string SenderTel { get; }
+        string Receiver { get; }
+        string ReceiverTel { get; }
+        string ReceiverAddress { get; }
+        /// <summary>
+        /// 单号
+        /// </summary>
+        string No { get; }
+        /// <summary>
+        /// 创建时间
+        /// </summary>
+        DateTime? Created { get; }
+        /// <summary>
+        /// 代理商
+        /// </summary>
+        long? AgentUid { get; }
+        /// <summary>
+        /// 邮编
+        /// </summary>
+        string Post { get; }
+        /// <summary>
+        /// 保险
+        /// </summary>
+        decimal Insurance { get; }
+        /// <summary>
+        /// 物品
+        /// </summary>
+        string Goods { get; }
+        /// <summary>
+        /// 备注
+        /// </summary>
+        string Remarks { get; }
+        /// <summary>
+        /// 国内快递
+        /// </summary>
+        string InternalExpress { get; }
+        /// <summary>
+        /// 国内快递单号
+        /// </summary>
+        string InternalNo { get; }
+    }
+
+    class BillArgs
     {
         private string _Sender;
         public string Sender
@@ -62,41 +107,14 @@ namespace BHOffice.Core.Business.Bill
                 _ReceiverAddress = value.Trim();
             }
         }
-        /// <summary>
-        /// 单号
-        /// </summary>
         public string No { get; set; }
-        /// <summary>
-        /// 创建时间
-        /// </summary>
         public DateTime? Created { get; set; }
-        /// <summary>
-        /// 代理商
-        /// </summary>
         public long? AgentUid { get; set; }
-        /// <summary>
-        /// 邮编
-        /// </summary>
         public string Post { get; set; }
-        /// <summary>
-        /// 保险
-        /// </summary>
         public decimal Insurance { get; set; }
-        /// <summary>
-        /// 物品
-        /// </summary>
         public string Goods { get; set; }
-        /// <summary>
-        /// 备注
-        /// </summary>
         public string Remarks { get; set; }
-        /// <summary>
-        /// 国内快递
-        /// </summary>
         public string InternalExpress { get; set; }
-        /// <summary>
-        /// 国内快递单号
-        /// </summary>
         public string InternalNo { get; set; }
 
 

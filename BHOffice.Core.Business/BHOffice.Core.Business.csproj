@@ -54,6 +54,7 @@
     <Compile Include="Bill\BillStates.cs" />
     <Compile Include="Bill\IBill.cs" />
     <Compile Include="Bill\IBillManager.cs" />
+    <Compile Include="Data\Bill.cs" />
     <Compile Include="Data\DbSetRepository.cs" />
     <Compile Include="Data\User.cs" />
     <Compile Include="IUser.cs" />

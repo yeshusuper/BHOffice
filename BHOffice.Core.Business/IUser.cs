@@ -8,6 +8,7 @@ namespace BHOffice.Core.Business
 {
     public interface IUser
     {
+        long Uid { get; }
         void ResetPassword(string oldPwd, string newPwd);
         void UpdateInfo(IUserInfoEditer editer);
     }
@@ -25,6 +26,11 @@ namespace BHOffice.Core.Business
         public void UpdateInfo(IUserInfoEditer editer)
         {
             throw new NotImplementedException();
+        }
+
+        public long Uid
+        {
+            get { throw new NotImplementedException(); }
         }
     }
 

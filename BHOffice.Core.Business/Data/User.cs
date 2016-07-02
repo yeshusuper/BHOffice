@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BHOffice.Core.Data
+namespace BHOffice.Core.Business.Data
 {
     public class User
     {
