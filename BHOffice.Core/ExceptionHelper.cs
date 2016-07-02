@@ -13,9 +13,9 @@ namespace BHOffice.Core
         {
             if (param == null)
                 if (!String.IsNullOrEmpty(message))
-                    throw new ArgumentNullException(message, paramName);
+                    throw new ArgumentException(message, paramName);
                 else
-                    throw new ArgumentNullException("参数错误", paramName);
+                    throw new ArgumentException("参数错误", paramName);
         }
 
         public static void ThrowIfNullOrEmpty(string param, string paramName, string message = null)
