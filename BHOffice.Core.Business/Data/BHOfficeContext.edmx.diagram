@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="e78374f1896245b9a5e19bbc941d84a1" Name="Diagram1">
+        <EntityTypeShape EntityType="BHOfficeModel.Bill" Width="1.5" PointX="3" PointY="1.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="BHOfficeModel.BillStateHistory" Width="1.5" PointX="5.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BHOfficeModel.User" Width="1.5" PointX="0.75" PointY="2.625" IsExpanded="true" />
+        <AssociationConnector Association="BHOfficeModel.FK_Bill_User_AgentUid" ManuallyRouted="false" />
+        <AssociationConnector Association="BHOfficeModel.FK_Bill_User_Creater" ManuallyRouted="false" />
+        <AssociationConnector Association="BHOfficeModel.FK_BillStateHistory_BillStateHistory1" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

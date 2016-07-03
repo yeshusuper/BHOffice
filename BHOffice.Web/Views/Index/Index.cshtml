@@ -1,0 +1,22 @@
+﻿@{
+    ViewBag.Title = "首页";
+    Layout = "../Layout/_Header.cshtml";
+}
+<div>
+    <div>
+        <form>
+            <ul>
+                <li>
+                    用户名：<input value="" name="userno" />
+                </li>
+                <li>
+                    密码：<input type="password" value="" name="password" />
+                </li>
+                <li>
+                    <input type="submit" value="登陆" />
+                    还没有账号，<a href="@Url.Action("register", "user")" target="_blank">注册</a>。
+                </li>
+            </ul>
+        </form>
+    </div>
+</div>

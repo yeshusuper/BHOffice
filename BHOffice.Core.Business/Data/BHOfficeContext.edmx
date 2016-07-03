@@ -1,0 +1,320 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="BHOfficeModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Bill">
+          <Key>
+            <PropertyRef Name="bid" />
+          </Key>
+          <Property Name="bid" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="no" Type="varchar" MaxLength="100" />
+          <Property Name="sender" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="sender_tel" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="receiver" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="receiver_tel" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="receiver_addr" Type="nvarchar" MaxLength="300" Nullable="false" />
+          <Property Name="post" Type="nvarchar" MaxLength="20" />
+          <Property Name="agent_uid" Type="bigint" />
+          <Property Name="goods" Type="nvarchar" MaxLength="30" />
+          <Property Name="insurance" Type="decimal" Precision="11" Scale="2" Nullable="false" />
+          <Property Name="i_express" Type="nvarchar" MaxLength="50" />
+          <Property Name="i_no" Type="nvarchar" MaxLength="50" />
+          <Property Name="confirmed" Type="bit" Nullable="false" />
+          <Property Name="confirmer" Type="bigint" />
+          <Property Name="enabled" Type="bit" />
+          <Property Name="remarks" Type="nvarchar" MaxLength="500" />
+          <Property Name="state" Type="tinyint" Nullable="false" />
+          <Property Name="last_state_updated" Type="datetime" Nullable="false" />
+          <Property Name="bill_date" Type="datetime" Nullable="false" />
+          <Property Name="created" Type="datetime" Nullable="false" />
+          <Property Name="creater" Type="bigint" Nullable="false" />
+          <Property Name="updated" Type="datetime" Nullable="false" />
+          <Property Name="updater" Type="bigint" />
+        </EntityType>
+        <EntityType Name="BillStateHistory">
+          <Key>
+            <PropertyRef Name="bhid" />
+          </Key>
+          <Property Name="bhid" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="bid" Type="bigint" Nullable="false" />
+          <Property Name="creater" Type="bigint" Nullable="false" />
+          <Property Name="state_updated" Type="datetime" Nullable="false" />
+          <Property Name="created" Type="datetime" Nullable="false" />
+          <Property Name="state" Type="tinyint" Nullable="false" />
+          <Property Name="enabled" Type="bit" Nullable="false" />
+          <Property Name="remarks" Type="nvarchar" MaxLength="500" />
+        </EntityType>
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="uid" />
+          </Key>
+          <Property Name="uid" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="email" Type="nvarchar" MaxLength="70" Nullable="false" />
+          <Property Name="pwd" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="name" Type="nvarchar" MaxLength="20" Nullable="false" />
+          <Property Name="created" Type="datetime" Nullable="false" />
+          <Property Name="enabled" Type="bit" Nullable="false" />
+          <Property Name="role" Type="tinyint" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_Bill_User_AgentUid">
+          <End Role="User" Type="Self.User" Multiplicity="0..1" />
+          <End Role="Bill" Type="Self.Bill" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="uid" />
+            </Principal>
+            <Dependent Role="Bill">
+              <PropertyRef Name="agent_uid" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Bill_User_Creater">
+          <End Role="User" Type="Self.User" Multiplicity="1" />
+          <End Role="Bill" Type="Self.Bill" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="uid" />
+            </Principal>
+            <Dependent Role="Bill">
+              <PropertyRef Name="creater" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_BillStateHistory_BillStateHistory">
+          <End Role="Bill" Type="Self.Bill" Multiplicity="1" />
+          <End Role="BillStateHistory" Type="Self.BillStateHistory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Bill">
+              <PropertyRef Name="bid" />
+            </Principal>
+            <Dependent Role="BillStateHistory">
+              <PropertyRef Name="bid" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="BHOfficeModelStoreContainer">
+          <EntitySet Name="Bill" EntityType="Self.Bill" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="BillStateHistory" EntityType="Self.BillStateHistory" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="User" EntityType="Self.User" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_Bill_User_AgentUid" Association="Self.FK_Bill_User_AgentUid">
+            <End Role="User" EntitySet="User" />
+            <End Role="Bill" EntitySet="Bill" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Bill_User_Creater" Association="Self.FK_Bill_User_Creater">
+            <End Role="User" EntitySet="User" />
+            <End Role="Bill" EntitySet="Bill" />
+          </AssociationSet>
+          <AssociationSet Name="FK_BillStateHistory_BillStateHistory" Association="Self.FK_BillStateHistory_BillStateHistory">
+            <End Role="Bill" EntitySet="Bill" />
+            <End Role="BillStateHistory" EntitySet="BillStateHistory" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="BHOfficeModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Bill">
+          <Key>
+            <PropertyRef Name="bid" />
+          </Key>
+          <Property Name="bid" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="no" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="sender" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="sender_tel" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="receiver" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="receiver_tel" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="receiver_addr" Type="String" MaxLength="300" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="post" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="agent_uid" Type="Int64" />
+          <Property Name="goods" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="insurance" Type="Decimal" Precision="11" Scale="2" Nullable="false" />
+          <Property Name="i_express" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="i_no" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="confirmed" Type="Boolean" Nullable="false" />
+          <Property Name="confirmer" Type="Int64" />
+          <Property Name="enabled" Type="Boolean" />
+          <Property Name="remarks" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="state" Type="BHOfficeModel.BillStates" Nullable="false" />
+          <Property Name="last_state_updated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="bill_date" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="created" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="creater" Type="Int64" Nullable="false" />
+          <Property Name="updated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="updater" Type="Int64" />
+          <NavigationProperty Name="User" Relationship="Self.FK_Bill_User_AgentUid" FromRole="Bill" ToRole="User" />
+          <NavigationProperty Name="User1" Relationship="Self.FK_Bill_User_Creater" FromRole="Bill" ToRole="User" />
+          <NavigationProperty Name="BillStateHistory" Relationship="BHOfficeModel.FK_BillStateHistory_BillStateHistory1" FromRole="Bill" ToRole="BillStateHistory" />
+        </EntityType>
+        <EntityType Name="BillStateHistory">
+          <Key>
+            <PropertyRef Name="bhid" />
+          </Key>
+          <Property Name="bhid" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="bid" Type="Int64" Nullable="false" />
+          <Property Name="creater" Type="Int64" Nullable="false" />
+          <Property Name="state_updated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="created" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="state" Type="BHOfficeModel.BillStates" Nullable="false" />
+          <Property Name="enabled" Type="Boolean" Nullable="false" />
+          <Property Name="remarks" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Bill" Relationship="BHOfficeModel.FK_BillStateHistory_BillStateHistory1" FromRole="BillStateHistory" ToRole="Bill" />
+        </EntityType>
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="uid" />
+          </Key>
+          <Property Name="uid" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="email" Type="String" MaxLength="70" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="pwd" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="name" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="created" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="enabled" Type="Boolean" Nullable="false" />
+          <Property Name="role" Type="BHOfficeModel.UserRoles" Nullable="false" />
+          <NavigationProperty Name="Bill" Relationship="Self.FK_Bill_User_AgentUid" FromRole="User" ToRole="Bill" />
+          <NavigationProperty Name="Bill1" Relationship="Self.FK_Bill_User_Creater" FromRole="User" ToRole="Bill" />
+        </EntityType>
+        <Association Name="FK_Bill_User_AgentUid">
+          <End Role="User" Type="Self.User" Multiplicity="0..1" />
+          <End Role="Bill" Type="Self.Bill" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="uid" />
+            </Principal>
+            <Dependent Role="Bill">
+              <PropertyRef Name="agent_uid" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Bill_User_Creater">
+          <End Role="User" Type="Self.User" Multiplicity="1" />
+          <End Role="Bill" Type="Self.Bill" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="uid" />
+            </Principal>
+            <Dependent Role="Bill">
+              <PropertyRef Name="creater" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="BHOfficeContext" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Bill" EntityType="Self.Bill" />
+          <EntitySet Name="BillStateHistory" EntityType="Self.BillStateHistory" />
+          <EntitySet Name="User" EntityType="Self.User" />
+          <AssociationSet Name="FK_Bill_User_AgentUid" Association="Self.FK_Bill_User_AgentUid">
+            <End Role="User" EntitySet="User" />
+            <End Role="Bill" EntitySet="Bill" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Bill_User_Creater" Association="Self.FK_Bill_User_Creater">
+            <End Role="User" EntitySet="User" />
+            <End Role="Bill" EntitySet="Bill" />
+          </AssociationSet>
+          <AssociationSet Name="FK_BillStateHistory_BillStateHistory1" Association="BHOfficeModel.FK_BillStateHistory_BillStateHistory1">
+            <End Role="Bill" EntitySet="Bill" />
+            <End Role="BillStateHistory" EntitySet="BillStateHistory" />
+          </AssociationSet>
+        </EntityContainer>
+        <Association Name="FK_BillStateHistory_BillStateHistory1">
+          <End Type="BHOfficeModel.Bill" Role="Bill" Multiplicity="1" />
+          <End Type="BHOfficeModel.BillStateHistory" Role="BillStateHistory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Bill">
+              <PropertyRef Name="bid" />
+            </Principal>
+            <Dependent Role="BillStateHistory">
+              <PropertyRef Name="bid" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EnumType Name="BillStates" UnderlyingType="Byte" a:ExternalTypeName="BHOffice.Core.Business.Bill.BillStates" xmlns:a="http://schemas.microsoft.com/ado/2006/04/codegeneration" />
+        <EnumType Name="UserRoles" UnderlyingType="Byte" a:ExternalTypeName="BHOffice.Core.Business.UserRoles" xmlns:a="http://schemas.microsoft.com/ado/2006/04/codegeneration" />
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="BHOfficeModelStoreContainer" CdmEntityContainer="BHOfficeContext">
+          <EntitySetMapping Name="Bill">
+            <EntityTypeMapping TypeName="BHOfficeModel.Bill">
+              <MappingFragment StoreEntitySet="Bill">
+                <ScalarProperty Name="bid" ColumnName="bid" />
+                <ScalarProperty Name="no" ColumnName="no" />
+                <ScalarProperty Name="sender" ColumnName="sender" />
+                <ScalarProperty Name="sender_tel" ColumnName="sender_tel" />
+                <ScalarProperty Name="receiver" ColumnName="receiver" />
+                <ScalarProperty Name="receiver_tel" ColumnName="receiver_tel" />
+                <ScalarProperty Name="receiver_addr" ColumnName="receiver_addr" />
+                <ScalarProperty Name="post" ColumnName="post" />
+                <ScalarProperty Name="agent_uid" ColumnName="agent_uid" />
+                <ScalarProperty Name="goods" ColumnName="goods" />
+                <ScalarProperty Name="insurance" ColumnName="insurance" />
+                <ScalarProperty Name="i_express" ColumnName="i_express" />
+                <ScalarProperty Name="i_no" ColumnName="i_no" />
+                <ScalarProperty Name="confirmed" ColumnName="confirmed" />
+                <ScalarProperty Name="confirmer" ColumnName="confirmer" />
+                <ScalarProperty Name="enabled" ColumnName="enabled" />
+                <ScalarProperty Name="remarks" ColumnName="remarks" />
+                <ScalarProperty Name="state" ColumnName="state" />
+                <ScalarProperty Name="last_state_updated" ColumnName="last_state_updated" />
+                <ScalarProperty Name="bill_date" ColumnName="bill_date" />
+                <ScalarProperty Name="created" ColumnName="created" />
+                <ScalarProperty Name="creater" ColumnName="creater" />
+                <ScalarProperty Name="updated" ColumnName="updated" />
+                <ScalarProperty Name="updater" ColumnName="updater" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="BillStateHistory">
+            <EntityTypeMapping TypeName="BHOfficeModel.BillStateHistory">
+              <MappingFragment StoreEntitySet="BillStateHistory">
+                <ScalarProperty Name="bhid" ColumnName="bhid" />
+                <ScalarProperty Name="bid" ColumnName="bid" />
+                <ScalarProperty Name="creater" ColumnName="creater" />
+                <ScalarProperty Name="state_updated" ColumnName="state_updated" />
+                <ScalarProperty Name="created" ColumnName="created" />
+                <ScalarProperty Name="state" ColumnName="state" />
+                <ScalarProperty Name="enabled" ColumnName="enabled" />
+                <ScalarProperty Name="remarks" ColumnName="remarks" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="User">
+            <EntityTypeMapping TypeName="BHOfficeModel.User">
+              <MappingFragment StoreEntitySet="User">
+                <ScalarProperty Name="uid" ColumnName="uid" />
+                <ScalarProperty Name="email" ColumnName="email" />
+                <ScalarProperty Name="pwd" ColumnName="pwd" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="created" ColumnName="created" />
+                <ScalarProperty Name="enabled" ColumnName="enabled" />
+                <ScalarProperty Name="role" ColumnName="role" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="无" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

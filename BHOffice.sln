@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BHOffice.Core.Business", "B
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BHOffice.Core", "BHOffice.Core\BHOffice.Core.csproj", "{F7C8D0BA-0486-4F64-BD3A-9172A98D9D9E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BHOffice.Web.Core", "BHOffice.Web.Core\BHOffice.Web.Core.csproj", "{404810A1-54B4-4C91-89AE-D4DC2A1DBED7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{F7C8D0BA-0486-4F64-BD3A-9172A98D9D9E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F7C8D0BA-0486-4F64-BD3A-9172A98D9D9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F7C8D0BA-0486-4F64-BD3A-9172A98D9D9E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{404810A1-54B4-4C91-89AE-D4DC2A1DBED7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{404810A1-54B4-4C91-89AE-D4DC2A1DBED7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{404810A1-54B4-4C91-89AE-D4DC2A1DBED7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{404810A1-54B4-4C91-89AE-D4DC2A1DBED7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

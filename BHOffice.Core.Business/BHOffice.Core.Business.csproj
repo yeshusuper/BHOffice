@@ -40,9 +40,14 @@
     <Reference Include="EntityFramework.SqlServer">
       <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
+    <Reference Include="Ninject">
+      <HintPath>..\packages\Ninject.3.2.2.0\lib\net45-full\Ninject.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
     <Reference Include="System.Transactions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -55,10 +60,33 @@
     <Compile Include="Bill\BillStates.cs" />
     <Compile Include="Bill\IBill.cs" />
     <Compile Include="Bill\IBillManager.cs" />
-    <Compile Include="Data\Bill.cs" />
-    <Compile Include="Data\BillStateHistory.cs" />
+    <Compile Include="Data\BHOfficeContext.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>BHOfficeContext.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\BHOfficeContext.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>BHOfficeContext.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\BHOfficeContext.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>BHOfficeContext.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="Data\Bill.cs">
+      <DependentUpon>BHOfficeContext.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\BillStateHistory.cs">
+      <DependentUpon>BHOfficeContext.tt</DependentUpon>
+    </Compile>
     <Compile Include="Data\DbSetRepository.cs" />
-    <Compile Include="Data\User.cs" />
+    <Compile Include="Data\User.cs">
+      <DependentUpon>BHOfficeContext.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Inject\DataModule.cs" />
+    <Compile Include="Inject\ServiceModule.cs" />
     <Compile Include="IUser.cs" />
     <Compile Include="IUserInfoEditer.cs" />
     <Compile Include="IUserManager.cs" />
@@ -73,7 +101,27 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <EntityDeploy Include="Data\BHOfficeContext.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>BHOfficeContext.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <None Include="Data\BHOfficeContext.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>BHOfficeContext.edmx</DependentUpon>
+      <LastGenOutput>BHOfficeContext.Context.cs</LastGenOutput>
+    </None>
+    <None Include="Data\BHOfficeContext.edmx.diagram">
+      <DependentUpon>BHOfficeContext.edmx</DependentUpon>
+    </None>
+    <None Include="Data\BHOfficeContext.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>BHOfficeContext.edmx</DependentUpon>
+      <LastGenOutput>BHOfficeContext.cs</LastGenOutput>
+    </None>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

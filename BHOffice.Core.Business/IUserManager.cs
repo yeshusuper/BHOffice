@@ -63,7 +63,7 @@ namespace BHOffice.Core.Business
                 enabled = true,
                 name = username,
                 pwd = EncryptPassword(password),
-                registed = DateTime.Now,
+                created = DateTime.Now,
                 role = UserRoles.User,
             };
             _UserRepository.Add(entity);

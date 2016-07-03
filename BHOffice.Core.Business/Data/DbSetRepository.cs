@@ -8,9 +8,9 @@ using System.Text;
 using System.Threading.Tasks;
 using EntityFramework.Extensions;
 
-namespace BHOffice.Core.Data
+namespace BHOffice.Core.Business.Data
 {
-    public class DbSetRepository<TContext, TEntity> : IRepository<TEntity>
+    public class DbSetRepository<TContext, TEntity> : Core.Data.IRepository<TEntity>
         where TContext : DbContext, IObjectContextAdapter
         where TEntity : class
     {

@@ -1,0 +1,28 @@
+﻿@model BHOffice.Web.Models.User.RegisterModel
+@{
+    ViewBag.Title = "用户注册";
+    Layout = "../Layout/_Header.cshtml";
+}
+<div>
+    @if (Model.IsEroor)
+    {
+        <div>@Html.DisplayFor(m => m.ErrorMessage)</div>
+    }
+    <form action="@Url.Action("register")" enctype="application/x-www-form-urlencoded" method="post">
+        <ul>
+            <li>
+                账号：<input value="@Html.DisplayFor(m => m.UserNo)" name="UserNo" />
+            </li>
+            <li>
+                密码：<input type="password" value="" name="Password" />
+            </li>
+            <li>
+                确认密码：<input type="password" value="" />
+            </li>
+            <li>
+                姓名：<input value="@Html.DisplayFor(m => m.UserName)" name="UserName" />
+            </li>
+        </ul>
+        <input type="submit" value="注册" />
+    </form>
+</div>
