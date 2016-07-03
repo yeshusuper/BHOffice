@@ -39,5 +39,21 @@ namespace BHOffice.Web.Controllers
                 return View(model);
             }
         }
+
+        public ActionResult IsUsable(string userNo)
+        {
+            var result = _UserMangaer.IsUsable(ref userNo);
+            if (result)
+                return SuccessJsonResult();
+            else
+                return JsonResult(ErrorCode.Exists, "账号已存在");
+        }
+
+
+        public ActionResult Login(string userNo, string password)
+        {
+            var user = _UserMangaer.Login(userNo, password);
+            return SuccessJsonResult();
+        }
     }
 }

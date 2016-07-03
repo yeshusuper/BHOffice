@@ -32,11 +32,11 @@ namespace BHOffice.Core.Business
 
             var entity = _UserRepository.Entities.FirstOrDefault(u => u.email == userNo);
             if (entity == null)
-                throw new BHException(ErrorCore.NotExists, "账号不存在");
+                throw new BHException(ErrorCode.NotExists, "账号不存在");
             if (!entity.enabled)
-                throw new BHException(ErrorCore.Locked, "账号被锁定");
+                throw new BHException(ErrorCode.Locked, "账号被锁定");
             if (!VerifyPassword(password, entity.pwd))
-                throw new BHException(ErrorCore.ErrorUserNoOrPwd, "账号或密码错误");
+                throw new BHException(ErrorCode.ErrorUserNoOrPwd, "账号或密码错误");
 
             return new UserService(entity, _UserRepository);
         }

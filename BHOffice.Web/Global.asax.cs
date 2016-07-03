@@ -19,5 +19,35 @@ namespace BHOffice.Web
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             InjectConfig.Register();
         }
+
+        protected void Application_Error(object sender, EventArgs e)
+        {
+            var ex = Server.GetLastError() as Exception;
+            if (ex != null)
+            {
+                var bhEx = ex as BHOffice.Core.BHException;
+                var context = new HttpContextWrapper(Context);
+                var errorCode = bhEx == null ? BHOffice.Core.ErrorCode.ServerError : bhEx.ErrorCode;
+                if (context.Request.IsAjaxRequest())
+                {
+                    Context.Response.Write(Newtonsoft.Json.JsonConvert.SerializeObject(new BHOffice.Web.Core.JsonResultEntry
+                    {
+                        Code = errorCode,
+                        Message = ex.Message
+                    }));
+                }
+                else
+                {
+                    IController ec = new Controllers.ErrorController();
+                    var routeData = new RouteData();
+                    routeData.Values["action"] = "index";
+                    routeData.Values["controller"] = "error";
+                    routeData.DataTokens["code"] = errorCode;
+                    routeData.DataTokens["msg"] = ex.Message;
+                    ec.Execute(new RequestContext(context, routeData));
+                }
+                Server.ClearError();
+            }
+        }
     }
 }

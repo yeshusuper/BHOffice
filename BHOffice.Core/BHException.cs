@@ -8,15 +8,15 @@ namespace BHOffice.Core
 {
     public class BHException : Exception
     {
-        public ErrorCore ErrorCore { get; private set; }
+        public ErrorCode ErrorCode { get; private set; }
 
-        public BHException(ErrorCore core, string message) : base(message) { ErrorCore = core; }
-        public BHException(ErrorCore core, string message, Exception internalException) : base(message, internalException) { ErrorCore = core; }
+        public BHException(ErrorCode core, string message) : base(message) { ErrorCode = core; }
+        public BHException(ErrorCode core, string message, Exception internalException) : base(message, internalException) { ErrorCode = core; }
 
         public override string ToString()
         {
             var sb = new StringBuilder();
-            sb.AppendLine("错误码:" + Convert.ToInt64(ErrorCore));
+            sb.AppendLine("错误码:" + Convert.ToInt64(ErrorCode));
             sb.AppendLine(base.ToString());
             return base.ToString();
         }
@@ -25,7 +25,7 @@ namespace BHOffice.Core
     public class BHArgumentException : BHException
     {
         public string ParamName { get; private set; }
-        public BHArgumentException(string message, string paramName) : base(ErrorCore.ArgError, message) { ParamName = paramName; }
+        public BHArgumentException(string message, string paramName) : base(ErrorCode.ArgError, message) { ParamName = paramName; }
         public override string ToString()
         {
             var sb = new StringBuilder();
@@ -37,8 +37,9 @@ namespace BHOffice.Core
 
 
 
-    public enum ErrorCore
+    public enum ErrorCode
     {
+        None = 0x00000000,
         /// <summary>
         /// 未登录
         /// </summary>
@@ -63,5 +64,13 @@ namespace BHOffice.Core
         /// 禁止的操作
         /// </summary>
         NotAllow = 0x00000006,
+        /// <summary>
+        /// 已存在
+        /// </summary>
+        Exists = 0x00000007,
+        /// <summary>
+        /// 系统错误
+        /// </summary>
+        ServerError = 0x00000010,
     }
 }

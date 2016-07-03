@@ -103,7 +103,7 @@ namespace BHOffice.Core.Business.Bill
         {
             var strategy = this as IBillUpdateStrategy;
             if (strategy.IsReadOnly)
-                throw new BHException(ErrorCore.NotAllow, "没有修改此订单的权限");
+                throw new BHException(ErrorCode.NotAllow, "没有修改此订单的权限");
 
             args.Verify(this);
             args.Fill(this, _LazyBill.Value, _User);
@@ -114,7 +114,7 @@ namespace BHOffice.Core.Business.Bill
         {
             var strategy = this as IBillUpdateStrategy;
             if (!strategy.IsAllowUpdateState)
-                throw new BHException(ErrorCore.NotAllow, "没有修改此订单的权限");
+                throw new BHException(ErrorCode.NotAllow, "没有修改此订单的权限");
 
             using(var scope = new System.Transactions.TransactionScope())
             {
@@ -150,7 +150,7 @@ namespace BHOffice.Core.Business.Bill
             ExceptionHelper.ThrowIfNotId(bhid, "bhid");
             var strategy = this as IBillUpdateStrategy;
             if (!strategy.IsAllowUpdateState)
-                throw new BHException(ErrorCore.NotAllow, "没有修改此订单的权限");
+                throw new BHException(ErrorCode.NotAllow, "没有修改此订单的权限");
 
             _BillStateHistoryRepository.Delete(h => h.bid == Bid && h.bhid == bhid);
         }

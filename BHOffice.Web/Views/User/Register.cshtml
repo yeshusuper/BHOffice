@@ -12,6 +12,7 @@
         <ul>
             <li>
                 账号：<input value="@Html.DisplayFor(m => m.UserNo)" name="UserNo" />
+                @Url.Action("isUsable") 地址可查询账号是否已经被注册，参数userNo
             </li>
             <li>
                 密码：<input type="password" value="" name="Password" />
