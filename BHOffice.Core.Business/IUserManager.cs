@@ -38,13 +38,13 @@ namespace BHOffice.Core.Business
             if (!VerifyPassword(password, entity.pwd))
                 throw new BHException(ErrorCore.ErrorUserNoOrPwd, "账号或密码错误");
 
-            return new UserService(entity);
+            return new UserService(entity, _UserRepository);
         }
 
         public IUser GetUser(long uid)
         {
             ExceptionHelper.ThrowIfNotId(uid, "uid");
-            return new UserService(uid);
+            return new UserService(uid, _UserRepository);
         }
 
         public IUser Register(string userNo, string password, string username)
@@ -69,7 +69,7 @@ namespace BHOffice.Core.Business
             _UserRepository.Add(entity);
             _UserRepository.SaveChanges();
 
-            return new UserService(entity);
+            return new UserService(entity, _UserRepository);
         }
 
 

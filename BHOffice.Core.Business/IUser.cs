@@ -16,11 +16,33 @@ namespace BHOffice.Core.Business
 
     class UserService : IUser
     {
+        private readonly long _Uid;
         private readonly Lazy<Data.User> _LazyUser;
         private readonly Core.Data.IRepository<Data.User> _UserRepository;
+        public long Uid { get { return _Uid; } }
 
-        public UserService(long uid) { }
-        public UserService(Data.User entity) { }
+        public UserService(long uid, Core.Data.IRepository<Data.User> userRepository)
+            :this(userRepository)
+        {
+            _Uid = uid;
+            _LazyUser = new Lazy<Data.User>(() =>
+            {
+                var entity = userRepository.Entities.FirstOrDefault(u => u.uid == _Uid);
+                ExceptionHelper.ThrowIfNull(entity, "uid", "账号不存在");
+                return entity;
+            });
+        }
+        public UserService(Data.User entity, Core.Data.IRepository<Data.User> userRepository)
+            : this(userRepository)
+        {
+            _Uid = entity.uid;
+            _LazyUser = new Lazy<Data.User>(() => entity);
+        }
+
+        private UserService(Core.Data.IRepository<Data.User> userRepository)
+        {
+            _UserRepository = userRepository;
+        }
 
         public void ResetPassword(string oldPwd, string newPwd)
         {
@@ -35,15 +57,15 @@ namespace BHOffice.Core.Business
 
         public void UpdateInfo(IUserInfoEditer editer)
         {
-            throw new NotImplementedException();
+            ExceptionHelper.ThrowIfNull(editer, "editer");
+            editer.Fill(_LazyUser.Value);
+            _UserRepository.SaveChanges();
         }
 
-        public long Uid
+        public UserRoles Role
         {
-            get { throw new NotImplementedException(); }
+            get { return _LazyUser.Value.role; }
         }
-
-        
     }
 
 }

@@ -59,5 +59,9 @@ namespace BHOffice.Core
         /// 错误的账号或者密码
         /// </summary>
         ErrorUserNoOrPwd = 0x00000005,
+        /// <summary>
+        /// 禁止的操作
+        /// </summary>
+        NotAllow = 0x00000006,
     }
 }

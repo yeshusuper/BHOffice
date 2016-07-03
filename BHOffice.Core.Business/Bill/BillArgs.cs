@@ -6,6 +6,32 @@ using System.Threading.Tasks;
 
 namespace BHOffice.Core.Business.Bill
 {
+    internal interface IBillUpdateStrategy
+    {
+        bool IsReadOnly { get; }
+        bool IsSenderAndReceiverReadOnly { get; }
+        bool IsAllowUpdateState { get; }
+    }
+
+    internal class AllAllowBillUpdateStrategy : IBillUpdateStrategy
+    {
+        public bool IsReadOnly
+        {
+            get { return true; }
+        }
+
+        public bool IsSenderAndReceiverReadOnly
+        {
+            get { return true; }
+        }
+
+        public bool IsAllowUpdateState
+        {
+            get { return true; }
+        }
+    }
+
+
     public interface IBillArgs
     {
         string Sender { get; }
@@ -51,80 +77,52 @@ namespace BHOffice.Core.Business.Bill
         string InternalNo { get; }
     }
 
-    class BillArgs
+    static class BillArgsHelper
     {
-        private string _Sender;
-        public string Sender
+        public static void Verify(this IBillArgs args, IBillUpdateStrategy strategy)
         {
-            get { return _Sender; }
-            set 
+            ExceptionHelper.ThrowIfNull(args, "args");
+
+            if (!strategy.IsSenderAndReceiverReadOnly)
             {
-                ExceptionHelper.ThrowIfNullOrWhiteSpace(_Sender, "sender", "发件人不能为空");
-                _Sender = value.Trim(); 
+                ExceptionHelper.ThrowIfNullOrWhiteSpace(args.Sender, "sender", "发件人不能为空");
+                ExceptionHelper.ThrowIfNullOrWhiteSpace(args.SenderTel, "senderTel", "发件人电话不能为空");
+                ExceptionHelper.ThrowIfNullOrWhiteSpace(args.Receiver, "receiver", "收件人不能为空");
+                ExceptionHelper.ThrowIfNullOrWhiteSpace(args.ReceiverTel, "receiverTel", "收件人电话不能为空");
+                ExceptionHelper.ThrowIfNullOrWhiteSpace(args.ReceiverAddress, "receiverAddress", "收件人地址不能为空");
             }
         }
 
-        private string _SenderTel;
-        public string SenderTel
+        public static void Fill(this IBillArgs args, IBillUpdateStrategy strategy, Data.Bill entity, IUser user)
         {
-            get { return _SenderTel; }
-            set
+            if (!strategy.IsSenderAndReceiverReadOnly)
             {
-                ExceptionHelper.ThrowIfNullOrWhiteSpace(_SenderTel, "senderTel", "发件人电话不能为空");
-                _SenderTel = value.Trim();
+                entity.sender = args.Sender.Trim();
+                entity.sender_tel = args.SenderTel.Trim();
+                entity.receiver = args.Receiver.Trim();
+                entity.receiver_tel = args.ReceiverTel.Trim();
+                entity.receiver_addr = args.ReceiverAddress.Trim();
             }
-        }
-
-        private string _Receiver;
-        public string Receiver
-        {
-            get { return _Receiver; }
-            set
+            if (!strategy.IsReadOnly)
             {
-                ExceptionHelper.ThrowIfNullOrWhiteSpace(_Receiver, "receiver", "收件人不能为空");
-                _Receiver = value.Trim();
+                entity.no = args.No.SafeTrim();
+                entity.post = args.Post.SafeTrim();
+                entity.agent_uid = args.AgentUid;
+                entity.bill_date = args.Created ?? DateTime.Now;
+                entity.goods = args.Goods.SafeTrim();
+                entity.i_express = args.InternalExpress.SafeTrim();
+                entity.i_no = args.InternalNo.SafeTrim();
+                entity.insurance = args.Insurance;
+                entity.remarks = args.Remarks.SafeTrim();
+                entity.updated = DateTime.Now;
+                entity.updater = user.Uid;
+
+                if (!entity.confirmed && user.Role >= UserRoles.Agent)
+                {
+                    entity.confirmed = true;
+                    entity.confirmer = user.Uid;
+                }
             }
-        }
-
-        private string _ReceiverTel;
-        public string ReceiverTel
-        {
-            get { return _ReceiverTel; }
-            set
-            {
-                ExceptionHelper.ThrowIfNullOrWhiteSpace(_ReceiverTel, "receiverTel", "收件人电话不能为空");
-                _ReceiverTel = value.Trim();
-            }
-        }
-
-        private string _ReceiverAddress;
-        public string ReceiverAddress
-        {
-            get { return _ReceiverAddress; }
-            set
-            {
-                ExceptionHelper.ThrowIfNullOrWhiteSpace(_ReceiverAddress, "receiverAddress", "收件人地址不能为空");
-                _ReceiverAddress = value.Trim();
-            }
-        }
-        public string No { get; set; }
-        public DateTime? Created { get; set; }
-        public long? AgentUid { get; set; }
-        public string Post { get; set; }
-        public decimal Insurance { get; set; }
-        public string Goods { get; set; }
-        public string Remarks { get; set; }
-        public string InternalExpress { get; set; }
-        public string InternalNo { get; set; }
-
-
-        public BillArgs(string sender, string senderTel, string receiver, string receiverTel, string receiverAddress)
-        {
-            Sender = sender;
-            SenderTel = senderTel;
-            Receiver = receiver;
-            ReceiverTel = receiverTel;
-            ReceiverAddress = receiverAddress;
         }
     }
 }

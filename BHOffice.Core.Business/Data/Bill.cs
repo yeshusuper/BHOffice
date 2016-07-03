@@ -21,11 +21,12 @@ namespace BHOffice.Core.Business.Data
         public decimal insurance { get; set; }
         public string i_express { get; set; }
         public string i_no { get; set; }
-        public bool? confirmed { get; set; }
+        public bool confirmed { get; set; }
         public long? confirmer { get; set; }
         public bool enabled { get; set; }
         public string remarks { get; set; }
         public Business.Bill.BillStates state { get; set; }
+        public DateTime last_state_updated { get; set; }
         public DateTime bill_date { get; set; }
         public DateTime created { get; set; }
         public long creater { get; set; }

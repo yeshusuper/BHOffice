@@ -9,62 +9,42 @@ namespace BHOffice.Core.Business.Bill
     public interface IBillManager
     {
         IBill Create(IUser user, IBillArgs args);
-        IBill GetBill(long bid);
+        IBill GetBill(IUser user, long bid);
     }
 
     class BillManager : IBillManager
     {
         private readonly Core.Data.IRepository<Data.Bill> _BillRepository;
+        private readonly Core.Data.IRepository<Data.BillStateHistory> _BillStateHistoryRepository;
 
-        public BillManager(Core.Data.IRepository<Data.Bill> billRepository)
+        public BillManager(Core.Data.IRepository<Data.Bill> billRepository,
+            Core.Data.IRepository<Data.BillStateHistory> billStateHistoryRepository)
         {
             _BillRepository = billRepository;
+            _BillStateHistoryRepository = billStateHistoryRepository;
         }
 
         public IBill Create(IUser user, IBillArgs args)
         {
             ExceptionHelper.ThrowIfNull(user, "user");
-            ExceptionHelper.ThrowIfNull(args, "args");
 
-            ExceptionHelper.ThrowIfNullOrWhiteSpace(args.Sender, "sender", "发件人不能为空");
-            ExceptionHelper.ThrowIfNullOrWhiteSpace(args.SenderTel, "senderTel", "发件人电话不能为空");
-            ExceptionHelper.ThrowIfNullOrWhiteSpace(args.Receiver, "receiver", "收件人不能为空");
-            ExceptionHelper.ThrowIfNullOrWhiteSpace(args.ReceiverTel, "receiverTel", "收件人电话不能为空");
-            ExceptionHelper.ThrowIfNullOrWhiteSpace(args.ReceiverAddress, "receiverAddress", "收件人地址不能为空");
+            args.Verify(new AllAllowBillUpdateStrategy());
 
             var entity = new Data.Bill
             {
-                no = args.No.SafeTrim(),
-                sender = args.Sender.Trim(),
-                sender_tel = args.SenderTel.Trim(),
-                receiver = args.Receiver.Trim(),
-                receiver_tel = args.ReceiverTel.Trim(),
-                receiver_addr = args.ReceiverAddress.Trim(),
-                post = args.Post.SafeTrim(),
-                agent_uid = args.AgentUid,
-                bill_date = args.Created ?? DateTime.Now,
                 creater = user.Uid,
-                goods = args.Goods.SafeTrim(),
-                i_express = args.InternalExpress.SafeTrim(),
-                i_no = args.InternalNo.SafeTrim(),
-                insurance = args.Insurance,
-                remarks = args.Remarks.SafeTrim(),
-                updated = DateTime.Now,
                 created = DateTime.Now,
+                last_state_updated = DateTime.Now,
                 enabled = true,
                 state = BillStates.None,
             };
 
-            if (user.Role >= UserRoles.Agent)
-            {
-                entity.confirmed = true;
-                entity.confirmer = user.Uid;
-            }
+            args.Fill(new AllAllowBillUpdateStrategy(), entity, user);
 
             _BillRepository.Add(entity);
             _BillRepository.SaveChanges();
 
-            return new BillService(entity);
+            return new BillService(user, entity, _BillRepository, _BillStateHistoryRepository);
         }
 
         //private string CreateBillNo()
@@ -73,10 +53,10 @@ namespace BHOffice.Core.Business.Bill
         //}
 
 
-        public IBill GetBill(long bid)
+        public IBill GetBill(IUser user, long bid)
         {
             ExceptionHelper.ThrowIfNotId(bid, "bid");
-            return new BillService(bid);
+            return new BillService(user, bid, _BillRepository, _BillStateHistoryRepository);
         }
     }
 
