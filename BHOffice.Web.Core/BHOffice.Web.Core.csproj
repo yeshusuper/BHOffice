@@ -75,11 +75,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ActionResultExtension.cs" />
+    <Compile Include="BHAuthorizeAttribute.cs" />
     <Compile Include="BaseController.cs" />
+    <Compile Include="Config.cs" />
     <Compile Include="JsonResultEntry.cs" />
     <Compile Include="NinjectDependencyResolver.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RequestBaseExtension.cs" />
+    <Compile Include="SessionServiceExtenstion.cs" />
     <Compile Include="UrlHelperExtenstion.cs" />
+    <Compile Include="UserSessionEntry.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

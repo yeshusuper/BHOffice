@@ -9,6 +9,7 @@ namespace BHOffice.Core.Business
     public interface IUser
     {
         long Uid { get; }
+        string Name { get; }
         UserRoles Role { get; }
         void ResetPassword(string oldPwd, string newPwd);
         void UpdateInfo(IUserInfoEditer editer);
@@ -65,6 +66,12 @@ namespace BHOffice.Core.Business
         public UserRoles Role
         {
             get { return _LazyUser.Value.role; }
+        }
+
+
+        public string Name
+        {
+            get { return _LazyUser.Value.name; }
         }
     }
 

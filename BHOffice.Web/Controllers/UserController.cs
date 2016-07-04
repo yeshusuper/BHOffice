@@ -53,7 +53,21 @@ namespace BHOffice.Web.Controllers
         public ActionResult Login(string userNo, string password)
         {
             var user = _UserMangaer.Login(userNo, password);
+            CurrentUser = new UserSessionEntry
+            {
+                Name = user.Name,
+                Uid = user.Uid
+            };
             return SuccessJsonResult();
+        }
+
+        public ActionResult Logout()
+        {
+            CurrentUser = null;
+            if (Request.IsAjaxRequest())
+                return SuccessJsonResult();
+            else
+                return RedirectToAction("index", "index");
         }
     }
 }

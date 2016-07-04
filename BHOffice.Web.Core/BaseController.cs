@@ -10,6 +10,20 @@ namespace BHOffice.Web.Core
 {
     public abstract class BaseController : Controller
     {
+        private const string UserSessionKey = "_U_SESSION";
+
+        public UserSessionEntry CurrentUser
+        {
+            get
+            {
+                return Session.GetCurrentUser();
+            }
+            set
+            {
+                Session.SetCurrentUser(value);
+            }
+        }
+
         public ActionResult JsonResult(BHOffice.Core.ErrorCode code, string msg)
         {
             return Content(JsonConvert.SerializeObject(new JsonResultEntry

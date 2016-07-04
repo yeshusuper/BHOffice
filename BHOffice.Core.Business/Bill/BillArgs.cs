@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BHOffice.Core.Business.Bill
 {
-    internal interface IBillUpdateStrategy
+    public interface IBillUpdateStrategy
     {
         bool IsReadOnly { get; }
         bool IsSenderAndReceiverReadOnly { get; }

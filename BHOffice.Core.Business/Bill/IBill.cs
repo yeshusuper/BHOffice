@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BHOffice.Core.Business.Bill
 {
-    public interface IBill
+    public interface IBill : IBillArgs, IBillUpdateStrategy
     {
         long Bid { get; }
         BillStates State { get; }
@@ -17,7 +17,7 @@ namespace BHOffice.Core.Business.Bill
         IQueryable<Data.BillStateHistory> Histories { get; }
     }
 
-    class BillService : IBill, IBillUpdateStrategy
+    class BillService : IBill
     {
         private readonly IUser _User;
         private readonly long _Bid;
@@ -26,7 +26,7 @@ namespace BHOffice.Core.Business.Bill
         private readonly Core.Data.IRepository<Data.BillStateHistory> _BillStateHistoryRepository;
 
         #region IBillUpdateStrategy
-        bool IBillUpdateStrategy.IsReadOnly
+        public bool IsReadOnly
         {
             get
             {
@@ -34,7 +34,7 @@ namespace BHOffice.Core.Business.Bill
             }
         }
 
-        bool IBillUpdateStrategy.IsSenderAndReceiverReadOnly
+        public bool IsSenderAndReceiverReadOnly
         {
             get
             {
@@ -47,7 +47,7 @@ namespace BHOffice.Core.Business.Bill
             }
         }
 
-        bool IBillUpdateStrategy.IsAllowUpdateState
+        public bool IsAllowUpdateState
         {
             get
             {
@@ -101,8 +101,7 @@ namespace BHOffice.Core.Business.Bill
 
         public void UpdateInfo(IBillArgs args)
         {
-            var strategy = this as IBillUpdateStrategy;
-            if (strategy.IsReadOnly)
+            if (IsReadOnly)
                 throw new BHException(ErrorCode.NotAllow, "没有修改此订单的权限");
 
             args.Verify(this);
@@ -112,8 +111,7 @@ namespace BHOffice.Core.Business.Bill
 
         public void UpdateState(BillStates state, string remarks, DateTime? date = null)
         {
-            var strategy = this as IBillUpdateStrategy;
-            if (!strategy.IsAllowUpdateState)
+            if (IsAllowUpdateState)
                 throw new BHException(ErrorCode.NotAllow, "没有修改此订单的权限");
 
             using(var scope = new System.Transactions.TransactionScope())
@@ -154,6 +152,78 @@ namespace BHOffice.Core.Business.Bill
 
             _BillStateHistoryRepository.Delete(h => h.bid == Bid && h.bhid == bhid);
         }
+
+        #region IBillArgs
+        public string Sender
+        {
+            get { return _LazyBill.Value.sender; }
+        }
+
+        public string SenderTel
+        {
+            get { return _LazyBill.Value.sender_tel; }
+        }
+
+        public string Receiver
+        {
+            get { return _LazyBill.Value.receiver; }
+        }
+
+        public string ReceiverTel
+        {
+            get { return _LazyBill.Value.receiver_tel; }
+        }
+
+        public string ReceiverAddress
+        {
+            get { return _LazyBill.Value.receiver_addr; }
+        }
+
+        public string No
+        {
+            get { return _LazyBill.Value.no; }
+        }
+
+        public DateTime? Created
+        {
+            get { return _LazyBill.Value.bill_date; }
+        }
+
+        public long? AgentUid
+        {
+            get { return _LazyBill.Value.agent_uid; }
+        }
+
+        public string Post
+        {
+            get { return _LazyBill.Value.post; }
+        }
+
+        public decimal Insurance
+        {
+            get { return _LazyBill.Value.insurance; }
+        }
+
+        public string Goods
+        {
+            get { return _LazyBill.Value.goods; }
+        }
+
+        public string Remarks
+        {
+            get { return _LazyBill.Value.remarks; }
+        }
+
+        public string InternalExpress
+        {
+            get { return _LazyBill.Value.i_express; }
+        }
+
+        public string InternalNo
+        {
+            get { return _LazyBill.Value.i_no; }
+        }
+        #endregion
     }
 
 }
