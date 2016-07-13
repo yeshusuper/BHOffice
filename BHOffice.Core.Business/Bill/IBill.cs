@@ -54,6 +54,11 @@ namespace BHOffice.Core.Business.Bill
                 return _User.Role >= UserRoles.Agent;
             }
         }
+
+        public bool IsAgent
+        {
+            get { return _User.Role >= UserRoles.Agent; }
+        }
         #endregion
 
         public long Bid { get { return _Bid; } }
@@ -224,6 +229,8 @@ namespace BHOffice.Core.Business.Bill
             get { return _LazyBill.Value.i_no; }
         }
         #endregion
+
+
     }
 
 }

@@ -49,7 +49,7 @@ namespace BHOffice.Web.Controllers
                 return JsonResult(ErrorCode.Exists, "账号已存在");
         }
 
-
+        [HttpPost]
         public ActionResult Login(string userNo, string password)
         {
             var user = _UserMangaer.Login(userNo, password);
@@ -58,7 +58,22 @@ namespace BHOffice.Web.Controllers
                 Name = user.Name,
                 Uid = user.Uid
             };
-            return SuccessJsonResult();
+            if(Request.IsAjaxRequest())
+                return SuccessJsonResult();
+            else
+            {
+                var backUrl = Request.GetBackUrl();
+                if (!String.IsNullOrWhiteSpace(backUrl))
+                    return Redirect(backUrl);
+                else
+                    return RedirectToAction("index", "index");
+            }
+        }
+
+        [HttpGet]
+        public ActionResult Login()
+        {
+            return View();
         }
 
         public ActionResult Logout()

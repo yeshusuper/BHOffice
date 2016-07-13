@@ -79,6 +79,7 @@
     <Compile Include="BHAuthorizeAttribute.cs" />
     <Compile Include="BaseController.cs" />
     <Compile Include="Config.cs" />
+    <Compile Include="ControllerExtension.cs" />
     <Compile Include="JsonResultEntry.cs" />
     <Compile Include="NinjectDependencyResolver.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

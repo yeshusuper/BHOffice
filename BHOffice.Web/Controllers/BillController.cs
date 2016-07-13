@@ -9,6 +9,7 @@ using System.Web.Mvc;
 
 namespace BHOffice.Web.Controllers
 {
+    [BHAuthorize]
     public class BillController : BaseController
     {
         private readonly IBillManager _BillManager;

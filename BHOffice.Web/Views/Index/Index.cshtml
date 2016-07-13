@@ -1,21 +1,35 @@
-﻿@{
+﻿@model BHOffice.Web.Models.Index.IndexModel
+@{
     ViewBag.Title = "首页";
     Layout = "../Layout/_Header.cshtml";
 }
 <div>
-    <div>
-        <ul>
-            <li>
-                用户名：<input value="" name="userno" />
-            </li>
-            <li>
-                密码：<input type="password" value="" name="password" />
-            </li>
-            <li>
-                <input type="submit" value="登陆" />
-                还没有账号，<a href="@Url.Action("register", "user")" target="_blank">注册</a>。
-            </li>
-        </ul>
-        @Url.Action("login", "user") 登陆地址，参数userNo+password
-    </div>
+    @if(!Model.IsLogin)
+    { 
+        <div>
+            <form action="@Url.Action("login", "user")" method="post" enctype="application/x-www-form-urlencoded">
+                <ul>
+                    <li>
+                        用户名：<input value="" name="userno" />
+                    </li>
+                    <li>
+                        密码：<input type="password" value="" name="password" />
+                    </li>
+                    <li>
+                        <input type="submit" value="登陆" />
+                        还没有账号，<a href="@Url.Action("register", "user")" target="_blank">注册</a>。
+                    </li>
+                </ul>
+
+            </form>
+            @Url.Action("login", "user") 登陆地址,post请求，参数userNo+password
+        </div>
+    }
+    else
+    {
+        <div>
+            <h3>快速导航</h3>
+            <a href="@Url.Action("edit", "bill")" target="_blank">创建单个运单</a>
+        </div>
+    }
 </div>

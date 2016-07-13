@@ -28,7 +28,7 @@ namespace BHOffice.Core.Business.Bill
         {
             ExceptionHelper.ThrowIfNull(user, "user");
 
-            args.Verify(new AllAllowBillUpdateStrategy());
+            args.Verify(new AllAllowBillUpdateStrategy(user));
 
             var entity = new Data.Bill
             {
@@ -39,7 +39,7 @@ namespace BHOffice.Core.Business.Bill
                 state = BillStates.None,
             };
 
-            args.Fill(new AllAllowBillUpdateStrategy(), entity, user);
+            args.Fill(new AllAllowBillUpdateStrategy(user), entity, user);
 
             _BillRepository.Add(entity);
             _BillRepository.SaveChanges();

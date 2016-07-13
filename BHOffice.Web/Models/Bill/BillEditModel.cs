@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BHOffice.Web.Models.Bill
 {
-    public class BillEditModel : BHOffice.Core.Business.Bill.IBillArgs, BHOffice.Core.Business.Bill.IBillUpdateStrategy
+    public class BillEditModel : BHOffice.Core.Business.Bill.IBillArgs
     {
         public long Bid { get; set; }
 
@@ -24,7 +24,7 @@ namespace BHOffice.Web.Models.Bill
 
         public string No { get; set; }
 
-        [DisplayFormat(NullDisplayText = String.Empty, DataFormatString = "yyyy/MM/dd HH:mm:ss")]
+        [DisplayFormat(NullDisplayText = "", DataFormatString = "yyyy/MM/dd HH:mm:ss")]
         public DateTime? Created { get; set; }
 
         public long? AgentUid { get; set; }
@@ -42,14 +42,6 @@ namespace BHOffice.Web.Models.Bill
         public string InternalNo { get; set; }
         #endregion
 
-        #region IBillUpdateStrategy
-        public bool IsReadOnly { get; set; }
-
-        public bool IsSenderAndReceiverReadOnly { get; set; }
-
-        public bool IsAllowUpdateState { get; set; }
-        #endregion
-
         public BillEditModel(BHOffice.Core.Business.Bill.IBill service)
             : this()
         {
@@ -60,9 +52,6 @@ namespace BHOffice.Web.Models.Bill
             this.Insurance = service.Insurance;
             this.InternalExpress = service.InternalExpress;
             this.InternalNo = service.InternalNo;
-            this.IsAllowUpdateState = service.IsAllowUpdateState;
-            this.IsReadOnly = service.IsReadOnly;
-            this.IsSenderAndReceiverReadOnly = service.IsSenderAndReceiverReadOnly;
             this.No = service.No;
             this.Post = service.Post;
             this.Receiver = service.Receiver;

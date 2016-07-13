@@ -10,8 +10,6 @@ namespace BHOffice.Web.Core
 {
     public abstract class BaseController : Controller
     {
-        private const string UserSessionKey = "_U_SESSION";
-
         public UserSessionEntry CurrentUser
         {
             get

@@ -1,0 +1,24 @@
+﻿
+@{
+    ViewBag.Title = "登陆";
+    Layout = "../Layout/_Header.cshtml";
+}
+<div>
+    <form action="@Url.Action("login", "user")" method="post" enctype="application/x-www-form-urlencoded">
+        <input type="hidden" name="@Config.Current.BACK_URL_KEY" value="@Request.GetBackUrl()" />
+        <ul>
+            <li>
+                用户名：<input value="" name="userno" />
+            </li>
+            <li>
+                密码：<input type="password" value="" name="password" />
+            </li>
+            <li>
+                <input type="submit" value="登陆" />
+                还没有账号，<a href="@Url.Action("register", "user")" target="_blank">注册</a>。
+            </li>
+        </ul>
+
+    </form>
+    @Url.Action("login", "user") 登陆地址,post请求，参数userNo+password
+</div>

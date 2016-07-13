@@ -1,0 +1,91 @@
+﻿@model BHOffice.Web.Models.Bill.EditModel
+@{
+    ViewBag.Title = "创建单个运单";
+    Layout = "../Layout/_ManagerLeft.cshtml"; 
+}
+
+<div>
+    <h2>带“*”号的为必填项</h2>
+    <table cellpadding="0" cellspacing="0">
+        <tr>
+            <td>单号</td>
+            <td colspan="3">
+                <input value="@Model.Bill.No" name="No" />
+            </td>
+        </tr>
+        @if(Model.IsAgent)
+        { 
+        <tr>
+            <td>制单日期*</td>
+            <td>
+                <input value="@((Model.Bill.Created ?? DateTime.Now).ToString("yyyy/MM/dd HH:mm:ss"))" name="Created" />
+            </td>
+            <td>代理商*</td>
+            <td>
+                @Html.DropDownList("AgentUid", Model.Agents.Select(a => new SelectListItem
+                {
+                    Selected = Model.Bill.AgentUid.HasValue && a.Key == Model.Bill.AgentUid.Value,
+                    Value = a.Key.ToString(),
+                    Text = a.Value
+                }), "--选择代理商--");
+            </td>
+        </tr>
+        }
+        <tr>
+            <td>发件人*</td>
+            <td>
+                <input value="@Model.Bill.Sender" name="Sender" />
+            </td>
+            <td>发件人电话*</td>
+            <td>
+                <input value="@Model.Bill.SenderTel" name="SenderTel" />
+            </td>
+        </tr>
+        <tr>
+            <td>收件人*</td>
+            <td>
+                <input value="@Model.Bill.Receiver" name="Receiver" />
+            </td>
+            <td>收件人电话*</td>
+            <td>
+                <input value="@Model.Bill.ReceiverTel" name="ReceiverTel" />
+            </td>
+        </tr>
+        <tr>
+            <td>收件人地址*</td>
+            <td colspan="3">
+                <input value="@Model.Bill.ReceiverAddress" name="ReceiverAddress" />
+            </td>
+        </tr>
+        <tr>
+            <td>保险</td>
+            <td>
+                <input value="@Model.Bill.Insurance" name="Insurance" />
+            </td>
+            <td>邮编</td>
+            <td>
+                <input value="@Model.Bill.Post" name="Post" />
+            </td>
+        </tr>
+        <tr>
+            <td>物品</td>
+            <td>
+                <textarea name="Goods">@Model.Bill.Goods</textarea>
+            </td>
+            <td>备注</td>
+            <td>
+                <textarea name="Remarks">@Model.Bill.Remarks</textarea>
+            </td>
+        </tr>
+        <tr>
+            <td>国内快递</td>
+            <td>
+                <input value="@Model.Bill.InternalExpress" name="InternalExpress" />
+            </td>
+            <td>国内单号</td>
+            <td>
+                <input value="@Model.Bill.InternalNo" name="InternalNo" />
+            </td>
+        </tr>
+    </table>
+</div>

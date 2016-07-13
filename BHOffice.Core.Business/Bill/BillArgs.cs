@@ -11,6 +11,10 @@ namespace BHOffice.Core.Business.Bill
         bool IsReadOnly { get; }
         bool IsSenderAndReceiverReadOnly { get; }
         bool IsAllowUpdateState { get; }
+        /// <summary>
+        /// 是否包含代理或以上的权限
+        /// </summary>
+        bool IsAgent { get; }
     }
 
     internal class AllAllowBillUpdateStrategy : IBillUpdateStrategy
@@ -28,6 +32,14 @@ namespace BHOffice.Core.Business.Bill
         public bool IsAllowUpdateState
         {
             get { return true; }
+        }
+
+
+        public bool IsAgent { get; private set; }
+
+        public AllAllowBillUpdateStrategy(IUser user)
+        {
+            IsAgent = user.Role >= UserRoles.Agent;
         }
     }
 
@@ -107,8 +119,6 @@ namespace BHOffice.Core.Business.Bill
             {
                 entity.no = args.No.SafeTrim();
                 entity.post = args.Post.SafeTrim();
-                entity.agent_uid = args.AgentUid;
-                entity.bill_date = args.Created ?? DateTime.Now;
                 entity.goods = args.Goods.SafeTrim();
                 entity.i_express = args.InternalExpress.SafeTrim();
                 entity.i_no = args.InternalNo.SafeTrim();
@@ -117,10 +127,20 @@ namespace BHOffice.Core.Business.Bill
                 entity.updated = DateTime.Now;
                 entity.updater = user.Uid;
 
-                if (!entity.confirmed && user.Role >= UserRoles.Agent)
+                if(strategy.IsAgent)
                 {
-                    entity.confirmed = true;
-                    entity.confirmer = user.Uid;
+                    entity.agent_uid = args.AgentUid;
+                    entity.bill_date = args.Created ?? DateTime.Now;
+
+                    if(!entity.confirmed)
+                    {
+                        entity.confirmed = true;
+                        entity.confirmer = user.Uid;
+                    }
+                }
+                else
+                {
+                    entity.created = DateTime.Now;
                 }
             }
         }

@@ -10,7 +10,7 @@ namespace BHOffice.Web.Core
 {
     public class BHAuthorizeAttribute : System.Web.Mvc.AuthorizeAttribute
     {
-        protected BHAuthorizeAttribute()
+        public BHAuthorizeAttribute()
         {
         }
 
