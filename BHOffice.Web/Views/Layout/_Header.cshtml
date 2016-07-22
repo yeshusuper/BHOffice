@@ -5,22 +5,41 @@
 <head lang="en">
     <meta charset="UTF-8">
     <title>@ViewBag.Title</title>
+    <link href="/Resources/css/base.css" rel="stylesheet" />
+    <style>
+        .header{
+            height:110px;
+        }
+        .header .nav li{
+            float:left;
+        }
+        .manager_left_nav{
+            float:left;
+            width:200px;
+        }
+        .manager_content{
+            float:left;
+            width:1000px;
+        }
+    </style>
 </head>
 <body>
-    <div>
-        @if(this.Session.GetCurrentUser() != null)
-        {
-            <span>欢迎你：</span>@(this.Session.GetCurrentUser().Name)
-            <a href="@Url.Action("logout", "user")">退出</a>
-        }
+    <div class="main_layout">
+        <div class="header">
+            <div>
+                @if (this.Session.GetCurrentUser() != null)
+                {
+                    <span>欢迎你：</span>@(this.Session.GetCurrentUser().Name)
+                    <a href="@Url.Action("logout", "user")">退出</a>
+                }
+            </div>
+            <ul class="nav">
+                <li>
+                    <a href="@Url.Action("index", "index")" @(Url.IsCurrent("index", "index") ? "class=\"current\"" : String.Empty)>首页</a>
+                </li>
+            </ul>
+        </div>
+        @RenderBody()
     </div>
-    <div>
-        <ul>
-            <li>
-                <a href="@Url.Action("index", "index")" @(Url.IsCurrent("index", "index") ? "class=\"current\"" : String.Empty)>首页</a>
-            </li>
-        </ul>
-    </div>
-    @RenderBody()
 </body>
 </html>

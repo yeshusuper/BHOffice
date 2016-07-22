@@ -22,7 +22,7 @@ namespace BHOffice.Core.Business.Bill
         private readonly IUser _User;
         private readonly long _Bid;
         private readonly Lazy<Data.Bill> _LazyBill;
-        private readonly Core.Data.IRepository<Data.Bill> _BillRepository;
+        private readonly Data.IBillRepository _BillRepository;
         private readonly Core.Data.IRepository<Data.BillStateHistory> _BillStateHistoryRepository;
 
         #region IBillUpdateStrategy
@@ -64,7 +64,7 @@ namespace BHOffice.Core.Business.Bill
         public long Bid { get { return _Bid; } }
 
         public BillService(IUser user, long bid,
-            Core.Data.IRepository<Data.Bill> billRepository,
+            Data.IBillRepository billRepository,
             Core.Data.IRepository<Data.BillStateHistory> billStateHistoryRepository)
             : this(user, billRepository, billStateHistoryRepository)
         {
@@ -77,7 +77,7 @@ namespace BHOffice.Core.Business.Bill
             });
         }
         public BillService(IUser user, Data.Bill entity,
-            Core.Data.IRepository<Data.Bill> billRepository,
+            Data.IBillRepository billRepository,
             Core.Data.IRepository<Data.BillStateHistory> billStateHistoryRepository)
             : this(user, billRepository, billStateHistoryRepository) 
         {
@@ -85,8 +85,8 @@ namespace BHOffice.Core.Business.Bill
             _LazyBill = new Lazy<Data.Bill>(() => entity);
         }
 
-        private BillService(IUser user, 
-            Core.Data.IRepository<Data.Bill> billRepository,
+        private BillService(IUser user,
+            Data.IBillRepository billRepository,
             Core.Data.IRepository<Data.BillStateHistory> billStateHistoryRepository)
         {
             _User = user;
@@ -110,6 +110,15 @@ namespace BHOffice.Core.Business.Bill
                 throw new BHException(ErrorCode.NotAllow, "没有修改此订单的权限");
 
             args.Verify(this);
+
+            if (!String.IsNullOrWhiteSpace(args.No))
+            {
+                var no = args.No.Trim();
+                if (no != No && _BillRepository.EnableBills.Any(b => b.bid != Bid && b.no == no))
+                    throw new BHException(ErrorCode.ArgError, "运单号已存在:" + no);
+            }
+
+
             args.Fill(this, _LazyBill.Value, _User);
             _BillRepository.SaveChanges();
         }

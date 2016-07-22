@@ -8,6 +8,9 @@ namespace BHOffice.Web.Models.Bill
 {
     public class EditModel : BHOffice.Core.Business.Bill.IBillUpdateStrategy
     {
+        public bool IsSuccess { get; set; }
+        public string ErrorMessage { get; set; }
+
         public Dictionary<long, string> Agents { get; set; }
         public BillEditModel Bill { get; set; }
 
@@ -31,8 +34,17 @@ namespace BHOffice.Web.Models.Bill
         }
 
         public EditModel()
+            : this((BillEditModel)null)
         {
-            Bill = new BillEditModel();
+        }
+
+        public EditModel(BillEditModel model)
+        {
+            Bill = model ?? new BillEditModel();
+            this.IsReadOnly = false;
+            this.IsSenderAndReceiverReadOnly = false;
+            this.IsAgent = false;
+            this.IsAllowUpdateState = false;
         }
     }
 }

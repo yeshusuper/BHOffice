@@ -14,10 +14,10 @@ namespace BHOffice.Core.Business.Bill
 
     class BillManager : IBillManager
     {
-        private readonly Core.Data.IRepository<Data.Bill> _BillRepository;
+        private readonly Data.IBillRepository _BillRepository;
         private readonly Core.Data.IRepository<Data.BillStateHistory> _BillStateHistoryRepository;
 
-        public BillManager(Core.Data.IRepository<Data.Bill> billRepository,
+        public BillManager(Data.IBillRepository billRepository,
             Core.Data.IRepository<Data.BillStateHistory> billStateHistoryRepository)
         {
             _BillRepository = billRepository;
@@ -30,11 +30,19 @@ namespace BHOffice.Core.Business.Bill
 
             args.Verify(new AllAllowBillUpdateStrategy(user));
 
+            if(!String.IsNullOrWhiteSpace(args.No))
+            {
+                var no = args.No.Trim();
+                if (_BillRepository.EnableBills.Any(b => b.no == no))
+                    throw new BHException(ErrorCode.ArgError, "运单号已存在:" + no);
+            }
+
             var entity = new Data.Bill
             {
                 creater = user.Uid,
                 created = DateTime.Now,
                 last_state_updated = DateTime.Now,
+                bill_date = DateTime.Now,
                 enabled = true,
                 state = BillStates.None,
             };

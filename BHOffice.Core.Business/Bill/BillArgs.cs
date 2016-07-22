@@ -21,17 +21,17 @@ namespace BHOffice.Core.Business.Bill
     {
         public bool IsReadOnly
         {
-            get { return true; }
+            get { return false; }
         }
 
         public bool IsSenderAndReceiverReadOnly
         {
-            get { return true; }
+            get { return false; }
         }
 
         public bool IsAllowUpdateState
         {
-            get { return true; }
+            get { return false; }
         }
 
 

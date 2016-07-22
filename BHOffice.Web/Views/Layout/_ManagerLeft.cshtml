@@ -2,7 +2,7 @@
     Layout = "../Layout/_Header.cshtml";
 }
 
-<ul>
+<ul class="manager_left_nav">
     <li>
         <h3>运单管理</h3>
         <ul>
@@ -10,4 +10,6 @@
         </ul>
     </li>
 </ul>
-@RenderBody()
+<div class="manager_content">    
+    @RenderBody()
+</div>

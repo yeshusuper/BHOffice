@@ -1,0 +1,50 @@
+﻿body, h1, h2, h3, h4, h5, h6, p, dl, dt, dd, ul, ol, li, pre, form, fieldset, button, input, textarea, th, td, menu {margin:0;padding:0;}
+body, button, input, select, textarea {font:12px/1.75 arial, \5b8b\4f53, sans-serif;}
+article, aside, dialog, details, figcaption, figure, footer, header, hgroup, menu, nav, section { display: block; }
+audio, canvas, video { display: inline-block; *display: inline; *zoom:1}
+body{background:#fff}
+h1, h2, h3, h4, h5, h6, button, input, select, textarea {font-size:100%;}
+em{font-style:normal;}
+small{font-size: 12px;}
+ul, ol {list-style: none;}
+a {text-decoration: none;color:#369}
+a:hover {text-decoration: underline; color:#f60;}
+a.ul:hover{text-decoration:none;}
+a span{cursor:pointer;}
+fieldset, img {border: 0;}
+table{border-collapse: collapse;border-spacing:0;}
+.clearfix:before,.clearfix:after {content: "."; display: block; height: 0; visibility: hidden;}
+.clearfix:after {clear: both;}
+.clearfix {zoom: 1;}
+.fl{float:left;}
+.fr{float:right;}
+.cl, .clr{clear:both;}
+.clr{font-size:0;height:0;line-height:0}
+.tc{text-align:center;}
+.tl{text-align:left;}
+.tr{text-align:right;}
+.tj{text-align:justify;text-justify:inter-ideograph;}
+.vt{vertical-align:top;}
+.vm{vertical-align:middle;}
+.vb{vertical-align:text-bottom;}
+.hide{display:none;}
+.of-h{overflow:hidden;}
+.d-ib{display:inline-block;*display:inline;*zoom:1}
+.td-ul{text-decoration:underline;}
+.ml-10{margin-left:10px;}
+.mr-10{margin-right:10px;}
+.mt-10{margin-top:10px;}
+.mb-10{margin-bottom:10px;}
+.c-369{color:#369}
+.c-f60{color:#f60}
+.c-333{color:#333}
+.c-666{color:#666}
+.c-555{color:#555}
+.c-888{color:#888}
+.c-630{color:#630}
+.c-900{color:#900}
+.c-f00{ color:#f00;}
+.f12{font-size:12px;}
+.f14{font-size:14px;}
+.f16{font-size:16px;}
+.main_layout { width:1280px; margin:0 auto; }

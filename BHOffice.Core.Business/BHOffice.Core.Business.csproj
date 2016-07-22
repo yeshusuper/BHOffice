@@ -82,6 +82,7 @@
       <DependentUpon>BHOfficeContext.tt</DependentUpon>
     </Compile>
     <Compile Include="Data\DbSetRepository.cs" />
+    <Compile Include="Data\IBillRepository.cs" />
     <Compile Include="Data\User.cs">
       <DependentUpon>BHOfficeContext.tt</DependentUpon>
     </Compile>

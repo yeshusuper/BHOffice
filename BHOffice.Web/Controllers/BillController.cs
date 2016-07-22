@@ -22,17 +22,45 @@ namespace BHOffice.Web.Controllers
             _UserManager = userManager;
         }
 
+        [HttpGet]
         public ActionResult Edit(long? bid)
         {
-            if(bid.HasValue)
+            if(bid.HasValue && bid.Value > 0)
             {
                 var user = _UserManager.GetUser(CurrentUser.Uid);
                 var bill =_BillManager.GetBill(user, bid.Value);
-                return View(new Models.Bill.BillEditModel(bill));
+                return View(new Models.Bill.EditModel(bill));
             }
             else
             {
-                return View(new Models.Bill.BillEditModel());
+                return View(new Models.Bill.EditModel());
+            }
+        }
+
+        [HttpPost]
+        public ActionResult Edit(Models.Bill.BillEditModel model)
+        {
+            try
+            {
+                var user = _UserManager.GetUser(CurrentUser.Uid);
+                IBill bill;
+                if (model.Bid > 0)
+                {
+                    bill = _BillManager.GetBill(user, model.Bid);
+                    bill.UpdateInfo(model);
+                }
+                else
+                {
+                    bill = _BillManager.Create(user, model);
+                }
+                return View(new Models.Bill.EditModel(bill));
+            }
+            catch(System.Exception ex)
+            {
+                return View(new Models.Bill.EditModel(model)
+                {
+                    ErrorMessage = ex.Message
+                });
             }
         }
     }

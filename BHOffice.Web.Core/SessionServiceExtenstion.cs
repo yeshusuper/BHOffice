@@ -18,5 +18,19 @@ namespace BHOffice.Web.Core
         {
             session[Config.Current.SESSION_USER_KEY] = entry;
         }
+
+
+
+        public static UserSessionEntry Login(this HttpSessionStateBase session, BHOffice.Core.Business.IUserManager manager, string username, string password)
+        {
+            var user = manager.Login(username, password);
+            var entry = new UserSessionEntry
+            {
+                Name = user.Name,
+                Uid = user.Uid
+            };
+            SetCurrentUser(session, entry);
+            return entry;
+        }
     }
 }

@@ -17,6 +17,9 @@ namespace BHOffice.Web.Core
         protected bool AuthorizeCore(System.Web.HttpContextBase httpContext, UserSessionEntry user)
         {
             return user != null && user.Uid > 0;
+            /*
+            var manager = DependencyResolver.Current.GetService<BHOffice.Core.Business.IUserManager>();
+            httpContext.Session.Login(manager, "", "");*/
         }
 
         protected ActionResult UnauthorizedResult

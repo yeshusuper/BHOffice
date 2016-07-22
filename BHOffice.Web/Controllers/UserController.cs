@@ -52,12 +52,7 @@ namespace BHOffice.Web.Controllers
         [HttpPost]
         public ActionResult Login(string userNo, string password)
         {
-            var user = _UserMangaer.Login(userNo, password);
-            CurrentUser = new UserSessionEntry
-            {
-                Name = user.Name,
-                Uid = user.Uid
-            };
+            Session.Login(_UserMangaer, userNo, password);
             if(Request.IsAjaxRequest())
                 return SuccessJsonResult();
             else
