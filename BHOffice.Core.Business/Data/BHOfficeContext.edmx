@@ -24,7 +24,7 @@
           <Property Name="i_no" Type="nvarchar" MaxLength="50" />
           <Property Name="confirmed" Type="bit" Nullable="false" />
           <Property Name="confirmer" Type="bigint" />
-          <Property Name="enabled" Type="bit" />
+          <Property Name="enabled" Type="bit" Nullable="false" />
           <Property Name="remarks" Type="nvarchar" MaxLength="500" />
           <Property Name="state" Type="tinyint" Nullable="false" />
           <Property Name="last_state_updated" Type="datetime" Nullable="false" />
@@ -135,7 +135,7 @@
           <Property Name="i_no" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="confirmed" Type="Boolean" Nullable="false" />
           <Property Name="confirmer" Type="Int64" />
-          <Property Name="enabled" Type="Boolean" />
+          <Property Name="enabled" Type="Boolean" Nullable="false" />
           <Property Name="remarks" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
           <Property Name="state" Type="BHOfficeModel.BillStates" Nullable="false" />
           <Property Name="last_state_updated" Type="DateTime" Nullable="false" Precision="3" />
@@ -144,8 +144,8 @@
           <Property Name="creater" Type="Int64" Nullable="false" />
           <Property Name="updated" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="updater" Type="Int64" />
-          <NavigationProperty Name="User" Relationship="Self.FK_Bill_User_AgentUid" FromRole="Bill" ToRole="User" />
-          <NavigationProperty Name="User1" Relationship="Self.FK_Bill_User_Creater" FromRole="Bill" ToRole="User" />
+          <NavigationProperty Name="Agenters" Relationship="Self.FK_Bill_User_AgentUid" FromRole="Bill" ToRole="User" />
+          <NavigationProperty Name="Creaters" Relationship="Self.FK_Bill_User_Creater" FromRole="Bill" ToRole="User" />
           <NavigationProperty Name="BillStateHistory" Relationship="BHOfficeModel.FK_BillStateHistory_BillStateHistory1" FromRole="Bill" ToRole="BillStateHistory" />
         </EntityType>
         <EntityType Name="BillStateHistory">

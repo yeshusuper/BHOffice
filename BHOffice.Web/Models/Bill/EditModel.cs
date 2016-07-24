@@ -1,4 +1,5 @@
-﻿using BHOffice.Core.Business.Bill;
+﻿using BHOffice.Core.Business;
+using BHOffice.Core.Business.Bill;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,17 +34,17 @@ namespace BHOffice.Web.Models.Bill
             this.IsAgent = service.IsAgent;
         }
 
-        public EditModel()
-            : this((BillEditModel)null)
+        public EditModel(IUser user)
+            : this(user, null)
         {
         }
 
-        public EditModel(BillEditModel model)
+        public EditModel(IUser user, BillEditModel model)
         {
             Bill = model ?? new BillEditModel();
             this.IsReadOnly = false;
             this.IsSenderAndReceiverReadOnly = false;
-            this.IsAgent = false;
+            this.IsAgent = user.Role >= UserRoles.Agent;
             this.IsAllowUpdateState = false;
         }
     }

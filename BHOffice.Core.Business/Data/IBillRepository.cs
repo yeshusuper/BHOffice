@@ -17,7 +17,7 @@ namespace BHOffice.Core.Business.Data
 
         public IQueryable<Bill> EnableBills
         {
-            get { return Entities.Where(b => b.enabled == null || b.enabled.Value); }
+            get { return Entities.Where(b => b.enabled); }
         }
     }
 }

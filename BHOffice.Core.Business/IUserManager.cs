@@ -12,6 +12,7 @@ namespace BHOffice.Core.Business
         IUser GetUser(long uid);
         IUser Register(string userNo, string password, string username);
         bool IsUsable(ref string userNo);
+        Dictionary<long, string> GetUsersName(long[] uids);
     }
 
     class UserManager : IUserManager
@@ -89,6 +90,18 @@ namespace BHOffice.Core.Business
         internal static bool VerifyPassword(string input, string password)
         {
             return new Security.MD5().Verify(input, password);
+        }
+
+        public Dictionary<long, string> GetUsersName(long[] uids)
+        {
+            if (uids == null)
+                return new Dictionary<long, string>();
+            uids = uids.Where(id => id > 0).Distinct().ToArray();
+            if (uids.Length == 0)
+                return new Dictionary<long, string>();
+
+            var result = _UserRepository.Entities.Where(u => uids.Contains(u.uid)).Select(u => new { u.uid, u.name }).ToArray();
+            return result.ToDictionary(r => r.uid, r => r.name);
         }
     }
 

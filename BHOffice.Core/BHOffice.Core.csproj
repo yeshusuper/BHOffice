@@ -41,7 +41,9 @@
   <ItemGroup>
     <Compile Include="BHException.cs" />
     <Compile Include="Data\IRepository.cs" />
+    <Compile Include="DictionaryExtension.cs" />
     <Compile Include="ExceptionHelper.cs" />
+    <Compile Include="Linq\IQueryableExtension.cs" />
     <Compile Include="Log\ILogger.cs" />
     <Compile Include="Log\LocalLogger.cs" />
     <Compile Include="PageModel.cs" />

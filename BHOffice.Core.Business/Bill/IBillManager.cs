@@ -10,6 +10,7 @@ namespace BHOffice.Core.Business.Bill
     {
         IBill Create(IUser user, IBillArgs args);
         IBill GetBill(IUser user, long bid);
+        IQueryable<Data.Bill> Search(IUser user, IBillSearchQuery query);
     }
 
     class BillManager : IBillManager
@@ -63,11 +64,53 @@ namespace BHOffice.Core.Business.Bill
         //    return String.Format("{0:yyyyMMddHHmmssfff}{1}", DateTime.Now, new Random().Next(1, 100000).ToString().PadLeft(5, '0'));
         //}
 
-
         public IBill GetBill(IUser user, long bid)
         {
             ExceptionHelper.ThrowIfNotId(bid, "bid");
             return new BillService(user, bid, _BillRepository, _BillStateHistoryRepository);
+        }
+
+
+        public IQueryable<Data.Bill> Search(IUser user, IBillSearchQuery query)
+        {
+            ExceptionHelper.ThrowIfNull(user, "user");
+            var source = _BillRepository.EnableBills;
+            if (user.Role < UserRoles.Agent)
+                source = source.Where(b => b.creater == user.Uid);
+            else if (user.Role < UserRoles.Admin)
+                source = source.Where(b => b.creater == user.Uid || (b.agent_uid.HasValue && b.agent_uid.Value == user.Uid));
+
+            if (query != null)
+            {
+                if (!String.IsNullOrWhiteSpace(query.Creater))
+                {
+                    var creater = query.Creater.Trim();
+                    source = source.Where(b => b.Creaters.name == creater || b.Creaters.email == creater);
+                }
+                if (!String.IsNullOrWhiteSpace(query.No))
+                {
+                    var no = query.No.Trim();
+                    source = source.Where(b => b.no == no);
+                }
+                if (query.MinCreated.HasValue)
+                {
+                    source = source.Where(b => b.created >= query.MinCreated.Value);
+                }
+                if (query.MaxCreated.HasValue)
+                {
+                    source = source.Where(b => b.created <= query.MaxCreated.Value);
+                }
+                if (!String.IsNullOrWhiteSpace(query.Receiver))
+                {
+                    var receiver = query.Receiver.Trim();
+                    source = source.Where(b => b.receiver == receiver);
+                }
+                if (query.State.HasValue)
+                {
+                    source = source.Where(b => b.state == query.State.Value);
+                }
+            }
+            return source;
         }
     }
 

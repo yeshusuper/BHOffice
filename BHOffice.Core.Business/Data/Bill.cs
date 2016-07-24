@@ -34,7 +34,7 @@ namespace BHOffice.Core.Business.Data
         public string i_no { get; set; }
         public bool confirmed { get; set; }
         public Nullable<long> confirmer { get; set; }
-        public Nullable<bool> enabled { get; set; }
+        public bool enabled { get; set; }
         public string remarks { get; set; }
         public BHOffice.Core.Business.Bill.BillStates state { get; set; }
         public System.DateTime last_state_updated { get; set; }
@@ -44,8 +44,8 @@ namespace BHOffice.Core.Business.Data
         public System.DateTime updated { get; set; }
         public Nullable<long> updater { get; set; }
     
-        public virtual User User { get; set; }
-        public virtual User User1 { get; set; }
+        public virtual User Agenters { get; set; }
+        public virtual User Creaters { get; set; }
         public virtual ICollection<BillStateHistory> BillStateHistory { get; set; }
     }
 }

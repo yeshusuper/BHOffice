@@ -4,7 +4,7 @@
     Layout = "../Layout/_ManagerLeft.cshtml"; 
 }
 <div>
-    <form action="@Url.Action("list")" enctype="application/x-www-form-urlencoded" method="post">
+    <form action="@Url.Action("list")" enctype="application/x-www-form-urlencoded" method="get">
         <table>
             <tr>
                 <td>创建者：</td>
@@ -32,7 +32,7 @@
         </table>
     </form>
 </div>
-<table>
+<table class="common_table">
     <thead>
         <tr>
             <th>代理商</th>
@@ -46,4 +46,26 @@
             <th>追踪</th>
         </tr>
     </thead>
+    <tbody>
+        @foreach (var item in Model.Items)
+        {            
+            <tr>
+                <td>@item.AgentName</td>
+                <td>@item.No</td>
+                <td>@item.CreaterName</td>
+                <td>@item.Created.ToString("yyyy/MM/dd HH:mm:ss")</td>
+                <td>@item.ReceiverName</td>
+                <td>@item.ReceiverAddr</td>
+                <td>@item.StateName</td>
+                <td>
+                    <a target="_blank" href="@Url.Action("Edit", new { bid = item.Bid })">编辑</a>
+                    &nbsp;
+                    <a href="#">删除</a>
+                </td>
+                <td>
+                    <a target="_blank" href="@Url.Action("State", new { bid = item.Bid })">追踪</a>
+                </td>
+            </tr>
+        }
+    </tbody>
 </table>

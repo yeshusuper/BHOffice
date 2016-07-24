@@ -60,6 +60,7 @@
     <Compile Include="Bill\BillStates.cs" />
     <Compile Include="Bill\IBill.cs" />
     <Compile Include="Bill\IBillManager.cs" />
+    <Compile Include="Bill\IBillSearchQuery.cs" />
     <Compile Include="Data\BHOfficeContext.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

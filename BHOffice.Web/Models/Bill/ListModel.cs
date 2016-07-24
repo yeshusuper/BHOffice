@@ -8,7 +8,7 @@ namespace BHOffice.Web.Models.Bill
 {
     public class ListModel
     {
-        public class SearchModel
+        public class SearchModel : BHOffice.Core.Business.Bill.IBillSearchQuery
         {
             public string Creater { get; set; }
             public string No { get; set; }
@@ -18,18 +18,31 @@ namespace BHOffice.Web.Models.Bill
             [DisplayFormat(NullDisplayText = "", DataFormatString = "yyyy/MM/dd")]
             public DateTime? MaxCreated { get; set; }
             public BHOffice.Core.Business.Bill.BillStates? State { get; set; }
+            public int PageIndex { get; set; }
         }
 
         public class ListItemModel
         {
+            public long Bid { get; set; }
             public string AgentName { get; set; }
             public string No { get; set; }
             public string CreaterName { get; set; }
             public string ReceiverName { get; set; }
             public string ReceiverAddr { get; set; }
             public string StateName { get; set; }
+
+            [DisplayFormat(DataFormatString = "yyyy/MM/dd HH:mm:ss")]
+            public DateTime Created { get; set; }
         }
 
         public SearchModel Query { get; set; }
+        public Core.PageModel<ListItemModel> Items { get; set; }
+
+        public ListModel()
+        {
+            Query = new SearchModel();
+            Items = new Core.PageModel<ListItemModel>(Enumerable.Empty<ListItemModel>(), 1, 0);
+        }
     }
+
 }

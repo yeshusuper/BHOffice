@@ -26,11 +26,21 @@ namespace BHOffice.Core.Business.Bill
         private readonly Core.Data.IRepository<Data.BillStateHistory> _BillStateHistoryRepository;
 
         #region IBillUpdateStrategy
+        private bool IsOwner
+        {
+            get
+            {
+                return _User.Role >= UserRoles.Admin
+                    || _User.Uid == _LazyBill.Value.creater
+                    || (_LazyBill.Value.agent_uid.HasValue && _LazyBill.Value.agent_uid.Value == _User.Uid);
+            }
+        }
+
         public bool IsReadOnly
         {
             get
             {
-                return _LazyBill.Value.confirmed && _User.Role < UserRoles.Agent;
+                return !IsOwner || (_LazyBill.Value.confirmed && _User.Role < UserRoles.Agent);
             }
         }
 
@@ -38,6 +48,9 @@ namespace BHOffice.Core.Business.Bill
         {
             get
             {
+                if (!IsOwner)
+                    return true;
+
                 if (!_LazyBill.Value.confirmed)
                     return false;
                 else if (_LazyBill.Value.state == BillStates.None)
@@ -51,6 +64,9 @@ namespace BHOffice.Core.Business.Bill
         {
             get
             {
+                if (!IsOwner)
+                    return false;
+
                 return _User.Role >= UserRoles.Agent;
             }
         }
