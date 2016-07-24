@@ -13,20 +13,75 @@
         .header .nav li{
             float:left;
         }
+        .header .user_info{
+            float:right;
+        }
         .manager_left_nav{
             float:left;
             width:200px;
         }
         .manager_content{
             float:left;
-            width:1000px;
+            width:960px;
+            padding:20px;
+        }
+
+        /*分页样式*/
+        .page {
+            margin: 20px 0;
+            line-height: 20px;
+            text-align: center;
+        }
+
+            .page a, .page b {
+                display: inline-block;
+                *display: inline;
+                *zoom: 1;
+                border: 1px #8CA9CC solid;
+                background-color: #FFF;
+                padding-left: 7px;
+                padding-right: 7px;
+                height: 20px;
+                color: #1f366d;
+                cursor: pointer;
+                margin-right: 5px;
+                font-weight: 400;
+                border-radius: 2px;
+            }
+
+                .page b, .page a.current, .page a:hover {
+                    border: 1px #4C6A8C solid;
+                    background-color: #8BBBE9;
+                    color: #fff;
+                }
+
+            .page input {
+                box-sizing: content-box;
+                line-height: 22px;
+                height: 22px;
+                border: 1px solid #8CA9CC;
+                border-radius: 2px;
+                height: 16px;
+                width: 40px;
+                line-height: 16px;
+                border-right: 0;
+                vertical-align: top;
+                border-radius: 2px 0 0 2px;
+            }
+
+                .page input:focus {
+                    box-shadow: 0 0 5px #A4C6FD;
+                    outline: -webkit-focus-ring-color auto 5px;
+                }
+        ._temp_border{
+            border: 1px solid #000;
         }
     </style>
 </head>
 <body>
     <div class="main_layout">
-        <div class="header">
-            <div>
+        <div class="header _temp_border">
+            <div class="user_info">
                 @if (this.Session.GetCurrentUser() != null)
                 {
                     <span>欢迎你：</span>@(this.Session.GetCurrentUser().Name)

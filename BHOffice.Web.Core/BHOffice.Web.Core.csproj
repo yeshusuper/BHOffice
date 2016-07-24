@@ -92,6 +92,7 @@
     <Compile Include="ActionResultExtension.cs" />
     <Compile Include="BHAuthorizeAttribute.cs" />
     <Compile Include="BaseController.cs" />
+    <Compile Include="Pager.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="ControllerExtension.cs" />
     <Compile Include="JsonResultEntry.cs" />
@@ -101,6 +102,7 @@
     <Compile Include="SessionServiceExtenstion.cs" />
     <Compile Include="UrlHelperExtenstion.cs" />
     <Compile Include="UserSessionEntry.cs" />
+    <Compile Include="Util.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

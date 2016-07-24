@@ -3,7 +3,7 @@
     ViewBag.Title = "首页";
     Layout = "../Layout/_Header.cshtml";
 }
-<div>
+<div style="float:right; margin:20px;">
     @if(!Model.IsLogin)
     { 
         <div>
@@ -20,15 +20,17 @@
                         还没有账号，<a href="@Url.Action("register", "user")" target="_blank">注册</a>。
                     </li>
                 </ul>
-
             </form>
-            @Url.Action("login", "user") 登陆地址,post请求，参数userNo+password
+            <span style="display:none">
+                @Url.Action("login", "user") 登陆地址,post请求，参数userNo+password
+            </span>
         </div>
     }
     else
     {
         <div>
             <h3>快速导航</h3>
+            <a href="@Url.Action("list", "bill")" target="_blank">运单列表</a>
             <a href="@Url.Action("edit", "bill")" target="_blank">创建单个运单</a>
         </div>
     }

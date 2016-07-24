@@ -123,6 +123,7 @@
     </Compile>
     <Compile Include="Models\Bill\BillEditModel.cs" />
     <Compile Include="Models\Bill\EditModel.cs" />
+    <Compile Include="Models\Bill\ListModel.cs" />
     <Compile Include="Models\ErrorModel.cs" />
     <Compile Include="Models\Index\IndexModel.cs" />
     <Compile Include="Models\User\RegisterModel.cs" />
@@ -187,6 +188,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\User\Login.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Bill\List.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

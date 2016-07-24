@@ -3,7 +3,7 @@
     ViewBag.Title = "登陆";
     Layout = "../Layout/_Header.cshtml";
 }
-<div>
+<div style="width:500px;margin:0 auto;">
     <form action="@Url.Action("login", "user")" method="post" enctype="application/x-www-form-urlencoded">
         <input type="hidden" name="@Config.Current.BACK_URL_KEY" value="@Request.GetBackUrl()" />
         <ul>
@@ -18,7 +18,8 @@
                 还没有账号，<a href="@Url.Action("register", "user")" target="_blank">注册</a>。
             </li>
         </ul>
-
     </form>
-    @Url.Action("login", "user") 登陆地址,post请求，参数userNo+password
+    <span style="display:none">        
+        @Url.Action("login", "user") 登陆地址,post请求，参数userNo+password
+    </span>
 </div>

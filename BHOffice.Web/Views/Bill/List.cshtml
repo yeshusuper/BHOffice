@@ -1,0 +1,49 @@
+﻿@model BHOffice.Web.Models.Bill.ListModel
+@{
+    ViewBag.Title = "运单列表";
+    Layout = "../Layout/_ManagerLeft.cshtml"; 
+}
+<div>
+    <form action="@Url.Action("list")" enctype="application/x-www-form-urlencoded" method="post">
+        <table>
+            <tr>
+                <td>创建者：</td>
+                <td><input name="Creater" value="@Model.Query.Creater" /></td>
+                <td>单号：</td>
+                <td><input name="No" value="@Model.Query.No" /></td>
+                <td>状态：</td>
+                <td>
+                    @Html.DropDownList("State", Util.GetBillStateSelectList(Model.Query.State), "--运单状态--")
+                </td>
+            </tr>
+            <tr>
+                <td>收件人：</td>
+                <td><input name="Receiver" value="@Model.Query.Receiver" /></td>
+                <td>创建时间：</td>
+                <td>
+                    <input name="MinCreated" value="@Html.DisplayFor(m => m.Query.MinCreated)" />
+                    到
+                    <input name="MaxCreated" value="@Html.DisplayFor(m => m.Query.MaxCreated)" />
+                </td>
+                <td colspan="2">
+                    <input value="搜索" type="submit" />
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+<table>
+    <thead>
+        <tr>
+            <th>代理商</th>
+            <th>订单号</th>
+            <th>创建者</th>
+            <th>创建时间</th>
+            <th>收件人</th>
+            <th>收件地址</th>
+            <th>状态</th>
+            <th>功能</th>
+            <th>追踪</th>
+        </tr>
+    </thead>
+</table>

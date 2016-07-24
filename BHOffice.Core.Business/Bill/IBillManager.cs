@@ -28,6 +28,9 @@ namespace BHOffice.Core.Business.Bill
         {
             ExceptionHelper.ThrowIfNull(user, "user");
 
+            if (user.Role == UserRoles.User)
+                throw new BHException(ErrorCode.NotAllow, "普通用户暂不支持创建运单");
+
             args.Verify(new AllAllowBillUpdateStrategy(user));
 
             if(!String.IsNullOrWhiteSpace(args.No))

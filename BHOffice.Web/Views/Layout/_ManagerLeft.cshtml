@@ -2,14 +2,15 @@
     Layout = "../Layout/_Header.cshtml";
 }
 
-<ul class="manager_left_nav">
+<ul class="manager_left_nav _temp_border">
     <li>
         <h3>运单管理</h3>
         <ul>
             <li><a href="@Url.Action("edit", "bill")" @(Url.IsCurrent("edit", "bill") ? "class=\"current\"" : String.Empty)>创建单个运单</a></li>
+            <li><a href="@Url.Action("list", "bill")" @(Url.IsCurrent("list", "bill") ? "class=\"current\"" : String.Empty)>运单列表</a></li>
         </ul>
     </li>
 </ul>
-<div class="manager_content">    
+<div class="manager_content _temp_border">    
     @RenderBody()
 </div>
