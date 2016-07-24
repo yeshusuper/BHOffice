@@ -1,0 +1,94 @@
+﻿@model BHOffice.Web.Models.Bill.TrackModel
+@{
+    ViewBag.Title = "运单追踪";
+    Layout = "../Layout/_ManagerLeft.cshtml"; 
+}
+<div>单号：@Model.No</div>
+<div>状态：@Model.State.ToString()</div>
+<div>
+    历史状态：
+    <table class="common_table">
+        <thead>
+            <tr>
+                <th>操作时间</th>
+                <th>状态</th>
+                <th>备注</th>
+                <th>删除</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Histroys)
+            {
+                <tr>
+                    <td>@item.Created.ToString("yyyy/MM/dd HH:mm:ss")</td>
+                    <td>@item.State.ToString()</td>
+                    <td>@item.Remarks</td>
+                    <td><a href="#" data-bhid="@item.Bhid" class="j-del">删除</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<div style="border-top:1px solid #000">
+    <form enctype="application/x-www-form-urlencoded" method="post" action="@Url.Action("Track")">
+        <input type="hidden" name="Bid" value="@Model.Bid" />
+        <table>
+            <tr>
+                <td>状态：</td>
+                <td>
+                    @Html.DropDownList("State", Util.GetBillStateSelectList(null), "--运单状态--")
+                </td>
+            </tr>
+            <tr>
+                <td>操作时间：</td>
+                <td>
+                    <input name="Created" value="@(DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"))" />
+                </td>
+            </tr>
+            <tr>
+                <td>备注：</td>
+                <td>
+                    <textarea name="Remarks"></textarea>
+                </td>
+            </tr>
+            <tr>
+                <td>&nbsp;</td>
+                <td>
+                    <input value="True" name="UpdateState" checked="checked" type="checkbox" />更新运单状态
+                </td>
+            </tr>
+            <tr>
+                <td>&nbsp;</td>
+                <td>
+                    <input value="保存" type="submit" />
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+<script>
+    (function () {
+        $(".j-del").click(function () {
+            var bhid = $(this).data("bhid");
+            if (confirm("删除后不可恢复，确定要删除么？")) {
+                $.ajax({
+                    url: "@Url.Action("DelHistory")",
+                    data: { bhid: bhid, bid: '@Model.Bid' },
+                    type: "post",
+                    dataType: "text json",
+                    success: function (data) {
+                        if (data.code == 0) {
+                            location.reload();
+                        } else {
+                            alert(data.msg);
+                        }
+                    },
+                    error: function () {
+                        alert("出错了，请重试！");
+                    }
+                });
+                return false;
+            }
+        });
+    })();
+</script>

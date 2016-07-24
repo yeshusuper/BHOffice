@@ -12,7 +12,8 @@ namespace BHOffice.Core.Business.Bill
         BillStates State { get; }
         DateTime? LastStateDate { get; }
         void UpdateInfo(IBillArgs args);
-        void UpdateState(BillStates state, string remarks, DateTime? date = null);
+        void UpdateState(BillStates state, string remarks, bool addHistoryOnly = false, DateTime? date = null);
+        void Delete();
         void DeleteStateHistory(long bhid);
         IQueryable<Data.BillStateHistory> Histories { get; }
     }
@@ -139,16 +140,42 @@ namespace BHOffice.Core.Business.Bill
             _BillRepository.SaveChanges();
         }
 
-        public void UpdateState(BillStates state, string remarks, DateTime? date = null)
+        public void Delete()
         {
-            if (IsAllowUpdateState)
+            if(!IsOwner)
+                throw new BHException(ErrorCode.NotAllow, "没有删除此运单的权限");
+            if(State != BillStates.None)
+                throw new BHException(ErrorCode.NotAllow, "不能删除已经发出的运单");
+
+            _LazyBill.Value.enabled = false;
+            _BillRepository.SaveChanges();
+        }
+
+        public void UpdateState(BillStates state, string remarks, bool addHistoryOnly = false, DateTime? date = null)
+        {
+            if (!IsAllowUpdateState)
                 throw new BHException(ErrorCode.NotAllow, "没有修改此订单的权限");
+
+            if(state == BillStates.None)
+                throw new BHException(ErrorCode.NotAllow, "修改的状态不正确");
+
+            var updateBill = false;
 
             using(var scope = new System.Transactions.TransactionScope())
             {
-                _LazyBill.Value.state = state;
-                _LazyBill.Value.last_state_updated = date ?? DateTime.Now;
-                _BillRepository.SaveChanges();
+                if (!_LazyBill.Value.confirmed)
+                {
+                    _LazyBill.Value.confirmed = true;
+                    updateBill = true;
+                }
+                if (!addHistoryOnly)
+                {                   
+                    _LazyBill.Value.state = state;
+                    _LazyBill.Value.last_state_updated = date ?? DateTime.Now;
+                    updateBill = true;
+                }
+                if (updateBill)
+                    _BillRepository.SaveChanges();
 
                 var entity = new Data.BillStateHistory
                 {
@@ -180,7 +207,10 @@ namespace BHOffice.Core.Business.Bill
             if (!strategy.IsAllowUpdateState)
                 throw new BHException(ErrorCode.NotAllow, "没有修改此订单的权限");
 
-            _BillStateHistoryRepository.Delete(h => h.bid == Bid && h.bhid == bhid);
+            _BillStateHistoryRepository.Update(h => h.bid == Bid && h.bhid == bhid, h => new Data.BillStateHistory
+            {
+                enabled = false
+            });
         }
 
         #region IBillArgs

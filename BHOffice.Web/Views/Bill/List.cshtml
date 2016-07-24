@@ -60,12 +60,38 @@
                 <td>
                     <a target="_blank" href="@Url.Action("Edit", new { bid = item.Bid })">编辑</a>
                     &nbsp;
-                    <a href="#">删除</a>
+                    <a href="#" data-bid="@item.Bid" class="j-del">删除</a>
                 </td>
                 <td>
-                    <a target="_blank" href="@Url.Action("State", new { bid = item.Bid })">追踪</a>
+                    <a target="_blank" href="@Url.Action("Track", new { bid = item.Bid })">追踪</a>
                 </td>
             </tr>
         }
     </tbody>
 </table>
+<script>
+    (function () {
+        $(".j-del").click(function () {
+            var bid = $(this).data("bid");
+            if (confirm("删除后不可恢复，确定要删除么？")) {
+                $.ajax({
+                    url: "@Url.Action("Del")",
+                    data: { bid: bid },
+                    type: "post",
+                    dataType: "text json",
+                    success: function (data) {
+                        if (data.code == 0) {
+                            location.reload();
+                        } else {
+                            alert(data.msg);
+                        }
+                    },
+                    error: function () {
+                        alert("出错了，请重试！");
+                    }
+                });
+                return false;
+            }
+        });
+    })();
+</script>

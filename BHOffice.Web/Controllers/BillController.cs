@@ -66,6 +66,15 @@ namespace BHOffice.Web.Controllers
             }
         }
 
+        [HttpPost]
+        public ActionResult Del(long bid)
+        {
+            var user = _UserManager.GetUser(CurrentUser.Uid);
+            var bill = _BillManager.GetBill(user, bid);
+            bill.Delete();
+            return JsonResult(ErrorCode.None, "删除成功");
+        }
+
         [HttpGet]
         public ActionResult List(Models.Bill.ListModel.SearchModel query)
         {
@@ -100,6 +109,53 @@ namespace BHOffice.Web.Controllers
             };
 
             return View(model);
+        }
+
+        [HttpGet]
+        public ActionResult Track(long bid)
+        {
+            var user = _UserManager.GetUser(CurrentUser.Uid);
+            var bill = _BillManager.GetBill(user, bid);
+            return ViewTask(bill);
+        }
+
+        [HttpPost]
+        public ActionResult Track(Models.Bill.TrackEditModel model)
+        {
+            var user = _UserManager.GetUser(CurrentUser.Uid);
+            var bill = _BillManager.GetBill(user, model.Bid);
+            bill.UpdateState(model.State, model.Remarks, !model.UpdateState, model.Created);
+            return RedirectToAction("Track", new { bid = model.Bid });
+        }
+
+        private ActionResult ViewTask(IBill bill)
+        {
+            var model = new Models.Bill.TrackModel
+            {
+                Bid = bill.Bid,
+                No = bill.No,
+                State = bill.State,
+                Histroys = bill
+                            .Histories
+                            .OrderByDescending(h => h.state_updated)
+                            .Select(h => new Models.Bill.TrackModel.HistoryItem
+                            {
+                                Bhid = h.bhid,
+                                Created = h.state_updated,
+                                Remarks = h.remarks,
+                                State = h.state
+                            }).ToArray()
+            };
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult DelHistory(long bid, long bhid)
+        {
+            var user = _UserManager.GetUser(CurrentUser.Uid);
+            var bill = _BillManager.GetBill(user, bid);
+            bill.DeleteStateHistory(bhid);
+            return JsonResult(ErrorCode.None, "删除成功");
         }
     }
 }
