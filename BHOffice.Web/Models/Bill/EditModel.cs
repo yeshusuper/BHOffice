@@ -32,6 +32,7 @@ namespace BHOffice.Web.Models.Bill
             this.IsReadOnly = service.IsReadOnly;
             this.IsSenderAndReceiverReadOnly = service.IsSenderAndReceiverReadOnly;
             this.IsAgent = service.IsAgent;
+            this.Agents = new Dictionary<long, string>();
         }
 
         public EditModel(IUser user)
@@ -46,6 +47,7 @@ namespace BHOffice.Web.Models.Bill
             this.IsSenderAndReceiverReadOnly = false;
             this.IsAgent = user.Role >= UserRoles.Agent;
             this.IsAllowUpdateState = false;
+            this.Agents = new Dictionary<long, string>();
         }
     }
 }

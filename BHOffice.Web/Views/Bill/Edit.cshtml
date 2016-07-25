@@ -40,7 +40,7 @@
                     Selected = Model.Bill.AgentUid.HasValue && a.Key == Model.Bill.AgentUid.Value,
                     Value = a.Key.ToString(),
                     Text = a.Value
-                }), "--选择代理商--");
+                }), "--选择代理商--")
                     </td>
                 </tr>
             }
@@ -81,7 +81,7 @@
                 </td>
             </tr>
             <tr>
-                <td>物品</td>
+                <td>物品(中文)</td>
                 <td>
                     <textarea name="Goods">@Model.Bill.Goods</textarea>
                 </td>

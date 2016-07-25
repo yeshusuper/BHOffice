@@ -52,12 +52,7 @@ namespace BHOffice.Core.Business.Bill
                 if (!IsOwner)
                     return true;
 
-                if (!_LazyBill.Value.confirmed)
-                    return false;
-                else if (_LazyBill.Value.state == BillStates.None)
-                    return false;
-                else
-                    return true;
+                return _User.Role < UserRoles.Admin;
             }
         }
 
