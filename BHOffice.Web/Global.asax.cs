@@ -28,22 +28,23 @@ namespace BHOffice.Web
                 var bhEx = ex as BHOffice.Core.BHException;
                 var context = new HttpContextWrapper(Context);
                 var errorCode = bhEx == null ? BHOffice.Core.ErrorCode.ServerError : bhEx.ErrorCode;
+                var errorMsg = bhEx == null ? ex.ToString() : bhEx.Message;
                 if (context.Request.IsAjaxRequest())
                 {
-                    Context.Response.Write(Newtonsoft.Json.JsonConvert.SerializeObject(new BHOffice.Web.Core.JsonResultEntry
+                    Context.Response.Write(Newtonsoft.Json.JsonConvert.SerializeObject(new Core.JsonResultEntry
                     {
                         Code = errorCode,
-                        Message = ex.Message
+                        Message = errorMsg
                     }));
                 }
                 else
-                {
+                { 
                     IController ec = new Controllers.ErrorController();
                     var routeData = new RouteData();
                     routeData.Values["action"] = "index";
                     routeData.Values["controller"] = "error";
                     routeData.DataTokens["code"] = errorCode;
-                    routeData.DataTokens["msg"] = ex.Message;
+                    routeData.DataTokens["msg"] = errorMsg;
                     ec.Execute(new RequestContext(context, routeData));
                 }
                 Server.ClearError();

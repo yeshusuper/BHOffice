@@ -16,7 +16,7 @@ namespace BHOffice.Web.Controllers
                 msg = this.RouteData.DataTokens["msg"].ToString();
             }
             ViewBag.Message = msg;
-            return View();
+            return View("Index");
         }
 
     }

@@ -32,10 +32,16 @@ namespace BHOffice.Web.Controllers
                 _UserMangaer.Register(model.UserNo, model.Password, model.UserName);
                 return RedirectToAction("index", "index");
             }
-            catch (Exception ex)
+            catch (BHException ex)
             {
                 model.IsEroor = true;
                 model.ErrorMessage = ex.Message;
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                model.IsEroor = true;
+                model.ErrorMessage = ex.ToString();
                 return View(model);
             }
         }
