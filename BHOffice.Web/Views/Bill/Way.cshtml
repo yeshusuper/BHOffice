@@ -1,0 +1,48 @@
+﻿@model BHOffice.Web.Models.Bill.WayModel
+@{
+    ViewBag.Title = "运单查询";
+    Layout = "../Layout/_Header.cshtml";
+}
+<div style="margin:0 auto;width:800px;">
+    @if(Model.Items.Length == 0)
+    {
+        <span>订单号不存在</span>
+    }
+    else
+    {
+        foreach (var item in Model.Items)
+        {
+            <table class="common_table" style="text-align:center;margin-top:12px;width:780px">
+                <tr>
+                    <td colspan="3">
+                        单号：@item.No，当前状态：@(item.State == BHOffice.Core.Business.Bill.BillStates.None ? "未更新状态" : item.State.ToString())
+                    </td>
+                </tr>
+                @if(item.State != BHOffice.Core.Business.Bill.BillStates.None)
+                { 
+                    if(!String.IsNullOrWhiteSpace(item.InternalNo))
+                    {
+                        <tr>
+                            <td colspan ="3">
+                                国内快递：@item.InternalExpress，快递单号：@item.InternalNo
+                            </td>
+                        </tr>
+                    }
+                    <tr>
+                        <td width="160">处理时间</td>
+                        <td width="200">订单状态</td>
+                        <td>备注</td>
+                    </tr>
+                    foreach (var history in item.Histories)
+	                {		            
+                        <tr>
+                            <td>@history.Created.ToString("yyyy/MM/dd HH:mm:ss")</td>
+                            <td>@history.State.ToString()</td>
+                            <td>@history.Remarks</td>
+                        </tr>
+	                }
+                }
+            </table>
+        }
+    }
+</div>

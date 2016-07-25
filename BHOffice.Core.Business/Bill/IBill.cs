@@ -154,6 +154,9 @@ namespace BHOffice.Core.Business.Bill
             if(state == BillStates.None)
                 throw new BHException(ErrorCode.NotAllow, "修改的状态不正确");
 
+            if (state == State)
+                return;
+
             var updateBill = false;
 
             using(var scope = new System.Transactions.TransactionScope())

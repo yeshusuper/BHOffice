@@ -11,6 +11,9 @@ namespace BHOffice.Core.Business.Bill
         IBill Create(IUser user, IBillArgs args);
         IBill GetBill(IUser user, long bid);
         IQueryable<Data.Bill> Search(IUser user, IBillSearchQuery query);
+        IQueryable<Data.Bill> GetBill(string[] nos);
+        IQueryable<Data.BillStateHistory> GetBillHistories(long[] bids);
+
     }
 
     class BillManager : IBillManager
@@ -111,6 +114,35 @@ namespace BHOffice.Core.Business.Bill
                 }
             }
             return source;
+        }
+
+
+        public IQueryable<Data.Bill> GetBill(string[] nos)
+        {
+            if (nos == null)
+                return Enumerable.Empty<Data.Bill>().AsQueryable();
+
+            nos = nos.Where(no => !String.IsNullOrWhiteSpace(no)).Select(no => no.Trim()).Distinct().ToArray();
+
+            if (nos.Length == 0)
+                return Enumerable.Empty<Data.Bill>().AsQueryable();
+
+            return _BillRepository.EnableBills.Where(b => nos.Contains(b.no));
+
+        }
+
+        public IQueryable<Data.BillStateHistory> GetBillHistories(long[] bids)
+        {
+            if (bids == null)
+                return Enumerable.Empty<Data.BillStateHistory>().AsQueryable();
+
+            bids = bids.Where(id => id > 0).Distinct().ToArray();
+
+            if (bids.Length == 0)
+                return Enumerable.Empty<Data.BillStateHistory>().AsQueryable();
+
+            return _BillStateHistoryRepository.Entities.Where(h => h.enabled && bids.Contains(h.bid));
+
         }
     }
 

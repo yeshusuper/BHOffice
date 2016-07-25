@@ -8,6 +8,7 @@ using System.Web.Mvc;
 
 namespace BHOffice.Web.Core
 {
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = true, AllowMultiple = true)]
     public class BHAuthorizeAttribute : System.Web.Mvc.AuthorizeAttribute
     {
         public BHAuthorizeAttribute()
@@ -17,9 +18,6 @@ namespace BHOffice.Web.Core
         protected bool AuthorizeCore(System.Web.HttpContextBase httpContext, UserSessionEntry user)
         {
             return user != null && user.Uid > 0;
-            /*
-            var manager = DependencyResolver.Current.GetService<BHOffice.Core.Business.IUserManager>();
-            httpContext.Session.Login(manager, "", "");*/
         }
 
         protected ActionResult UnauthorizedResult

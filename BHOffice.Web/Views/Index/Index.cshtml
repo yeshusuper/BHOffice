@@ -35,3 +35,10 @@
         </div>
     }
 </div>
+<div>
+    <form target="_blank" method="post" enctype="application/x-www-form-urlencoded" action="@Url.Action("way", "bill")">
+        运单追踪,最多同时查询20条，多个单号用“,”、空格或回车分隔<br />
+        <textarea name="nos" style="width:300px;height:140px;"></textarea><br />
+        <input type="submit" value="查询" style="width:90px;height:29px;" />
+    </form>
+</div>

@@ -11,7 +11,6 @@ using BHOffice.Core;
 
 namespace BHOffice.Web.Controllers
 {
-    [BHAuthorize]
     public class BillController : BaseController
     {
         private readonly IBillManager _BillManager;
@@ -25,6 +24,7 @@ namespace BHOffice.Web.Controllers
         }
 
         [HttpGet]
+        [BHAuthorize]
         public ActionResult Edit(long? bid)
         {
             var user = _UserManager.GetUser(CurrentUser.Uid);
@@ -40,6 +40,7 @@ namespace BHOffice.Web.Controllers
         }
 
         [HttpPost]
+        [BHAuthorize]
         public ActionResult Edit(Models.Bill.BillEditModel model)
         {
             var user = _UserManager.GetUser(CurrentUser.Uid);
@@ -67,6 +68,7 @@ namespace BHOffice.Web.Controllers
         }
 
         [HttpPost]
+        [BHAuthorize]
         public ActionResult Del(long bid)
         {
             var user = _UserManager.GetUser(CurrentUser.Uid);
@@ -76,6 +78,7 @@ namespace BHOffice.Web.Controllers
         }
 
         [HttpGet]
+        [BHAuthorize]
         public ActionResult List(Models.Bill.ListModel.SearchModel query)
         {
             var pageSize = 30;
@@ -112,6 +115,7 @@ namespace BHOffice.Web.Controllers
         }
 
         [HttpGet]
+        [BHAuthorize]
         public ActionResult Track(long bid)
         {
             var user = _UserManager.GetUser(CurrentUser.Uid);
@@ -120,6 +124,7 @@ namespace BHOffice.Web.Controllers
         }
 
         [HttpPost]
+        [BHAuthorize]
         public ActionResult Track(Models.Bill.TrackEditModel model)
         {
             var user = _UserManager.GetUser(CurrentUser.Uid);
@@ -150,12 +155,54 @@ namespace BHOffice.Web.Controllers
         }
 
         [HttpPost]
+        [BHAuthorize]
         public ActionResult DelHistory(long bid, long bhid)
         {
             var user = _UserManager.GetUser(CurrentUser.Uid);
             var bill = _BillManager.GetBill(user, bid);
             bill.DeleteStateHistory(bhid);
             return JsonResult(ErrorCode.None, "删除成功");
+        }
+
+        [HttpPost]
+        public ActionResult Way(string nos)
+        {
+            var noArr = nos
+                        .Split(new []{ ",", " ", "\r\n" }, StringSplitOptions.RemoveEmptyEntries)
+                        .Take(20)
+                        .ToArray();
+
+            var bills = _BillManager.GetBill(noArr)
+                            .Select(b => new
+                            {
+                                b.bid,
+                                b.no,
+                                b.state,
+                                b.i_express,
+                                b.i_no
+                            }).ToArray();
+            var histories = _BillManager.GetBillHistories(bills.Select(b => b.bid).ToArray()).ToArray();
+
+            var model = new Models.Bill.WayModel
+            {
+                Items = bills.Select(b => new Models.Bill.WayModel.WayItemModel
+                {
+                    No = b.no,
+                    State = b.state,
+                    InternalExpress = b.i_express,
+                    InternalNo = b.i_no,
+                    Histories = histories.Where(h => h.bid == b.bid).OrderByDescending(h => h.created)
+                                    .Select(h => new Models.Bill.TrackModel.HistoryItem
+                                    {
+                                        Bhid = h.bhid,
+                                        Created = h.state_updated,
+                                        Remarks = h.remarks,
+                                        State = h.state
+                                    }).ToArray()
+                }).ToArray()
+            };
+
+            return View(model);
         }
     }
 }
