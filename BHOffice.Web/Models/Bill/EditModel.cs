@@ -7,7 +7,7 @@ using System.Web;
 
 namespace BHOffice.Web.Models.Bill
 {
-    public class EditModel : BHOffice.Core.Business.Bill.IBillUpdateStrategy
+    public class EditModel : IBillUpdateStrategy
     {
         public bool IsSuccess { get; set; }
         public string ErrorMessage { get; set; }
@@ -21,7 +21,8 @@ namespace BHOffice.Web.Models.Bill
         public bool IsSenderAndReceiverReadOnly { get; set; }
         public bool IsAllowUpdateState { get; set; }
 
-        public bool IsAgent { get; set; }
+        public bool IsAllowUpdateCreated { get; set; }
+        public bool IsAllowUpdateAgent { get; set; }
         #endregion
 
         public EditModel(IBill service)
@@ -31,7 +32,8 @@ namespace BHOffice.Web.Models.Bill
             this.IsAllowUpdateState = service.IsAllowUpdateState;
             this.IsReadOnly = service.IsReadOnly;
             this.IsSenderAndReceiverReadOnly = service.IsSenderAndReceiverReadOnly;
-            this.IsAgent = service.IsAgent;
+            this.IsAllowUpdateCreated = service.IsAllowUpdateCreated;
+            this.IsAllowUpdateAgent = service.IsAllowUpdateAgent;
             this.Agents = new Dictionary<long, string>();
         }
 
@@ -45,8 +47,9 @@ namespace BHOffice.Web.Models.Bill
             Bill = model ?? new BillEditModel();
             this.IsReadOnly = false;
             this.IsSenderAndReceiverReadOnly = false;
-            this.IsAgent = user.Role >= UserRoles.Agent;
+            this.IsAllowUpdateCreated = user.Role >= UserRoles.Agent;
             this.IsAllowUpdateState = false;
+            this.IsAllowUpdateAgent = user.Role >= UserRoles.Admin;
             this.Agents = new Dictionary<long, string>();
         }
     }

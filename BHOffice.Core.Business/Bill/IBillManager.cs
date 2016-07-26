@@ -35,7 +35,9 @@ namespace BHOffice.Core.Business.Bill
             if (user.Role == UserRoles.User)
                 throw new BHException(ErrorCode.NotAllow, "普通用户暂不支持创建运单");
 
-            args.Verify(new AllAllowBillUpdateStrategy(user));
+            var strategy = new AllAllowBillUpdateStrategy(user);
+
+            args.Verify(strategy);
 
             if(!String.IsNullOrWhiteSpace(args.No))
             {
@@ -54,7 +56,7 @@ namespace BHOffice.Core.Business.Bill
                 state = BillStates.None,
             };
 
-            args.Fill(new AllAllowBillUpdateStrategy(user), entity, user);
+            args.Fill(strategy, entity, user);
 
             _BillRepository.Add(entity);
             _BillRepository.SaveChanges();

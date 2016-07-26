@@ -28,15 +28,23 @@ namespace BHOffice.Web.Controllers
         public ActionResult Edit(long? bid)
         {
             var user = _UserManager.GetUser(CurrentUser.Uid);
+            Models.Bill.EditModel model;
             if(bid.HasValue && bid.Value > 0)
             {
                 var bill =_BillManager.GetBill(user, bid.Value);
-                return View(new Models.Bill.EditModel(bill));
+                model = new Models.Bill.EditModel(bill);
             }
             else
             {
-                return View(new Models.Bill.EditModel(user));
+                model = new Models.Bill.EditModel(user);
             }
+            model.Agents = _UserManager
+                            .GetAgents()
+                            .Select(u => new { u.uid, u.name })
+                            .ToArray()
+                            .OrderBy(u => u.uid)
+                            .ToDictionary(u => u.uid, u => u.name);
+            return View(model);
         }
 
         [HttpPost]
@@ -44,6 +52,13 @@ namespace BHOffice.Web.Controllers
         public ActionResult Edit(Models.Bill.BillEditModel model)
         {
             var user = _UserManager.GetUser(CurrentUser.Uid);
+
+            var agents = _UserManager
+                            .GetAgents()
+                            .Select(u => new { u.uid, u.name })
+                            .ToArray()
+                            .OrderBy(u => u.uid)
+                            .ToDictionary(u => u.uid, u => u.name);
             try
             {
                 IBill bill;
@@ -56,13 +71,17 @@ namespace BHOffice.Web.Controllers
                 {
                     bill = _BillManager.Create(user, model);
                 }
-                return View(new Models.Bill.EditModel(bill));
+                return View(new Models.Bill.EditModel(bill)
+                {
+                    Agents = agents
+                });
             }
             catch(System.Exception ex)
             {
                 return View(new Models.Bill.EditModel(user, model)
                 {
-                    ErrorMessage = ex.Message
+                    ErrorMessage = ex.Message,
+                    Agents = agents
                 });
             }
         }

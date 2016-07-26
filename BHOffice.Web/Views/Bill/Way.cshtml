@@ -24,7 +24,10 @@
                     {
                         <tr>
                             <td colspan ="3">
-                                国内快递：@item.InternalExpress，快递单号：@item.InternalNo
+                                国内快递：@item.InternalExpress，快递单号：
+                                <a target="_blank" href="http://www.kuaidi100.com/chaxun?com=@(HttpUtility.UrlEncode(item.InternalExpress ?? String.Empty, System.Text.Encoding.UTF8))&nu=@item.InternalNo">
+                                    @item.InternalNo
+                                </a>
                             </td>
                         </tr>
                     }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BHOffice.Core.Business.Data;
 
 namespace BHOffice.Core.Business
 {
@@ -13,6 +14,7 @@ namespace BHOffice.Core.Business
         IUser Register(string userNo, string password, string username);
         bool IsUsable(ref string userNo);
         Dictionary<long, string> GetUsersName(long[] uids);
+        IQueryable<Data.User> GetAgents();
     }
 
     class UserManager : IUserManager
@@ -102,6 +104,11 @@ namespace BHOffice.Core.Business
 
             var result = _UserRepository.Entities.Where(u => uids.Contains(u.uid)).Select(u => new { u.uid, u.name }).ToArray();
             return result.ToDictionary(r => r.uid, r => r.name);
+        }
+
+        public IQueryable<User> GetAgents()
+        {
+            return _UserRepository.Entities.Where(u => u.enabled && u.role >= UserRoles.Agent);
         }
     }
 

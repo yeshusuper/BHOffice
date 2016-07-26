@@ -12,9 +12,13 @@ namespace BHOffice.Core.Business.Bill
         bool IsSenderAndReceiverReadOnly { get; }
         bool IsAllowUpdateState { get; }
         /// <summary>
-        /// 是否包含代理或以上的权限
+        /// 是否允许修改运单时间
         /// </summary>
-        bool IsAgent { get; }
+        bool IsAllowUpdateCreated { get; }
+        /// <summary>
+        /// 是否允许修改代理商
+        /// </summary>
+        bool IsAllowUpdateAgent { get; }
     }
 
     internal class AllAllowBillUpdateStrategy : IBillUpdateStrategy
@@ -35,11 +39,14 @@ namespace BHOffice.Core.Business.Bill
         }
 
 
-        public bool IsAgent { get; private set; }
+        public bool IsAllowUpdateCreated { get; private set; }
+
+        public bool IsAllowUpdateAgent { get; private set; }
 
         public AllAllowBillUpdateStrategy(IUser user)
         {
-            IsAgent = user.Role >= UserRoles.Agent;
+            IsAllowUpdateCreated = user.Role >= UserRoles.Agent;
+            IsAllowUpdateAgent = user.Role >= UserRoles.Admin;
         }
     }
 
@@ -127,20 +134,24 @@ namespace BHOffice.Core.Business.Bill
                 entity.updated = DateTime.Now;
                 entity.updater = user.Uid;
 
-                if(strategy.IsAgent)
+                if(strategy.IsAllowUpdateCreated)
                 {
-                    entity.agent_uid = args.AgentUid;
                     entity.bill_date = args.Created ?? DateTime.Now;
-
-                    if(!entity.confirmed)
-                    {
-                        entity.confirmed = true;
-                        entity.confirmer = user.Uid;
-                    }
                 }
-                else
+
+                if (strategy.IsAllowUpdateAgent)
                 {
-                    entity.created = DateTime.Now;
+                    entity.agent_uid = args.AgentUid ?? user.Uid;
+                }
+                else if (!entity.agent_uid.HasValue && user.Role >= UserRoles.Agent)
+                {
+                    entity.agent_uid = user.Uid;
+                }
+
+                if(!entity.confirmed && user.Role >= UserRoles.Agent)
+                {
+                    entity.confirmed = true;
+                    entity.confirmer = user.Uid;
                 }
             }
         }

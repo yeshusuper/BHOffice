@@ -67,9 +67,14 @@ namespace BHOffice.Core.Business.Bill
             }
         }
 
-        public bool IsAgent
+        public bool IsAllowUpdateCreated
         {
             get { return _User.Role >= UserRoles.Agent; }
+        }
+
+        public bool IsAllowUpdateAgent
+        {
+            get { return _User.Role >= UserRoles.Admin; }
         }
         #endregion
 
@@ -130,8 +135,8 @@ namespace BHOffice.Core.Business.Bill
                     throw new BHException(ErrorCode.ArgError, "运单号已存在:" + no);
             }
 
-
             args.Fill(this, _LazyBill.Value, _User);
+
             _BillRepository.SaveChanges();
         }
 

@@ -26,22 +26,28 @@
                     <input value="@Model.Bill.No" name="No" />
                 </td>
             </tr>
-            @if (Model.IsAgent)
+            @if (Model.IsAllowUpdateCreated || Model.IsAllowUpdateAgent)
             {
                 <tr>
-                    <td>制单日期*</td>
-                    <td>
-                        <input value="@((Model.Bill.Created ?? DateTime.Now).ToString("yyyy/MM/dd HH:mm:ss"))" name="Created" />
-                    </td>
-                    <td>代理商*</td>
-                    <td>
-                        @Html.DropDownList("AgentUid", Model.Agents.Select(a => new SelectListItem
-                {
-                    Selected = Model.Bill.AgentUid.HasValue && a.Key == Model.Bill.AgentUid.Value,
-                    Value = a.Key.ToString(),
-                    Text = a.Value
-                }), "--选择代理商--")
-                    </td>
+                    @if (Model.IsAllowUpdateCreated)
+                    {
+                        <td>制单日期*</td>
+                        <td>
+                            <input value="@((Model.Bill.Created ?? DateTime.Now).ToString("yyyy/MM/dd HH:mm:ss"))" name="Created" />
+                        </td>
+                    }
+                    @if (Model.IsAllowUpdateCreated || Model.IsAllowUpdateAgent)
+                    {
+                        <td>代理商*</td>
+                        <td>
+                            @Html.DropDownList("AgentUid", Model.Agents.Select(a => new SelectListItem
+                            {
+                                Selected = Model.Bill.AgentUid.HasValue && a.Key == Model.Bill.AgentUid.Value,
+                                Value = a.Key.ToString(),
+                                Text = a.Value
+                            }), "--选择代理商--")
+                        </td>
+                    }
                 </tr>
             }
             <tr>
