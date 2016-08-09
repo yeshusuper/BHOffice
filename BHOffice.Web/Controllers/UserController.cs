@@ -60,7 +60,7 @@ namespace BHOffice.Web.Controllers
         {
             Session.Login(_UserMangaer, userNo, password);
             if(Request.IsAjaxRequest())
-                return SuccessJsonResult();
+                return SuccessJsonResult(Request.GetBackUrl());
             else
             {
                 var backUrl = Request.GetBackUrl();

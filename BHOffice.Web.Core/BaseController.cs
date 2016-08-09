@@ -40,5 +40,14 @@ namespace BHOffice.Web.Core
         {
             return JsonResult(BHOffice.Core.ErrorCode.None, String.Empty);
         }
+        public ActionResult SuccessJsonResult<T>(T data)
+        {
+            return Content(JsonConvert.SerializeObject(new JsonResultEntry<T>
+            {
+                Code = BHOffice.Core.ErrorCode.None,
+                Message = String.Empty,
+                Data = data,
+            }));
+        }
     }
 }

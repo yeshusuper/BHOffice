@@ -19,11 +19,11 @@
     <form action="@Url.Action("Edit")" enctype="application/x-www-form-urlencoded" method="post">
         <input type="hidden" name="Bid" value="@Model.Bill.Bid" />
         <h2>带“*”号的为必填项</h2>
-        <table cellpadding="0" cellspacing="0">
+        <table cellpadding="0" cellspacing="0" class="common-form">
             <tr>
                 <td>单号</td>
                 <td colspan="3">
-                    <input value="@Model.Bill.No" name="No" />
+                    <input value="@Model.Bill.No" name="No" class="form-control" />
                 </td>
             </tr>
             @if (Model.IsAllowUpdateCreated || Model.IsAllowUpdateAgent)
@@ -33,7 +33,7 @@
                     {
                         <td>制单日期*</td>
                         <td>
-                            <input value="@((Model.Bill.Created ?? DateTime.Now).ToString("yyyy/MM/dd HH:mm:ss"))" name="Created" />
+                            <input value="@((Model.Bill.Created ?? DateTime.Now).ToString("yyyy/MM/dd HH:mm:ss"))" name="Created" class="form-control" />
                         </td>
                     }
                     @if (Model.IsAllowUpdateCreated || Model.IsAllowUpdateAgent)
@@ -53,37 +53,37 @@
             <tr>
                 <td>发件人*</td>
                 <td>
-                    <input value="@Model.Bill.Sender" name="Sender" />
+                    <input value="@Model.Bill.Sender" name="Sender" class="form-control" />
                 </td>
                 <td>发件人电话*</td>
                 <td>
-                    <input value="@Model.Bill.SenderTel" name="SenderTel" />
+                    <input value="@Model.Bill.SenderTel" name="SenderTel" class="form-control" />
                 </td>
             </tr>
             <tr>
                 <td>收件人*</td>
                 <td>
-                    <input value="@Model.Bill.Receiver" name="Receiver" />
+                    <input value="@Model.Bill.Receiver" name="Receiver" class="form-control" />
                 </td>
                 <td>收件人电话*</td>
                 <td>
-                    <input value="@Model.Bill.ReceiverTel" name="ReceiverTel" />
+                    <input value="@Model.Bill.ReceiverTel" name="ReceiverTel" class="form-control" />
                 </td>
             </tr>
             <tr>
                 <td>收件人地址*</td>
                 <td colspan="3">
-                    <input value="@Model.Bill.ReceiverAddress" name="ReceiverAddress" style="width:300px" />
+                    <input value="@Model.Bill.ReceiverAddress" name="ReceiverAddress" style="width:300px" class="form-control" />
                 </td>
             </tr>
             <tr>
                 <td>保险</td>
                 <td>
-                    <input value="@Model.Bill.Insurance" name="Insurance" />
+                    <input value="@Model.Bill.Insurance" name="Insurance" class="form-control" />
                 </td>
                 <td>邮编</td>
                 <td>
-                    <input value="@Model.Bill.Post" name="Post" />
+                    <input value="@Model.Bill.Post" name="Post" class="form-control" />
                 </td>
             </tr>
             <tr>
@@ -99,16 +99,16 @@
             <tr>
                 <td>国内快递</td>
                 <td>
-                    <input value="@Model.Bill.InternalExpress" name="InternalExpress" />
+                    <input value="@Model.Bill.InternalExpress" name="InternalExpress" class="form-control" />
                 </td>
                 <td>国内单号</td>
                 <td>
-                    <input value="@Model.Bill.InternalNo" name="InternalNo" />
+                    <input value="@Model.Bill.InternalNo" name="InternalNo" class="form-control" />
                 </td>
             </tr>
             <tr>
                 <td colspan="3">
-                    <input type="submit" value="提交" />
+                    <input type="submit" value="提交" class="btn btn-primary" style="margin-top:15px;" />
                 </td>
             </tr>
         </table>

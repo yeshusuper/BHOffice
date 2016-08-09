@@ -29,10 +29,10 @@
         </tbody>
     </table>
 </div>
-<div style="border-top:1px solid #000">
+<div style="border-top:1px solid #000;margin-top:20px;padding-top:20px;">
     <form enctype="application/x-www-form-urlencoded" method="post" action="@Url.Action("Track")">
         <input type="hidden" name="Bid" value="@Model.Bid" />
-        <table>
+        <table class="common-form">
             <tr>
                 <td>状态：</td>
                 <td>
@@ -42,13 +42,13 @@
             <tr>
                 <td>操作时间：</td>
                 <td>
-                    <input name="Created" value="@(DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"))" />
+                    <input name="Created" value="@(DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"))" class="form-control" />
                 </td>
             </tr>
             <tr>
                 <td>备注：</td>
                 <td>
-                    <textarea name="Remarks"></textarea>
+                    <textarea name="Remarks" class="form-control"></textarea>
                 </td>
             </tr>
             <tr>
@@ -60,7 +60,7 @@
             <tr>
                 <td>&nbsp;</td>
                 <td>
-                    <input value="保存" type="submit" />
+                    <input value="保存" type="submit" class="btn btn-primary" style="margin-top:15px;"  />
                 </td>
             </tr>
         </table>

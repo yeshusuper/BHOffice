@@ -12,6 +12,7 @@ namespace BHOffice.Web.Models.Bill
             public long Bhid { get; set; }
             public DateTime Created { get; set; }
             public BHOffice.Core.Business.Bill.BillStates State { get; set; }
+            public string StateName { get { return State.ToString(); } }
             public string Remarks { get; set; }
         }
 

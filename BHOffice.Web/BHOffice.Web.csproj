@@ -20,6 +20,7 @@
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
+    <UseGlobalApplicationHostFile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -136,7 +137,10 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Content Include="Global.asax" />
-    <Content Include="Resources\Css\base.css" />
+    <Content Include="Resources\Css\iconfont\iconfont.css" />
+    <Content Include="Resources\Css\iconfont\iconfont.svg" />
+    <Content Include="Resources\Css\style.css" />
+    <Content Include="Resources\Image\login-index-bg.jpg" />
     <Content Include="Resources\Js\jquery-3.1.0.min.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
@@ -199,7 +203,9 @@
     <Content Include="Views\Bill\Track.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Bill\Way.cshtml" />
+    <Content Include="Resources\Css\iconfont\iconfont.eot" />
+    <Content Include="Resources\Css\iconfont\iconfont.ttf" />
+    <Content Include="Resources\Css\iconfont\iconfont.woff" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

@@ -18,6 +18,14 @@ namespace BHOffice.Web
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             InjectConfig.Register();
+
+            Newtonsoft.Json.JsonConvert.DefaultSettings = () =>
+            {
+                return new Newtonsoft.Json.JsonSerializerSettings
+                {
+                    DateFormatString = "yyyy-MM-dd HH:mm:ss"
+                };
+            };
         }
 
         protected void Application_Error(object sender, EventArgs e)

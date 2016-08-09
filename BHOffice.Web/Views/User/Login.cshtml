@@ -1,25 +1,160 @@
-﻿
-@{
+﻿@{
     ViewBag.Title = "登陆";
     Layout = "../Layout/_Header.cshtml";
 }
-<div style="width:500px;margin:0 auto;">
-    <form action="@Url.Action("login", "user")" method="post" enctype="application/x-www-form-urlencoded">
-        <input type="hidden" name="@Config.Current.BACK_URL_KEY" value="@Request.GetBackUrl()" />
-        <ul>
-            <li>
-                用户名：<input value="" name="userno" />
-            </li>
-            <li>
-                密码：<input type="password" value="" name="password" />
-            </li>
-            <li>
-                <input type="submit" value="登陆" />
-                还没有账号，<a href="@Url.Action("register", "user")" target="_blank">注册</a>。
-            </li>
-        </ul>
-    </form>
-    <span style="display:none">        
-        @Url.Action("login", "user") 登陆地址,post请求，参数userNo+password
-    </span>
+@section head{
+<style>
+    .login-index-bg {
+        position: absolute;
+        top: 50px;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url(/Resources/image/login-index-bg.jpg) no-repeat #008df3;
+        background-size: cover;
+        overflow: hidden;
+    }
+
+    .login-index-wrap {
+        width: 1200px;
+        margin: 0 auto;
+    }
+
+        .login-index-wrap .container {
+            position: relative;
+            top: 144px;
+        }
+
+        .login-index-wrap .form-wrapper {
+            float: right;
+            border-radius: 3px;
+            background-color: #fff;
+        }
+
+    .common-form {
+        padding: 20px;
+        position: relative;
+    }
+
+        .common-form legend {
+            display: block;
+            box-sizing: content-box;
+            width: 100%;
+            line-height: inherit;
+            border-bottom: 1px solid #e5e5e5;
+            margin: 0 0 20px 0;
+        }
+
+            .common-form legend h2 {
+                font-size: 18px;
+                font-weight: 600;
+                margin: 0 0 -1px;
+                line-height: 38px;
+                border-bottom: solid 3px #008df3;
+                display: inline-block;
+            }
+
+        .common-form .reg-entry {
+            position: absolute;
+            top: 30px;
+            right: 20px;
+        }
+
+        .common-form .form-group {
+            margin: 0 auto 15px;
+            position: relative;
+        }
+
+        .common-form .form-control {
+            width: 326px;
+            height: 32px;
+            padding: 6px 12px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 2px;
+            box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+            transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+            -webkit-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+            -moz-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+            -ms-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+            -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+        }
+
+    body .common-form .btn-default, body .common-form .btn-primary {
+        display: block;
+        width: 100%;
+        padding: 12px 0;
+    }
+</style>
+}
+<div class="">
+    <div class="login-index-bg"></div>
+    <div class="login-index-wrap">
+        <div class="container">
+            <div class="form-wrapper">
+                <form action="@Url.Action("login", "user")" method="post" role="form" class="common-form">
+                    <input type="hidden" name="@Config.Current.BACK_URL_KEY" value="@Request.GetBackUrl()" />
+                    <legend class="ng-scope">
+                        <h2>账号密码登录</h2>
+                    </legend>
+                    <div class="reg-entry">
+                        <a href="@Url.Action("register", "user")">注册新用户</a>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" name="userno" placeholder="手机号/邮箱">
+                    </div>
+
+                    <div class="form-group">
+                        <input type="password" class="form-control" name="password" placeholder="密码">
+                    </div>
+                    @{ /*
+                    <div class="form-group">                        
+                        <a target="_blank" href="" style="font-size: 12px">忘记登录密码</a>
+                    </div>
+                    */}
+                    <button type="submit" class="btn btn-primary">立即登录</button>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
+<script type="text/javascript">
+    $(function () {
+        var $login = $('.btn-primary'),
+            $userno = $('[name=userno]:input'),
+            $password = $('[name=password]:input');
+        var sending = false;
+        $login.click(function () {
+            if (sending) return false;
+
+            var userno = $.trim($userno.val()),
+                password = $.trim($password.val());
+
+            if (!userno) {
+                alert("请先填写账号");
+                $userno.focus();
+            } else if(!password) {
+                alert("请先填写密码");
+                $password.focus();
+            } else {
+                sending = true;
+                $.ajax({
+                    url: '@Url.Action("login", "user")',
+                    type: 'post',
+                    dataType: 'json',
+                    data: { userNo: userno, password: password },
+                    success: function (data) {
+                        if (data.code == 0) {
+                            location.href = data.data || '@Url.Action("index", "index")';
+                        } else {
+                            alert(data.msg);
+                        }
+                    },
+                    error: function () { alert('网络错误，请重试'); }
+                }).always(function () { sending = false; })
+            }
+
+            return false;
+        });
+    });
+</script>

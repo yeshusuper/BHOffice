@@ -14,4 +14,14 @@ namespace BHOffice.Web.Core
         [JsonProperty(PropertyName = "msg")]
         public string Message { get; set; }
     }
+
+    public class JsonResultEntry<T>
+    {
+        [JsonProperty(PropertyName = "code")]
+        public BHOffice.Core.ErrorCode Code { get; set; }
+        [JsonProperty(PropertyName = "msg")]
+        public string Message { get; set; }
+        [JsonProperty(PropertyName = "data")]
+        public T Data { get; set; }
+    }
 }

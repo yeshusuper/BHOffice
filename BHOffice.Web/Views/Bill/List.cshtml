@@ -5,12 +5,12 @@
 }
 <div>
     <form action="@Url.Action("list")" enctype="application/x-www-form-urlencoded" method="get">
-        <table>
+        <table class="common-form">
             <tr>
                 <td>创建者：</td>
-                <td><input name="Creater" value="@Model.Query.Creater" /></td>
+                <td><input name="Creater" value="@Model.Query.Creater" class="form-control" /></td>
                 <td>单号：</td>
-                <td><input name="No" value="@Model.Query.No" /></td>
+                <td><input name="No" value="@Model.Query.No" class="form-control" /></td>
                 <td>状态：</td>
                 <td>
                     @Html.DropDownList("State", Util.GetBillStateSelectList(Model.Query.State), "--运单状态--")
@@ -18,15 +18,15 @@
             </tr>
             <tr>
                 <td>收件人：</td>
-                <td><input name="Receiver" value="@Model.Query.Receiver" /></td>
+                <td><input name="Receiver" value="@Model.Query.Receiver" class="form-control" /></td>
                 <td>创建时间：</td>
                 <td>
-                    <input name="MinCreated" value="@Html.DisplayFor(m => m.Query.MinCreated)" />
+                    <input name="MinCreated" value="@Html.DisplayFor(m => m.Query.MinCreated)" class="form-control" />
                     到
-                    <input name="MaxCreated" value="@Html.DisplayFor(m => m.Query.MaxCreated)" />
+                    <input name="MaxCreated" value="@Html.DisplayFor(m => m.Query.MaxCreated)" class="form-control" />
                 </td>
                 <td colspan="2">
-                    <input value="搜索" type="submit" />
+                    <input value="搜索" type="submit" class="btn btn-primary" />
                 </td>
             </tr>
         </table>

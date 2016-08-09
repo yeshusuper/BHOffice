@@ -3,42 +3,397 @@
     ViewBag.Title = "首页";
     Layout = "../Layout/_Header.cshtml";
 }
-<div style="float:right; margin:20px;">
-    @if(!Model.IsLogin)
-    { 
-        <div>
-            <form action="@Url.Action("login", "user")" method="post" enctype="application/x-www-form-urlencoded">
+@section head{
+<style>
+    .common-container {
+        width: 1200px;
+        margin: 0 auto;
+        padding-top: 64px;
+    }
+
+    .mainlib_flex_wapper {
+        display: -webkit-box;
+        display: -moz-flex;
+        display: -ms-flexbox;
+        display: -ms-flex;
+        display: flex;
+    }
+
+    .mainlib {
+        background-color: #fff;
+        min-height: 5rem;
+        -webkit-box-flex: 1 1 auto;
+        -moz-flex: 1 1 auto;
+        -ms-flex: 1 1 auto;
+        flex: 1 1 auto;
+    }
+
+        .mainlib .center-content {
+            padding: 30px;
+            margin-right: 10%;
+        }
+
+    .rightlib {
+        -webkit-box-flex: 0 0 320px;
+        -moz-flex: 0 0 320px;
+        -ms-flex: 0 0 320px;
+        flex: 0 0 320px;
+        -webkit-box-ordinal-group: 3;
+        -ms-flex-order: 2;
+        order: 2;
+    }
+
+    .mainlib .center-content ul {
+        display: flex;
+    }
+
+    .mainlib .center-content li {
+        flex: auto;
+        height: 35px;
+        line-height: 35px;
+        text-align: center;
+        background-color: #008df3;
+    }
+
+        .mainlib .center-content li a {
+            color: #fff;
+        }
+
+    .mainlib .order-search-box {
+        position: relative;
+        border: 1px solid #d9d9d9;
+        padding: 10px;
+        min-height: 42px;
+    }
+
+        .mainlib .order-search-box .order-num {
+            height: 30px;
+            line-height: 30px;
+            background-color: #f3f8ff;
+            padding: 6px;
+            margin: 5px;
+            border-radius: 3px;
+        }
+
+            .mainlib .order-search-box .order-num i {
+                float: right;
+            }
+
+        .mainlib .order-search-box .input-box {
+        }
+
+        .mainlib .order-search-box .input-area {
+            height: 30px;
+            line-height: 30px;
+            padding: 6px 0;
+            width: 100%;
+        }
+
+    .mainlib .clear-order {
+        position: absolute;
+        display: block;
+        width: 18px;
+        height: 18px;
+        right: 5px;
+        top: 50%;
+        margin-top: -9px;
+    }
+
+    .mainlib .input-order {
+        padding-right: 30px;
+    }
+
+    .mainlib .flex-cells {
+        display: flex;
+        flex-flow: wrap;
+    }
+
+    .mainlib .flex-cell {
+        flex: auto;
+    }
+
+    .mainlib .order-btn-box {
+        margin-top: 20px;
+    }
+
+        .mainlib .order-btn-box a.btn {
+            color: #fff;
+            width: 10%;
+            float: right;
+        }
+
+    .rightlib .right-content {
+        padding: 30px 0;
+    }
+
+    .common-notice {
+        line-height: 26px;
+    }
+
+        .common-notice ul {
+            padding: 0 20px 0 10px;
+        }
+
+        .common-notice li {
+            margin-top: 15px;
+            color: #3d464d;
+            position: relative;
+        }
+
+            .common-notice li:first-child {
+                margin-top: 0;
+            }
+
+            .common-notice li .secondary-color {
+                color: #a4abb1;
+                font-size: 14px;
+            }
+
+            .common-notice li h3 {
+                padding-left: 30px;
+                font-size: 14px;
+                font-weight: 400;
+            }
+
+            .common-notice li p {
+                padding-left: 30px;
+            }
+
+            .common-notice li i {
+                position: absolute;
+                color: #4285f4;
+                left: 0;
+                top: 2px;
+            }
+
+    .right-content-title {
+        position: relative;
+        padding: 0 0 15px 0;
+        margin-bottom: 15px;
+    }
+
+        .right-content-title:after {
+            content: " ";
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            color: #4285f4;
+            bottom: 0;
+            border-bottom: 1px solid #4285f4;
+            -webkit-transform-origin: 0 100%;
+            transform-origin: 0 100%;
+            -webkit-transform: scaleY(2);
+            transform: scaleY(2);
+        }
+
+        .right-content-title h2 {
+            color: #3d464d;
+            font-size: 16px;
+        }
+
+        .right-content-title i {
+            color: #4285f4;
+        }
+
+    .order-search-result {
+    }
+
+        .order-search-result table {
+            width: 100%;
+        }
+
+            .order-search-result table caption {
+                line-height: 30px;
+            }
+
+        .order-search-result th, .order-search-result td {
+            border: 1px solid #d9d9d9;
+            padding: 5px;
+            line-height: 24px;
+            text-align: left;
+        }
+        .order-search-result .internal-express{
+            text-align:center;
+        }
+        .order-search-result .internal-express a{
+            color:#369;
+        }
+</style>
+}
+<div class="common-container">
+    <div class="mainlib_flex_wapper">
+        <div class="mainlib">
+            <div class="center-content">
                 <ul>
                     <li>
-                        用户名：<input value="" name="userno" />
-                    </li>
-                    <li>
-                        密码：<input type="password" value="" name="password" />
-                    </li>
-                    <li>
-                        <input type="submit" value="登陆" />
-                        还没有账号，<a href="@Url.Action("register", "user")" target="_blank">注册</a>。
+                        <a href="">订单查询</a>
                     </li>
                 </ul>
-            </form>
-            <span style="display:none">
-                @Url.Action("login", "user") 登陆地址,post请求，参数userNo+password
-            </span>
+                <div class="order-search-box">
+                    <div class="input-order flex-cells">
+                        <div class="flex-cell input-box">
+                            <input type="text" class="input-area" placeholder="最多可同时查询20条运单号，请以逗号、空格或回车键隔开。" />
+                            <span></span>
+                        </div>
+                    </div>
+                    <i class="iconfont icon-shanchu clear-order"></i>
+                </div>
+                <div class="order-btn-box">
+                    <a href="#" class="btn btn-primary">查询</a>
+                </div>
+                <div class="order-search-result">
+                    
+                </div>
+            </div>
         </div>
-    }
-    else
-    {
-        <div>
-            <h3>快速导航</h3>
-            <a href="@Url.Action("list", "bill")" target="_blank">运单列表</a>
-            <a href="@Url.Action("edit", "bill")" target="_blank">创建单个运单</a>
+        <div class="rightlib">
+            <div class="right-content">
+                <div class="right-content-title">
+                    <h2>
+                        <i class="iconfont icon-gonggao"></i>
+                        公告
+                    </h2>
+                </div>
+                <div>暂无公告</div>
+                @{/*
+                <ul class="common-notice">
+                    <li>
+                        <h3>
+                            <i class="iconfont icon-right"></i><span>发生大幅加快了速度阿福觉得少了附近的苏里科夫绝对是雷锋精神的浪费史蒂夫</span>
+                        </h3>
+                        <p class="secondary-color">8分钟</p>
+                    </li>
+                </ul>
+                */}
+            </div>
         </div>
-    }
+    </div>
 </div>
-<div>
-    <form target="_blank" method="post" enctype="application/x-www-form-urlencoded" action="@Url.Action("way", "bill")">
-        运单追踪,最多同时查询20条，多个单号用“,”、空格或回车分隔<br />
-        <textarea name="nos" style="width:300px;height:140px;"></textarea><br />
-        <input type="submit" value="查询" style="width:90px;height:29px;" />
-    </form>
-</div>
+
+<script type="text/javascript">
+    $(function () {
+        var $box = $(".order-search-box");
+        var $input = $(".input-area", $box),
+            $orders = $(".input-order", $box),
+            $clear = $(".clear-order", $box),
+            $search = $(".order-btn-box .btn-primary"),
+            $searchResult = $(".order-search-result");
+        var orders = [], searching = false;
+
+        $input.on("keyup", function (event) {
+            if (event.which == 229 || event.which == 188 || event.which == 32 || event.which == 13)
+            {
+                var val = $input.val();
+                val = $.trim(val.slice(0, val.length - 1));
+                createItem(val);
+                return false;
+            }
+        });
+        $input.blur(function () {
+            var val = $.trim($input.val());
+            if (val) {
+                createItem(val);
+            }
+        });
+
+        $clear.click(function () {
+            if (confirm("清除所有单号？")) {
+                orders = [];
+                $(".order-num", $box).remove();
+            }
+        });
+
+
+        $search.click(function () {
+            if (searching) return false;
+            if (orders.length == 0) {
+                alert("请先填写单号");
+            } else if (orders.length > 20) {
+                alert("最多填写20个单号");
+            } else {
+                searching = true;
+                $.ajax({
+                    url: '@Url.Action("way", "bill")',
+                    type: 'post',
+                    dataType: 'json',
+                    data: { nos: orders.join(',') },
+                    success: function (data) {
+                        $searchResult.empty();
+                        if (data.code == 0) {
+                            if (!data.data || !data.data.length) {
+                                alert("未查询到对应的运单");
+                            } else {
+                                for (var i = 0; i < data.data.length; i++) {
+                                    $searchResult.append(createReasultItem(data.data[i]));
+                                }
+                            }
+                        } else {
+                            alert(data.msg);
+                        }
+                    },
+                    error: function () { alert('网络错误，请重试'); }
+                }).always(function () { searching = false; })
+            }
+            return false;
+        });
+
+        function createReasultItem(data) {
+            var html = '<div>' +
+                            '<table>' +
+                                '<caption>订单号:<span>' + data.No + '</span>;当前状态:<span>' + data.StateName + '</span></caption>';
+
+            if (data.InternalNo) {
+                html += '<tr>' +
+                            '<td colspan ="3" class="internal-express">' +
+                                '国内快递：' + data.InternalExpress + '，快递单号：' +
+                                '<a target="_blank" href="http://www.kuaidi100.com/chaxun?com=' + encodeURIComponent(data.InternalExpress || '') + '&nu='+ data.InternalNo +'">' + data.InternalNo + '</a>' +
+                            '</td>'
+                        '</tr>';
+            }
+
+            html +=             '<tr>' +
+                                    '<th>处理时间</th>' +
+                                    '<th>订单状态</th>' +
+                                    '<th>备注</th>' +
+                                '</tr>';
+
+            if(data.Histories){
+                for (var i = 0; i < data.Histories.length; i++) {
+                    html += '<tr>' +
+                                '<td>' + data.Histories[i].Created + '</td>' +
+                                '<td>' + data.Histories[i].StateName + '</td>' +
+                                '<td>' + (data.Histories[i].Remarks || '') + '</td>' +
+                            '</tr>';
+                }
+            }
+            html += '</table>' +
+                '</div>';
+
+            return $(html);
+        }
+
+        function createItem(val) {
+            if (val && !$.isArray(val, orders)) {
+                var $elem = $('<div class="flex-cell order-num"><span>' + val + '</span><i class="iconfont icon-iconfonticonfontclose"></i></div>');
+                $elem.find("i").click(function () {
+                    $elem.remove();
+                    removeItem(val);
+                })
+                $input.parent().before($elem);
+                orders.push(val);
+                $input.val('');
+            }
+        }
+
+        function removeItem(val) {
+            var newOrders = [];
+            for (var i = 0; i < orders.length; i++) {
+                if (val != orders[i]) {
+                    newOrders.push(orders[i]);
+                }
+            }
+            orders = newOrders;
+        }
+    });
+</script>

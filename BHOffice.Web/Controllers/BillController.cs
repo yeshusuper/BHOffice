@@ -202,15 +202,13 @@ namespace BHOffice.Web.Controllers
                             }).ToArray();
             var histories = _BillManager.GetBillHistories(bills.Select(b => b.bid).ToArray()).ToArray();
 
-            var model = new Models.Bill.WayModel
+            return SuccessJsonResult(bills.Select(b => new Models.Bill.WayModel.WayItemModel
             {
-                Items = bills.Select(b => new Models.Bill.WayModel.WayItemModel
-                {
-                    No = b.no,
-                    State = b.state,
-                    InternalExpress = b.i_express,
-                    InternalNo = b.i_no,
-                    Histories = histories.Where(h => h.bid == b.bid).OrderByDescending(h => h.created)
+                No = b.no,
+                State = b.state,
+                InternalExpress = b.i_express,
+                InternalNo = b.i_no,
+                Histories = histories.Where(h => h.bid == b.bid).OrderByDescending(h => h.created)
                                     .Select(h => new Models.Bill.TrackModel.HistoryItem
                                     {
                                         Bhid = h.bhid,
@@ -218,10 +216,7 @@ namespace BHOffice.Web.Controllers
                                         Remarks = h.remarks,
                                         State = h.state
                                     }).ToArray()
-                }).ToArray()
-            };
-
-            return View(model);
+            }).ToArray());
         }
     }
 }
