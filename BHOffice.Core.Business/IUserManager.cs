@@ -58,7 +58,10 @@ namespace BHOffice.Core.Business
             username = username.Trim();
             ExceptionHelper.ThrowIfTrue(!StringRule.VerifyPassword(password), "password", "密码格式不正确");
             ExceptionHelper.ThrowIfTrue(username.Length < 2 || username.Length > 6, "username", "请填写长度为2到6位的用户名");
-            ExceptionHelper.ThrowIfTrue(!IsUsable(ref userNo), "userNo", "该账号已经被注册");
+
+            if (!IsUsable(ref userNo))
+                throw new BHException(ErrorCode.Exists, "该账号已经被注册");
+                
 
             var entity = new Data.User
             {

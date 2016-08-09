@@ -140,7 +140,9 @@
     <Content Include="Resources\Css\iconfont\iconfont.css" />
     <Content Include="Resources\Css\iconfont\iconfont.svg" />
     <Content Include="Resources\Css\style.css" />
+    <Content Include="Resources\Image\fedex-express.png" />
     <Content Include="Resources\Image\login-index-bg.jpg" />
+    <Content Include="Resources\Image\yundaex.png" />
     <Content Include="Resources\Js\jquery-3.1.0.min.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>

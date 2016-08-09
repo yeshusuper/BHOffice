@@ -41,7 +41,7 @@ namespace BHOffice.Web.Controllers
             catch (Exception ex)
             {
                 model.IsEroor = true;
-                model.ErrorMessage = ex.ToString();
+                model.ErrorMessage = ex.Message.ToString();
                 return View(model);
             }
         }

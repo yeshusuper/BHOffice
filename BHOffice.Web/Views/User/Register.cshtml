@@ -3,27 +3,160 @@
     ViewBag.Title = "用户注册";
     Layout = "../Layout/_Header.cshtml";
 }
-<div>
-    @if (Model.IsEroor)
-    {
-        <div>@Html.DisplayFor(m => m.ErrorMessage)</div>
-    }
-    <form action="@Url.Action("register")" enctype="application/x-www-form-urlencoded" method="post">
-        <ul>
-            <li>
-                账号：<input value="@Html.DisplayFor(m => m.UserNo)" name="UserNo" />
-                @(//Url.Action("isUsable") 地址可查询账号是否已经被注册，参数userNo)
-            </li>
-            <li>
-                密码：<input type="password" value="" name="Password" />
-            </li>
-            <li>
-                确认密码：<input type="password" value="" />
-            </li>
-            <li>
-                姓名：<input value="@Html.DisplayFor(m => m.UserName)" name="UserName" />
-            </li>
-        </ul>
-        <input type="submit" value="注册" />
-    </form>
+
+@section head{
+    <style>
+        .login-index-bg {
+            position: absolute;
+            top: 50px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url(/Resources/image/login-index-bg.jpg) no-repeat #008df3;
+            background-size: cover;
+            overflow: hidden;
+        }
+
+        .login-index-wrap {
+            width: 1200px;
+            margin: 0 auto;
+        }
+
+            .login-index-wrap .container {
+                position: relative;
+                top: 144px;
+            }
+
+            .login-index-wrap .form-wrapper {
+                float: right;
+                border-radius: 3px;
+                background-color: #fff;
+            }
+            .login-index-wrap .error{
+                color:red;
+                padding-bottom:15px;
+            }
+
+        .common-form {
+            padding: 20px;
+            position: relative;
+        }
+
+            .common-form legend {
+                display: block;
+                box-sizing: content-box;
+                width: 100%;
+                line-height: inherit;
+                border-bottom: 1px solid #e5e5e5;
+                margin: 0 0 20px 0;
+            }
+
+                .common-form legend h2 {
+                    font-size: 18px;
+                    font-weight: 600;
+                    margin: 0 0 -1px;
+                    line-height: 38px;
+                    border-bottom: solid 3px #008df3;
+                    display: inline-block;
+                }
+
+            .common-form .reg-entry {
+                position: absolute;
+                top: 30px;
+                right: 20px;
+            }
+
+            .common-form .form-group {
+                margin: 0 auto 15px;
+                position: relative;
+            }
+
+            .common-form .form-control {
+                width: 326px;
+                height: 32px;
+                padding: 6px 12px;
+                background-color: #fff;
+                border: 1px solid #ccc;
+                border-radius: 2px;
+                box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+                transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+                -webkit-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+                -moz-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+                -ms-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+                -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+            }
+
+        body .common-form .btn-default, body .common-form .btn-primary {
+            display: block;
+            width: 100%;
+            padding: 12px 0;
+        }
+    </style>
+}
+<div class="">
+    <div class="login-index-bg"></div>
+    <div class="login-index-wrap">
+        <div class="container">
+            <div class="form-wrapper">
+                <form action="@Url.Action("register")" method="post" role="form" class="common-form">
+                    <legend class="ng-scope">
+                        <h2>用户注册</h2>
+                    </legend>
+                    <div class="error" style="@(Model.IsEroor ? String.Empty : "display:none")">@Html.DisplayFor(m => m.ErrorMessage)</div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" value="@Html.DisplayFor(m => m.UserNo)" name="UserNo" placeholder="邮箱">
+                    </div>
+                    <div class="form-group">
+                        <input type="password" class="form-control" name="Password" placeholder="密码">
+                    </div>
+                    <div class="form-group">
+                        <input type="password" class="form-control" name="Password2" placeholder="确认密码">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" value="@Html.DisplayFor(m => m.UserName)" name="UserName" placeholder="姓名">
+                    </div>
+                    <button type="submit" class="btn btn-primary">注册</button>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
+<script type="text/javascript">
+    $(function () {
+        var $register = $(".btn-primary"),
+            $userno = $("[name=UserNo]"),
+            $password = $("[name=Password]"),
+            $password2 = $("[name=Password2]"),
+            $name = $("[name=UserName]"),
+            $error = $(".error");
+
+        $register.click(function () {
+            var userno = $.trim($userno.val()),
+                password = $.trim($password.val()),
+                paddword2 = $.trim($password2.val()),
+                name = $.trim($name.val());
+            if (!userno) {
+                alertError("请填写账号");
+            } else if (!/^\w+([-+.']\w+)*@@\w+([-.]\w+)*\.\w+([-.]\w+)*$/.test(userno)) { 
+                alertError("请填写邮箱作为账号");
+            } else if(!password){
+                alertError("请填写密码");
+            } else if(password.length < 6 || password.length > 20){
+                alertError("请填写6到20位长度的密码");
+            } else if(password != password2){
+                alertError("两次密码不一致");
+            } else if(!name){                
+                alertError("请填写用户名");
+            } else if(name.length < 2 || name.length > 6){
+                alertError("请填写2到6位长度的名称");
+            } else {
+                return true;
+            }
+            return false;
+        });
+
+        function alertError(msg) {
+            $error.toggle(!!msg).html(msg);
+        }
+    });
+</script>
