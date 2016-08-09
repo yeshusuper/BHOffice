@@ -13,9 +13,9 @@ namespace BHOffice.Web.Models.Bill
             public string Creater { get; set; }
             public string No { get; set; }
             public string Receiver { get; set; }
-            [DisplayFormat(NullDisplayText = "", DataFormatString = "yyyy/MM/dd")]
+            [DisplayFormat(NullDisplayText = "", DataFormatString = "{0:yyyy/MM/dd}")]
             public DateTime? MinCreated { get; set; }
-            [DisplayFormat(NullDisplayText = "", DataFormatString = "yyyy/MM/dd")]
+            [DisplayFormat(NullDisplayText = "", DataFormatString = "{0:yyyy/MM/dd}")]
             public DateTime? MaxCreated { get; set; }
             public BHOffice.Core.Business.Bill.BillStates? State { get; set; }
             public int PageIndex { get; set; }

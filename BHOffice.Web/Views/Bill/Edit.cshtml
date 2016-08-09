@@ -3,7 +3,10 @@
     ViewBag.Title = "创建单个运单";
     Layout = "../Layout/_ManagerLeft.cshtml"; 
 }
-
+@section head{
+    <link rel="stylesheet" type="text/css" href="/Resources/css/jquery.datetimepicker.min.css" />
+}
+<script type="text/javascript" src="/Resources/Js/jquery.datetimepicker.full.min.js"></script>
 <div>
     @if(!Model.IsSuccess)
     { 
@@ -114,3 +117,11 @@
         </table>
     </form>
 </div>
+<script type="text/javascript">
+    $(function () {
+        $.datetimepicker.setLocale('ch');
+        $("[name=Created]").datetimepicker({
+            format: 'Y/m/d H:i:s'
+        });
+    });
+</script>

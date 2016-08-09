@@ -3,6 +3,10 @@
     ViewBag.Title = "运单列表";
     Layout = "../Layout/_ManagerLeft.cshtml"; 
 }
+@section head{
+    <link rel="stylesheet" type="text/css" href="/Resources/css/jquery.datetimepicker.min.css" />
+}
+<script type="text/javascript" src="/Resources/Js/jquery.datetimepicker.full.min.js"></script>
 <div>
     <form action="@Url.Action("list")" enctype="application/x-www-form-urlencoded" method="get">
         <table class="common-form">
@@ -93,5 +97,7 @@
                 return false;
             }
         });
+        $.datetimepicker.setLocale('ch');
+        $("[name=MinCreated],[name=MaxCreated]").datetimepicker({ timepicker: false, format:'Y/m/d' });
     })();
 </script>
