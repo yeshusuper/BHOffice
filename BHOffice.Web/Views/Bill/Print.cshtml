@@ -1,0 +1,56 @@
+﻿@model BHOffice.Web.Models.Bill.BillEditModel
+@{
+    ViewBag.Title = "运单打印";
+    Layout = null;
+}
+<html>
+    <head>
+        <title>@ViewBag.Title</title>
+        <link rel="stylesheet" href="/Resources/css/style.css">
+    </head>
+    <body>
+        @for (int i = 0; i < 3; i++)
+        {
+        <table>
+            <tr>
+                <td colspan="8">跟斗云快递<br/>www.gdyunkd.com</td>
+            </tr>
+            <tr>
+                <td>发件人/FROM：@Model.Sender</td>
+                <td>收件日期/DATE：@(Model.Created.HasValue ? Model.Created.Value.ToString("yyyy-MM-dd") : String.Empty)</td>
+                <td>收件人/TO：@Model.Receiver</td>
+                <td>电话/PHONE：@Model.ReceiverTel</td>
+            </tr>
+            <tr>
+                <td colspan="2">电话/PHONE：@Model.SenderTel</td>
+                <td colspan="2" rowspan="2">地址/ADDRESS：@Model.ReceiverAddress</td>
+            </tr>
+            <tr>
+                <td colspan="2">地址/ADDRESS：</td>
+            </tr>
+            <tr>
+                <td colspan="2">体积/VOLUME ：长LO X 高HO X宽WO = 立方厘米CM³</td>
+                <td>重量(磅)/WEIGHT：</td>
+                <td>邮编/POSTCODE：@Model.Post</td>
+            </tr>
+            <tr>
+                <td>金额/TOTAL：</td>
+                <td>品牌/BRAND：</td>
+                <td>备注/NOTE：@Model.Remarks</td>
+                <td>保险/ASSURANCE：@Model.Insurance</td>
+            </tr>
+            <tr>
+                <td colspan="4">物品详细/CONTENTS：@Model.Goods</td>
+            </tr>
+            <tr>
+                <td colspan="4">我保證上述向海關申報的內容的真實性及本订单內未夾寄禁寄和危險品，如有偽報瞞報必須承擔法律責任I ASSURE THE TRUTH OF THE ABOVE DECLARATION TO THE CUSTOMS AND I GUARANTEE THAT THE SHIPMENT DOES NOT CONTAIN ANY DANGEROUS AND PROHIBITED GOODS I SHALL BEAR ALL LEAGAL RESPONSIBILITY FOR ANY CONCEALED OR UNAUTHORIZED CONTENTS</td>
+            </tr>
+            <tr>
+                <td colspan="2">寄件人签名/SENDER'S SIGNATURE：</td>
+                <td colspan="2">日期/DATE：</td>
+            </tr>
+        </table>
+        <br />
+        }        
+    </body>
+</html>

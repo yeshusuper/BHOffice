@@ -70,12 +70,14 @@
                 <td>
                     <a target="_blank" href="@Url.Action("Edit", new { id = item.Bid })">编辑</a>                    
                     &nbsp;
-                    <a href="#" data-bid="@item.Bid" class="j-del">删除</a>                    
+                    <a target="_blank" href="@Url.Action("Print", new { id = item.Bid })">打印</a>                    
                     &nbsp;
-                    @if (Model.IsDisplayTrackButton) 
-                    {       
-                    <a target="_blank" href="@Url.Action("Track", new { id = item.Bid })">追踪</a>
+                    @if (Model.IsDisplayTrackButton)
+                    {
+                        <a target="_blank" href="@Url.Action("Track", new { id = item.Bid })">追踪</a>
                     }
+                    &nbsp;
+                    <a href="#" data-bid="@item.Bid" class="j-del">删除</a>             
                 </td>
             </tr>
         }

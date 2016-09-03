@@ -215,5 +215,19 @@ namespace BHOffice.Web.Controllers
                                     }).ToArray()
             }).ToArray());
         }
+
+        [HttpGet]
+        [BHAuthorize]
+        public ActionResult Print(long id)
+        {
+            var user = _UserManager.GetUser(CurrentUser.Uid);
+            var bill = _BillManager.GetBill(id);
+            var auth = new BillAuthority(user, bill);
+
+            if (!auth.AllowView)
+                throw new BHException(ErrorCode.NotAllow, "你没有查看此运单的权限");
+
+            return View(new Models.Bill.BillEditModel(bill));
+        }
     }
 }
