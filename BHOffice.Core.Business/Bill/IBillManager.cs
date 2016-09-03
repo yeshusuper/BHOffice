@@ -8,8 +8,7 @@ namespace BHOffice.Core.Business.Bill
 {
     public interface IBillManager
     {
-        IBill Create(IUser user, IBillArgs args);
-        IBill GetBill(IUser user, long bid);
+        IBill GetBill(long bid);
         IQueryable<Data.Bill> Search(IUser user, IBillSearchQuery query);
         IQueryable<Data.Bill> GetBill(string[] nos);
         IQueryable<Data.BillStateHistory> GetBillHistories(long[] bids);
@@ -28,49 +27,16 @@ namespace BHOffice.Core.Business.Bill
             _BillStateHistoryRepository = billStateHistoryRepository;
         }
 
-        public IBill Create(IUser user, IBillArgs args)
-        {
-            ExceptionHelper.ThrowIfNull(user, "user");
 
-            if (user.Role == UserRoles.User)
-                throw new BHException(ErrorCode.NotAllow, "普通用户暂不支持创建运单");
-
-            args.Verify(new AllAllowBillUpdateStrategy(user));
-
-            if(!String.IsNullOrWhiteSpace(args.No))
-            {
-                var no = args.No.Trim();
-                if (_BillRepository.EnableBills.Any(b => b.no == no))
-                    throw new BHException(ErrorCode.ArgError, "运单号已存在:" + no);
-            }
-
-            var entity = new Data.Bill
-            {
-                creater = user.Uid,
-                created = DateTime.Now,
-                last_state_updated = DateTime.Now,
-                bill_date = DateTime.Now,
-                enabled = true,
-                state = BillStates.None,
-            };
-
-            args.Fill(new AllAllowBillUpdateStrategy(user), entity, user);
-
-            _BillRepository.Add(entity);
-            _BillRepository.SaveChanges();
-
-            return new BillService(user, entity, _BillRepository, _BillStateHistoryRepository);
-        }
-
-        //private string CreateBillNo()
-        //{
-        //    return String.Format("{0:yyyyMMddHHmmssfff}{1}", DateTime.Now, new Random().Next(1, 100000).ToString().PadLeft(5, '0'));
-        //}
-
-        public IBill GetBill(IUser user, long bid)
+        public IBill GetBill(long bid)
         {
             ExceptionHelper.ThrowIfNotId(bid, "bid");
-            return new BillService(user, bid, _BillRepository, _BillStateHistoryRepository);
+            return new BillService(new Lazy<Data.Bill>(() =>
+            {
+                var entity = _BillRepository.EnableBills.FirstOrDefault(b => b.bid == bid);
+                ExceptionHelper.ThrowIfNull(entity, "bid", "运单不存在或已被删除");
+                return entity;
+            }));
         }
 
 

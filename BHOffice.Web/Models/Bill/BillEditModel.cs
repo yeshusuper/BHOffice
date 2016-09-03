@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BHOffice.Web.Models.Bill
 {
-    public class BillEditModel : BHOffice.Core.Business.Bill.IBillArgs
+    public class BillEditModel
     {
         public long Bid { get; set; }
 
@@ -50,16 +50,16 @@ namespace BHOffice.Web.Models.Bill
             this.Created = service.Created;
             this.Goods = service.Goods;
             this.Insurance = service.Insurance;
-            this.InternalExpress = service.InternalExpress;
-            this.InternalNo = service.InternalNo;
+            this.InternalExpress = service.InternalTrade.Express;
+            this.InternalNo = service.InternalTrade.No;
             this.No = service.No;
-            this.Post = service.Post;
-            this.Receiver = service.Receiver;
-            this.ReceiverAddress = service.ReceiverAddress;
-            this.ReceiverTel = service.ReceiverTel;
+            this.Post = service.Receiver.Address.Post;
+            this.Receiver = service.Receiver.Name;
+            this.ReceiverAddress = service.Receiver.Address.Addr;
+            this.ReceiverTel = service.Receiver.Mobile;
             this.Remarks = service.Remarks;
-            this.Sender = service.Sender;
-            this.SenderTel = service.SenderTel;
+            this.Sender = service.Sender.Name;
+            this.SenderTel = service.Sender.Mobile;
         }
 
         public BillEditModel() { }

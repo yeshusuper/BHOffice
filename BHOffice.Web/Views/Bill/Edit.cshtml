@@ -26,70 +26,113 @@
                     <input value="@Model.Bill.No" name="No" />
                 </td>
             </tr>
-            @if (Model.IsAgent)
-            {
-                <tr>
-                    <td>制单日期*</td>
-                    <td>
-                        <input value="@((Model.Bill.Created ?? DateTime.Now).ToString("yyyy/MM/dd HH:mm:ss"))" name="Created" />
-                    </td>
-                    <td>代理商*</td>
-                    <td>
-                        @Html.DropDownList("AgentUid", Model.Agents.Select(a => new SelectListItem
+            @if(Model.IsAllowSetAgent || Model.IsAllowSetCreateDate)
+            { 
+            <tr>
+                @if (Model.IsAllowSetCreateDate)
                 {
-                    Selected = Model.Bill.AgentUid.HasValue && a.Key == Model.Bill.AgentUid.Value,
-                    Value = a.Key.ToString(),
-                    Text = a.Value
-                }), "--选择代理商--")
-                    </td>
-                </tr>
+                <td>制单日期*</td>
+                <td>
+                    <input value="@((Model.Bill.Created ?? DateTime.Now).ToString("yyyy/MM/dd HH:mm:ss"))" name="Created" />
+                </td>
+                }
+                else
+                {
+                    <td></td><td></td>
+                }
+                @if(Model.IsAllowSetAgent)
+                { 
+                <td>代理商*</td>
+                <td>
+                    @Html.DropDownList("AgentUid", Model.Agents.Select(a => new SelectListItem
+                    {
+                        Selected = Model.Bill.AgentUid.HasValue && a.Key == Model.Bill.AgentUid.Value,
+                        Value = a.Key.ToString(),
+                        Text = a.Value
+                    }), "--选择代理商--")
+                </td>
+                }
+                else
+                {                    
+                    <td></td><td></td>
+                }
+            </tr>
             }
             <tr>
                 <td>发件人*</td>
                 <td>
-                    <input value="@Model.Bill.Sender" name="Sender" />
+                    @if(Model.IsSenderAndReceiverReadOnly || Model.IsReadOnly)
+                        <span>@Model.Bill.Sender</span>
+                    else
+                        <input value="@Model.Bill.Sender" name="Sender" />
                 </td>
                 <td>发件人电话*</td>
                 <td>
-                    <input value="@Model.Bill.SenderTel" name="SenderTel" />
+                    @if (Model.IsSenderAndReceiverReadOnly || Model.IsReadOnly)
+                         <span>@Model.Bill.SenderTel</span>
+                    else
+                        <input value="@Model.Bill.SenderTel" name="SenderTel" />
                 </td>
             </tr>
             <tr>
                 <td>收件人*</td>
                 <td>
-                    <input value="@Model.Bill.Receiver" name="Receiver" />
+                    @if (Model.IsSenderAndReceiverReadOnly || Model.IsReadOnly)
+                        <span>@Model.Bill.Receiver</span>
+                    else
+                        <input value="@Model.Bill.Receiver" name="Receiver" />
                 </td>
                 <td>收件人电话*</td>
                 <td>
-                    <input value="@Model.Bill.ReceiverTel" name="ReceiverTel" />
+                    @if (Model.IsSenderAndReceiverReadOnly || Model.IsReadOnly)
+                        <span>@Model.Bill.ReceiverTel</span>
+                    else
+                        <input value="@Model.Bill.ReceiverTel" name="ReceiverTel" />
                 </td>
             </tr>
             <tr>
                 <td>收件人地址*</td>
                 <td colspan="3">
-                    <input value="@Model.Bill.ReceiverAddress" name="ReceiverAddress" style="width:300px" />
+                    @if (Model.IsSenderAndReceiverReadOnly || Model.IsReadOnly)
+                        <span>@Model.Bill.ReceiverAddress</span>
+                    else
+                        <input value="@Model.Bill.ReceiverAddress" name="ReceiverAddress" style="width:300px" />
                 </td>
             </tr>
             <tr>
                 <td>保险</td>
                 <td>
-                    <input value="@Model.Bill.Insurance" name="Insurance" />
+                    @if (Model.IsReadOnly)
+                        <span>@Model.Bill.Insurance</span>
+                    else
+                        <input value="@Model.Bill.Insurance" name="Insurance" />
                 </td>
                 <td>邮编</td>
                 <td>
-                    <input value="@Model.Bill.Post" name="Post" />
+                    @if (Model.IsSenderAndReceiverReadOnly || Model.IsReadOnly)
+                        <span>@Model.Bill.Post</span>
+                    else
+                        <input value="@Model.Bill.Post" name="Post" />
                 </td>
             </tr>
             <tr>
                 <td>物品(中文)</td>
                 <td>
-                    <textarea name="Goods">@Model.Bill.Goods</textarea>
+                    @if (Model.IsReadOnly)
+                        <span>@Model.Bill.Goods</span>
+                    else
+                        <textarea name="Goods">@Model.Bill.Goods</textarea>
                 </td>
                 <td>备注</td>
                 <td>
-                    <textarea name="Remarks">@Model.Bill.Remarks</textarea>
+                    @if (Model.IsReadOnly)
+                        <span>@Model.Bill.Remarks</span>
+                    else
+                        <textarea name="Remarks">@Model.Bill.Remarks</textarea>
                 </td>
             </tr>
+            @if(Model.IsAllowUpdateState)
+            { 
             <tr>
                 <td>国内快递</td>
                 <td>
@@ -100,6 +143,7 @@
                     <input value="@Model.Bill.InternalNo" name="InternalNo" />
                 </td>
             </tr>
+            }
             <tr>
                 <td colspan="3">
                     <input type="submit" value="提交" />

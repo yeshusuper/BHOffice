@@ -7,7 +7,7 @@ using System.Web;
 
 namespace BHOffice.Web.Models.Bill
 {
-    public class EditModel : BHOffice.Core.Business.Bill.IBillUpdateStrategy
+    public class EditModel 
     {
         public bool IsSuccess { get; set; }
         public string ErrorMessage { get; set; }
@@ -15,38 +15,41 @@ namespace BHOffice.Web.Models.Bill
         public Dictionary<long, string> Agents { get; set; }
         public BillEditModel Bill { get; set; }
 
-        #region IBillUpdateStrategy
-        public bool IsReadOnly { get; set; }
+        public bool IsSenderAndReceiverReadOnly { get; private set; }
+        public bool IsReadOnly { get; private set; }
+        public bool IsAllowSetAgent { get; private set; }
+        public bool IsAllowUpdateState { get; private set; }
+        public bool IsAllowSetCreateDate { get; private set; }
 
-        public bool IsSenderAndReceiverReadOnly { get; set; }
-        public bool IsAllowUpdateState { get; set; }
-
-        public bool IsAgent { get; set; }
-        #endregion
-
-        public EditModel(IBill service)
+        public EditModel(BillAuthority authority, IBill service)
+            : this()
         {
-            this.Bill = new BillEditModel(service);
+            Bill = new BillEditModel(service);
 
-            this.IsAllowUpdateState = service.IsAllowUpdateState;
-            this.IsReadOnly = service.IsReadOnly;
-            this.IsSenderAndReceiverReadOnly = service.IsSenderAndReceiverReadOnly;
-            this.IsAgent = service.IsAgent;
-            this.Agents = new Dictionary<long, string>();
+            IsAllowUpdateState = authority.AllowUpdateState;
+            IsReadOnly = !authority.AllowUpdateMinorInfo;
+            IsSenderAndReceiverReadOnly = !authority.AllowUpdateSenderOrReceiver;
+            IsAllowSetAgent = authority.AllowSetAgent;
+            IsAllowSetCreateDate = authority.AllowSetCreateDate;
         }
 
+        /// <summary>
+        /// 用于创建运单
+        /// </summary>
+        /// <param name="user"></param>
         public EditModel(IUser user)
-            : this(user, null)
+            : this()
         {
+            Bill = new BillEditModel();
+            IsReadOnly = false;
+            IsSenderAndReceiverReadOnly = false;
+            IsAllowSetAgent = user.Role >= UserRoles.Admin;
+            IsAllowUpdateState = user.Role >= UserRoles.Agent;
+            IsAllowSetCreateDate = user.Role >= UserRoles.Agent;
         }
 
-        public EditModel(IUser user, BillEditModel model)
+        private EditModel()
         {
-            Bill = model ?? new BillEditModel();
-            this.IsReadOnly = false;
-            this.IsSenderAndReceiverReadOnly = false;
-            this.IsAgent = user.Role >= UserRoles.Agent;
-            this.IsAllowUpdateState = false;
             this.Agents = new Dictionary<long, string>();
         }
     }

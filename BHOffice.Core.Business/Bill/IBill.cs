@@ -6,104 +6,43 @@ using System.Threading.Tasks;
 
 namespace BHOffice.Core.Business.Bill
 {
-    public interface IBill : IBillArgs, IBillUpdateStrategy
+    public interface IBill
     {
+        long Creater { get; }
+        DateTime Created { get; }
         long Bid { get; }
         BillStates State { get; }
         DateTime? LastStateDate { get; }
-        void UpdateInfo(IBillArgs args);
-        void UpdateState(BillStates state, string remarks, bool addHistoryOnly = false, DateTime? date = null);
+        long? AgentUid { get; set; }
+        BillTradeNo No { get; }
+        ContactInfo Sender { get; }
+        ContactInfoWithAddress Receiver { get; }
+        decimal Insurance { get; }
+        string Goods { get; }
+        string Remarks { get; }
+        InternalTrade InternalTrade { get; }
+
+        void UpdateInfo(decimal insurance, string goods, string remarks);
+        void UpdateInfo(ContactInfo sender, ContactInfoWithAddress receiver);
         void Delete();
-        void DeleteStateHistory(long bhid);
-        IQueryable<Data.BillStateHistory> Histories { get; }
+        void UpdateState(IUser @operator, BillStates state);
+        void UpdateInternalState(IUser @operator, InternalTrade trade);
+        void UpdateCreated(IUser @operator, DateTime created);
     }
 
     class BillService : IBill
     {
-        private readonly IUser _User;
-        private readonly long _Bid;
         private readonly Lazy<Data.Bill> _LazyBill;
-        private readonly Data.IBillRepository _BillRepository;
-        private readonly Core.Data.IRepository<Data.BillStateHistory> _BillStateHistoryRepository;
 
-        #region IBillUpdateStrategy
-        private bool IsOwner
+        public long Bid { get { return _LazyBill.Value.bid; } }
+
+        public BillService(Lazy<Data.Bill> lazyBill)
         {
-            get
-            {
-                return _User.Role >= UserRoles.Admin
-                    || _User.Uid == _LazyBill.Value.creater
-                    || (_LazyBill.Value.agent_uid.HasValue && _LazyBill.Value.agent_uid.Value == _User.Uid);
-            }
+            _LazyBill = lazyBill;
         }
-
-        public bool IsReadOnly
+        public BillService(Data.Bill entity)
         {
-            get
-            {
-                return !IsOwner || (_LazyBill.Value.confirmed && _User.Role < UserRoles.Agent);
-            }
-        }
-
-        public bool IsSenderAndReceiverReadOnly
-        {
-            get
-            {
-                if (!IsOwner)
-                    return true;
-
-                return _User.Role < UserRoles.Admin;
-            }
-        }
-
-        public bool IsAllowUpdateState
-        {
-            get
-            {
-                if (!IsOwner)
-                    return false;
-
-                return _User.Role >= UserRoles.Agent;
-            }
-        }
-
-        public bool IsAgent
-        {
-            get { return _User.Role >= UserRoles.Agent; }
-        }
-        #endregion
-
-        public long Bid { get { return _Bid; } }
-
-        public BillService(IUser user, long bid,
-            Data.IBillRepository billRepository,
-            Core.Data.IRepository<Data.BillStateHistory> billStateHistoryRepository)
-            : this(user, billRepository, billStateHistoryRepository)
-        {
-            _Bid = bid;
-            _LazyBill = new Lazy<Data.Bill>(() =>
-            {
-                var entity = billRepository.Entities.FirstOrDefault(b => b.bid == bid);
-                ExceptionHelper.ThrowIfNull(entity, "bid", "运单不存在");
-                return entity;
-            });
-        }
-        public BillService(IUser user, Data.Bill entity,
-            Data.IBillRepository billRepository,
-            Core.Data.IRepository<Data.BillStateHistory> billStateHistoryRepository)
-            : this(user, billRepository, billStateHistoryRepository) 
-        {
-            _Bid = entity.bid;
             _LazyBill = new Lazy<Data.Bill>(() => entity);
-        }
-
-        private BillService(IUser user,
-            Data.IBillRepository billRepository,
-            Core.Data.IRepository<Data.BillStateHistory> billStateHistoryRepository)
-        {
-            _User = user;
-            _BillStateHistoryRepository = billStateHistoryRepository;
-            _BillRepository = billRepository;
         }
 
         public BillStates State
@@ -116,133 +55,35 @@ namespace BHOffice.Core.Business.Bill
             get { return _LazyBill.Value.last_state_updated; }
         }
 
-        public void UpdateInfo(IBillArgs args)
+        public void UpdateInfo(decimal insurance, string goods, string remarks)
         {
-            if (IsReadOnly)
-                throw new BHException(ErrorCode.NotAllow, "没有修改此订单的权限");
-
-            args.Verify(this);
-
-            if (!String.IsNullOrWhiteSpace(args.No))
-            {
-                var no = args.No.Trim();
-                if (no != No && _BillRepository.EnableBills.Any(b => b.bid != Bid && b.no == no))
-                    throw new BHException(ErrorCode.ArgError, "运单号已存在:" + no);
-            }
-
-
-            args.Fill(this, _LazyBill.Value, _User);
-            _BillRepository.SaveChanges();
+            _LazyBill.Value.insurance = Math.Max(0, insurance);
+            _LazyBill.Value.goods = goods.SafeTrim() ?? String.Empty;
+            _LazyBill.Value.remarks = remarks.SafeTrim() ?? String.Empty;
         }
 
         public void Delete()
         {
-            if(!IsOwner)
-                throw new BHException(ErrorCode.NotAllow, "没有删除此运单的权限");
-            if(State != BillStates.None)
-                throw new BHException(ErrorCode.NotAllow, "不能删除已经发出的运单");
-
             _LazyBill.Value.enabled = false;
-            _BillRepository.SaveChanges();
         }
 
-        public void UpdateState(BillStates state, string remarks, bool addHistoryOnly = false, DateTime? date = null)
+        #region 属性
+        public ContactInfo Sender
         {
-            if (!IsAllowUpdateState)
-                throw new BHException(ErrorCode.NotAllow, "没有修改此订单的权限");
-
-            if(state == BillStates.None)
-                throw new BHException(ErrorCode.NotAllow, "修改的状态不正确");
-
-            if (state == State)
-                return;
-
-            var updateBill = false;
-
-            using(var scope = new System.Transactions.TransactionScope())
-            {
-                if (!_LazyBill.Value.confirmed)
-                {
-                    _LazyBill.Value.confirmed = true;
-                    updateBill = true;
-                }
-                if (!addHistoryOnly)
-                {                   
-                    _LazyBill.Value.state = state;
-                    _LazyBill.Value.last_state_updated = date ?? DateTime.Now;
-                    updateBill = true;
-                }
-                if (updateBill)
-                    _BillRepository.SaveChanges();
-
-                var entity = new Data.BillStateHistory
-                {
-                    bid = Bid,
-                    created = DateTime.Now,
-                    state_updated = date ?? DateTime.Now,
-                    creater = _User.Uid,
-                    remarks = remarks.SafeTrim(),
-                    state = state,
-                    enabled = true,
-                };
-                _BillStateHistoryRepository.Add(entity);
-                _BillStateHistoryRepository.SaveChanges();
-
-                scope.Complete();
-            }
-
+            get { return new ContactInfo(_LazyBill.Value.sender, _LazyBill.Value.sender_tel); }
         }
 
-        public IQueryable<Data.BillStateHistory> Histories
+        public ContactInfoWithAddress Receiver
         {
-            get { return _BillStateHistoryRepository.Entities.Where(h => h.bid == Bid && h.enabled); }
+            get { return new ContactInfoWithAddress(_LazyBill.Value.receiver, _LazyBill.Value.receiver_tel, new Address(_LazyBill.Value.receiver_addr, _LazyBill.Value.post)); }
         }
 
-        public void DeleteStateHistory(long bhid)
-        {
-            ExceptionHelper.ThrowIfNotId(bhid, "bhid");
-            var strategy = this as IBillUpdateStrategy;
-            if (!strategy.IsAllowUpdateState)
-                throw new BHException(ErrorCode.NotAllow, "没有修改此订单的权限");
-
-            _BillStateHistoryRepository.Update(h => h.bid == Bid && h.bhid == bhid, h => new Data.BillStateHistory
-            {
-                enabled = false
-            });
-        }
-
-        #region IBillArgs
-        public string Sender
-        {
-            get { return _LazyBill.Value.sender; }
-        }
-
-        public string SenderTel
-        {
-            get { return _LazyBill.Value.sender_tel; }
-        }
-
-        public string Receiver
-        {
-            get { return _LazyBill.Value.receiver; }
-        }
-
-        public string ReceiverTel
-        {
-            get { return _LazyBill.Value.receiver_tel; }
-        }
-
-        public string ReceiverAddress
-        {
-            get { return _LazyBill.Value.receiver_addr; }
-        }
-
-        public string No
+        public BillTradeNo No
         {
             get { return _LazyBill.Value.no; }
         }
 
-        public DateTime? Created
+        public DateTime Created
         {
             get { return _LazyBill.Value.bill_date; }
         }
@@ -250,11 +91,7 @@ namespace BHOffice.Core.Business.Bill
         public long? AgentUid
         {
             get { return _LazyBill.Value.agent_uid; }
-        }
-
-        public string Post
-        {
-            get { return _LazyBill.Value.post; }
+            set { _LazyBill.Value.agent_uid = value; }
         }
 
         public decimal Insurance
@@ -272,18 +109,89 @@ namespace BHOffice.Core.Business.Bill
             get { return _LazyBill.Value.remarks; }
         }
 
-        public string InternalExpress
+        public InternalTrade InternalTrade
         {
-            get { return _LazyBill.Value.i_express; }
+            get 
+            { 
+                return new Bill.InternalTrade(_LazyBill.Value.i_no, _LazyBill.Value.i_express); 
+            }
         }
-
-        public string InternalNo
+        public long Creater
         {
-            get { return _LazyBill.Value.i_no; }
+            get { return _LazyBill.Value.creater; }
         }
         #endregion
 
 
+
+
+        private bool Confirme(IUser @operator)
+        {
+            ExceptionHelper.ThrowIfNull(@operator, "@operator");
+
+            if (!_LazyBill.Value.confirmed)
+            {
+                _LazyBill.Value.confirmed = true;
+                _LazyBill.Value.confirmer = @operator.Uid;
+                _LazyBill.Value.updated = DateTime.Now;
+                _LazyBill.Value.updater = @operator.Uid;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        public void UpdateInternalState(IUser @operator, InternalTrade trade)
+        {
+            ExceptionHelper.ThrowIfNull(trade, "trade");
+            _LazyBill.Value.i_no = trade.No;
+            _LazyBill.Value.i_express = trade.Express;
+            UpdateState(@operator, BillStates.清关完毕国内派送中);
+        }
+
+        public void UpdateState(IUser @operator, BillStates state)
+        {
+            ExceptionHelper.ThrowIfNull(@operator, "@operator");
+
+            if (state == _LazyBill.Value.state)
+                return;
+
+            _LazyBill.Value.state = state;
+            _LazyBill.Value.last_state_updated = DateTime.Now;
+            _LazyBill.Value.updated = DateTime.Now;
+            _LazyBill.Value.updater = @operator.Uid;
+
+            Confirme(@operator);
+        }
+
+
+        public void UpdateCreated(IUser @operator, DateTime created)
+        {
+            ExceptionHelper.ThrowIfNull(@operator, "@operator");
+            _LazyBill.Value.bill_date = created;
+            _LazyBill.Value.updated = DateTime.Now;
+            _LazyBill.Value.updater = @operator.Uid;
+        }
+
+        public void UpdateInfo(ContactInfo sender, ContactInfoWithAddress receiver)
+        {
+            ExceptionHelper.ThrowIfNull(sender, "sender");
+            ExceptionHelper.ThrowIfNull(receiver, "receiver");
+
+            _LazyBill.Value.sender = sender.Name;
+            _LazyBill.Value.sender_tel = sender.Mobile;
+            _LazyBill.Value.receiver = receiver.Name;
+            _LazyBill.Value.receiver_addr = receiver.Address.Addr;
+            _LazyBill.Value.receiver_tel = receiver.Mobile;
+            _LazyBill.Value.post = receiver.Address.Post;
+        }
+
+        public void InitTradeNo()
+        {
+            ExceptionHelper.ThrowIfNotId(_LazyBill.Value.bid, "bill.bid", "需要先保存实体");
+            _LazyBill.Value.no = new BillTradeNo(_LazyBill.Value.bid);
+        }
     }
 
 }

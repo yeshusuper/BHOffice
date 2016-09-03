@@ -15,23 +15,27 @@ namespace BHOffice.Web.Controllers
     {
         private readonly IBillManager _BillManager;
         private readonly IUserManager _UserManager;
+        private readonly IBillAppService _BillAppService;
 
         public BillController(IBillManager billManager,
-            IUserManager userManager)
+            IUserManager userManager,
+            IBillAppService billAppService)
         {
             _BillManager = billManager;
             _UserManager = userManager;
+            _BillAppService = billAppService;
         }
 
         [HttpGet]
         [BHAuthorize]
-        public ActionResult Edit(long? bid)
+        public ActionResult Edit(long? id)
         {
             var user = _UserManager.GetUser(CurrentUser.Uid);
-            if(bid.HasValue && bid.Value > 0)
+            if(id.HasValue && id.Value > 0)
             {
-                var bill =_BillManager.GetBill(user, bid.Value);
-                return View(new Models.Bill.EditModel(bill));
+                var bill =_BillManager.GetBill(id.Value);
+                var auth = new BillAuthority(user, bill);
+                return View(new Models.Bill.EditModel(auth, bill));
             }
             else
             {
@@ -43,38 +47,33 @@ namespace BHOffice.Web.Controllers
         [BHAuthorize]
         public ActionResult Edit(Models.Bill.BillEditModel model)
         {
-            var user = _UserManager.GetUser(CurrentUser.Uid);
-            try
+            if (model.Bid > 0)
             {
-                IBill bill;
-                if (model.Bid > 0)
-                {
-                    bill = _BillManager.GetBill(user, model.Bid);
-                    bill.UpdateInfo(model);
-                }
-                else
-                {
-                    bill = _BillManager.Create(user, model);
-                }
-                return View(new Models.Bill.EditModel(bill));
+                _BillAppService.UpdateBill(CurrentUser.Uid, model.Bid,
+                    model.Sender, model.SenderTel,
+                    model.Receiver, model.ReceiverTel, model.ReceiverAddress, model.Post,
+                    model.Insurance, model.Goods, model.Remarks,
+                    model.AgentUid, model.Created,
+                    model.InternalNo, model.InternalExpress);
             }
-            catch(System.Exception ex)
+            else
             {
-                return View(new Models.Bill.EditModel(user, model)
-                {
-                    ErrorMessage = ex.Message
-                });
+                _BillAppService.CreateBill(CurrentUser.Uid,
+                   model.Sender, model.SenderTel,
+                   model.Receiver, model.ReceiverTel, model.ReceiverAddress, model.Post,
+                   model.Insurance, model.Goods, model.Remarks,
+                   model.AgentUid, model.Created,
+                    model.InternalNo, model.InternalExpress);
             }
+            return SuccessJsonResult();
         }
 
         [HttpPost]
         [BHAuthorize]
         public ActionResult Del(long bid)
         {
-            var user = _UserManager.GetUser(CurrentUser.Uid);
-            var bill = _BillManager.GetBill(user, bid);
-            bill.Delete();
-            return JsonResult(ErrorCode.None, "删除成功");
+            _BillAppService.DeleteBill(CurrentUser.Uid, bid);
+            return SuccessJsonResult();
         }
 
         [HttpGet]
@@ -116,10 +115,9 @@ namespace BHOffice.Web.Controllers
 
         [HttpGet]
         [BHAuthorize]
-        public ActionResult Track(long bid)
+        public ActionResult Track(long id)
         {
-            var user = _UserManager.GetUser(CurrentUser.Uid);
-            var bill = _BillManager.GetBill(user, bid);
+            var bill = _BillManager.GetBill(id);
             return ViewTask(bill);
         }
 
@@ -127,10 +125,12 @@ namespace BHOffice.Web.Controllers
         [BHAuthorize]
         public ActionResult Track(Models.Bill.TrackEditModel model)
         {
-            var user = _UserManager.GetUser(CurrentUser.Uid);
-            var bill = _BillManager.GetBill(user, model.Bid);
-            bill.UpdateState(model.State, model.Remarks, !model.UpdateState, model.Created);
-            return RedirectToAction("Track", new { bid = model.Bid });
+            if (model.UpdateState)
+                _BillAppService.UpdateState(CurrentUser.Uid, model.Bid, model.State, model.Remarks, model.Created);
+            else
+                _BillAppService.InsertStateHistory(CurrentUser.Uid, model.Bid, model.State, model.Remarks, model.Created);
+
+            return RedirectToAction("Track", new { id = model.Bid });
         }
 
         private ActionResult ViewTask(IBill bill)
@@ -140,8 +140,7 @@ namespace BHOffice.Web.Controllers
                 Bid = bill.Bid,
                 No = bill.No,
                 State = bill.State,
-                Histroys = bill
-                            .Histories
+                Histroys = _BillManager.GetBillHistories(new []{ bill.Bid })
                             .OrderByDescending(h => h.state_updated)
                             .Select(h => new Models.Bill.TrackModel.HistoryItem
                             {
@@ -156,12 +155,10 @@ namespace BHOffice.Web.Controllers
 
         [HttpPost]
         [BHAuthorize]
-        public ActionResult DelHistory(long bid, long bhid)
+        public ActionResult DelHistory(long id, long bhid)
         {
-            var user = _UserManager.GetUser(CurrentUser.Uid);
-            var bill = _BillManager.GetBill(user, bid);
-            bill.DeleteStateHistory(bhid);
-            return JsonResult(ErrorCode.None, "删除成功");
+            _BillAppService.DeleteBillStateHistory(CurrentUser.Uid, id, bhid);
+            return SuccessJsonResult();
         }
 
         [HttpPost]

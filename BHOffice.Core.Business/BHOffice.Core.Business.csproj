@@ -56,11 +56,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Bill\BillArgs.cs" />
+    <Compile Include="Bill\Address.cs" />
+    <Compile Include="Bill\BillAppService.cs" />
+    <Compile Include="Bill\BillAuthority.cs" />
     <Compile Include="Bill\BillStates.cs" />
+    <Compile Include="Bill\BillTradeNo.cs" />
+    <Compile Include="Bill\BillUser.cs" />
+    <Compile Include="Bill\ContactInfo.cs" />
     <Compile Include="Bill\IBill.cs" />
+    <Compile Include="Bill\IBillUser.cs" />
     <Compile Include="Bill\IBillManager.cs" />
+    <Compile Include="Bill\IBillManagerUser.cs" />
     <Compile Include="Bill\IBillSearchQuery.cs" />
+    <Compile Include="Bill\InternalTrade.cs" />
     <Compile Include="Data\BHOfficeContext.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -92,6 +100,7 @@
     <Compile Include="IUser.cs" />
     <Compile Include="IUserInfoEditer.cs" />
     <Compile Include="IUserManager.cs" />
+    <Compile Include="Mobile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UserRoles.cs" />
   </ItemGroup>
