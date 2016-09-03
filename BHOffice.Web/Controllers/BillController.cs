@@ -229,5 +229,21 @@ namespace BHOffice.Web.Controllers
 
             return View(new Models.Bill.BillEditModel(bill));
         }
+
+        [HttpGet]
+        public ActionResult Barcode(string id)
+        {
+            using(var barcode = new BarcodeLib.Barcode().Encode(BarcodeLib.TYPE.CODE39, id,
+                                System.Drawing.Color.Black,
+                                System.Drawing.Color.White,
+                                500, 70))
+            {
+                var memory = new System.IO.MemoryStream();
+                barcode.Save(memory, System.Drawing.Imaging.ImageFormat.Png);
+                memory.Position = 0;
+                return File(memory, "image/png");
+            }
+
+        }
     }
 }

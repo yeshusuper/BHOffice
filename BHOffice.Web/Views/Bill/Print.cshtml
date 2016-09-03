@@ -7,47 +7,108 @@
     <head>
         <title>@ViewBag.Title</title>
         <link rel="stylesheet" href="/Resources/css/style.css">
+        <style>
+            .print-table {
+                width: 998px;
+                margin: 10px auto;
+                line-height: 21px;
+                font-size: 14px;
+                font-family: "Microsoft YaHei",sans-serif;
+            }
+                .print-table td {
+                    border: 1px solid #000;
+                    padding: 5px;
+                }
+                .print-table .tips {
+                    color: #474646;
+                    font-size: 12px;
+                }
+                .print-table .site-info {
+                    vertical-align: middle;
+                    border-right: 0px;
+                }
+                .print-table .site-info-wrapper {
+                    display: block;
+                    margin-right: 35px;
+                    text-align: center;
+                }
+                .print-table .site-name {
+                    font-size: 26px;
+                }
+                .print-table .site-host {
+                    font-size: 16px;
+                }
+                .print-table .barcode-info {
+                    border-left: 0px;
+                }
+                .print-table .barcode-info-wrapper {
+                    float: right;
+                    width: 500px;
+                    text-align:center;
+                    padding-top:3px
+                }
+                .print-table .barcode-info-wrapper img {
+                    float: right;
+                    width:500px;
+                }
+        </style>
     </head>
     <body>
         @for (int i = 0; i < 3; i++)
         {
-        <table>
+        <table class="print-table">
             <tr>
-                <td colspan="8">跟斗云快递<br/>www.gdyunkd.com</td>
+                <td class="site-info">
+                    <span class="site-info-wrapper">
+                        <b class="site-name">跟斗云快递</b>
+                        <b class="site-host">www.gdyunkd.com</b>
+                    </span>
+                </td>
+                <td colspan="3" class="barcode-info">
+                    <span class="barcode-info-wrapper">
+                        <img src="@Url.Action("barcode", new { id = Model.No })" alt="@Model.No" />
+                        <br />
+                        *@Model.No*
+                    </span>
+                </td>
             </tr>
             <tr>
-                <td>发件人/FROM：@Model.Sender</td>
-                <td>收件日期/DATE：@(Model.Created.HasValue ? Model.Created.Value.ToString("yyyy-MM-dd") : String.Empty)</td>
-                <td>收件人/TO：@Model.Receiver</td>
-                <td>电话/PHONE：@Model.ReceiverTel</td>
+                <td style="width:25%"><span class="tips">发件人/FROM：</span>@Model.Sender</td>
+                <td style="width:25%"><span class="tips">收件日期/DATE：</span>@(Model.Created.HasValue ? Model.Created.Value.ToString("yyyy-MM-dd") : String.Empty)</td>
+                <td style="width:25%"><span class="tips">收件人/TO：</span>@Model.Receiver</td>
+                <td style="width:25%"><span class="tips">电话/PHONE：</span>@Model.ReceiverTel</td>
             </tr>
             <tr>
-                <td colspan="2">电话/PHONE：@Model.SenderTel</td>
-                <td colspan="2" rowspan="2">地址/ADDRESS：@Model.ReceiverAddress</td>
+                <td colspan="2"><span class="tips">电话/PHONE：</span>@Model.SenderTel</td>
+                <td colspan="2" rowspan="2"><span class="tips">地址/ADDRESS：</span>@Model.ReceiverAddress</td>
             </tr>
             <tr>
-                <td colspan="2">地址/ADDRESS：</td>
+                <td colspan="2"><span class="tips">地址/ADDRESS：</span></td>
             </tr>
             <tr>
-                <td colspan="2">体积/VOLUME ：长LO X 高HO X宽WO = 立方厘米CM³</td>
-                <td>重量(磅)/WEIGHT：</td>
-                <td>邮编/POSTCODE：@Model.Post</td>
+                <td colspan="2"><span class="tips">体积/VOLUME ：</span>长LO X 高HO X宽WO = 立方厘米CM³</td>
+                <td><span class="tips">重量(磅)/WEIGHT：</span></td>
+                <td><span class="tips">邮编/POSTCODE：</span>@Model.Post</td>
             </tr>
             <tr>
-                <td>金额/TOTAL：</td>
-                <td>品牌/BRAND：</td>
-                <td>备注/NOTE：@Model.Remarks</td>
-                <td>保险/ASSURANCE：@Model.Insurance</td>
+                <td><span class="tips">金额/TOTAL：</span></td>
+                <td><span class="tips">品牌/BRAND：</span></td>
+                <td><span class="tips">备注/NOTE：</span>@Model.Remarks</td>
+                <td><span class="tips">保险/ASSURANCE：</span>@Model.Insurance</td>
             </tr>
             <tr>
-                <td colspan="4">物品详细/CONTENTS：@Model.Goods</td>
+                <td colspan="4"><span class="tips">物品详细/CONTENTS：</span>@Model.Goods</td>
             </tr>
             <tr>
-                <td colspan="4">我保證上述向海關申報的內容的真實性及本订单內未夾寄禁寄和危險品，如有偽報瞞報必須承擔法律責任I ASSURE THE TRUTH OF THE ABOVE DECLARATION TO THE CUSTOMS AND I GUARANTEE THAT THE SHIPMENT DOES NOT CONTAIN ANY DANGEROUS AND PROHIBITED GOODS I SHALL BEAR ALL LEAGAL RESPONSIBILITY FOR ANY CONCEALED OR UNAUTHORIZED CONTENTS</td>
+                <td colspan="4">
+                    <span class="tips">
+                        我保證上述向海關申報的內容的真實性及本订单內未夾寄禁寄和危險品，如有偽報瞞報必須承擔法律責任I ASSURE THE TRUTH OF THE ABOVE DECLARATION TO THE CUSTOMS AND I GUARANTEE THAT THE SHIPMENT DOES NOT CONTAIN ANY DANGEROUS AND PROHIBITED GOODS I SHALL BEAR ALL LEAGAL RESPONSIBILITY FOR ANY CONCEALED OR UNAUTHORIZED CONTENTS
+                    </span>
+                </td>
             </tr>
             <tr>
-                <td colspan="2">寄件人签名/SENDER'S SIGNATURE：</td>
-                <td colspan="2">日期/DATE：</td>
+                <td colspan="2"><span class="tips">寄件人签名/SENDER'S SIGNATURE：</span></td>
+                <td colspan="2"><span class="tips">日期/DATE：</span></td>
             </tr>
         </table>
         <br />
