@@ -15,11 +15,6 @@
             float: right;
         }
 
-    .manager_left_nav {
-        float: left;
-        width: 200px;
-    }
-
     .manager_content {
         float: left;
         width: 1200px;
@@ -136,18 +131,45 @@
         width: 100%;
         padding: 12px 0;
     }
+
+    .manager-area {
+        overflow: hidden;
+        zoom: 1;
+        height:100%
+    } 
+    .sidebar {
+        width: 190px;
+        padding: 5px;
+        float: left;
+        background: #232c3b;
+        font-size: 12px;
+        background: #232c3b;
+        padding-bottom: 10000px;
+        margin-bottom: -10000px;
+    }
+        .sidebar li {
+            background: #35404d;
+            border-radius:4px;
+            line-height:49px;
+            padding-left:17px;
+            margin-bottom:5px;
+        }
+        .sidebar a {
+            color: #fff;
+            display:block;
+        }
+            .sidebar a:hover {
+                color: #ff6c60;
+            }
 </style>
 @RenderSection("head", false)
 }
-<ul class="manager_left_nav _temp_border">
-    <li>
-        <h3>运单管理</h3>
-        <ul>
-            <li><a href="@Url.Action("edit", "bill", new { id = String.Empty })" @(Url.IsCurrent("edit", "bill") ? "class=\"current\"" : String.Empty)>创建单个运单</a></li>
-            <li><a href="@Url.Action("list", "bill")" @(Url.IsCurrent("list", "bill") ? "class=\"current\"" : String.Empty)>运单列表</a></li>
-        </ul>
-    </li>
-</ul>
-<div class="manager_content _temp_border">    
-    @RenderBody()
+<div class="manager-area">
+    <ul class="sidebar">
+        <li><a href="@Url.Action("edit", "bill", new { id = String.Empty })" @(Url.IsCurrent("edit", "bill") ? "class=\"current\"" : String.Empty)>创建单个运单</a></li>
+        <li><a href="@Url.Action("list", "bill")" @(Url.IsCurrent("list", "bill") ? "class=\"current\"" : String.Empty)>运单列表</a></li>
+    </ul>
+    <div class="manager_content">
+        @RenderBody()
+    </div>
 </div>

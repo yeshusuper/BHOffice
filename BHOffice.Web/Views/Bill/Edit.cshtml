@@ -4,6 +4,61 @@
     Layout = "../Layout/_ManagerLeft.cshtml"; 
 }
 @section head{
+    <style>
+        .common-form{
+            font-size:12px;
+        } 
+        .common-form .input-control {
+            width: 260px;
+            height: 28px;
+            padding: 3px 8px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 2px;
+            box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+            transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+            -webkit-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+            -moz-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+            -ms-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+            -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+        }
+        .common-form .textarea-control {
+            width: 260px;
+            height: 120px;
+            padding: 3px 8px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 2px;
+            box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+            transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+            -webkit-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+            -moz-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+            -ms-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+            -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+        }
+        .common-form td{
+            padding:10px 5px;
+        }
+        .common-form .tips {
+            color: #474646;
+            text-align: right;
+            padding-left: 20px;
+            vertical-align: middle;
+        }
+        .common-form .tips i, .common-form h2 i {
+            color: #ff6c60;
+            font-style: normal;
+        }
+        .common-form h2 {
+            padding-left: 40px;
+            margin-bottom: 20px;
+        }
+        body .common-form .btn-primary{
+            width:200px;
+            margin:20px 0 0 0;
+            font-size:14px;
+        }
+    </style>
     <link rel="stylesheet" type="text/css" href="/Resources/css/jquery.datetimepicker.min.css" />
 }
 <div>
@@ -18,174 +73,177 @@
     {
         <div style="color:green">保存运单成功</div>
     }
-    <form id="j-form" action="@Url.Action("Edit")" enctype="application/x-www-form-urlencoded" method="post">
+    <form class="common-form" id="j-form" action="@Url.Action("Edit")" enctype="application/x-www-form-urlencoded" method="post">
         <input type="hidden" name="Bid" value="@Model.Bill.Bid" />
-        <h2>带“*”号的为必填项</h2>
+        <h2>带“<i>*</i>”号的为必填项</h2>
         <table cellpadding="0" cellspacing="0">
-            @if (Model.Bill.Bid > 0) 
-            { 
-            <tr>
-                <td>单号</td>
-                <td colspan="3">@Model.Bill.No</td>
-            </tr>
+            @if (Model.Bill.Bid > 0)
+            {
+                <tr>
+                    <td class="tips">单号</td>
+                    <td colspan="3">@Model.Bill.No</td>
+                </tr>
             }
-            @if(Model.IsAllowSetAgent || Model.IsAllowSetCreateDate)
-            { 
-            <tr>
-                @if (Model.IsAllowSetCreateDate)
-                {
-                <td>制单日期*</td>
-                <td>
-                    <input value="@((Model.Bill.Created ?? DateTime.Now).ToString("yyyy/MM/dd HH:mm:ss"))" name="Created" />
-                </td>
-                }
-                else
-                {
-                    <td></td><td></td>
-                }
-                @if(Model.IsAllowSetAgent)
-                { 
-                <td>代理商*</td>
-                <td>
-                    @Html.DropDownList("AgentUid", Model.Agents.Select(a => new SelectListItem
+            @if (Model.IsAllowSetAgent || Model.IsAllowSetCreateDate)
+            {
+                <tr>
+                    @if (Model.IsAllowSetCreateDate)
+                    {
+                        <td class="tips">制单日期<i>*</i></td>
+                        <td>
+                            <input value="@((Model.Bill.Created ?? DateTime.Now).ToString("yyyy/MM/dd HH:mm:ss"))" name="Created" class="input-control" />
+                        </td>
+                    }
+                    else
+                    {
+                        <td></td>
+                        <td></td>
+                    }
+                    @if (Model.IsAllowSetAgent)
+                    {
+                        <td class="tips">代理商<i>*</i></td>
+                        <td>
+                            @Html.DropDownList("AgentUid", Model.Agents.Select(a => new SelectListItem
                     {
                         Selected = Model.Bill.AgentUid.HasValue && a.Key == Model.Bill.AgentUid.Value,
                         Value = a.Key.ToString(),
                         Text = a.Value
-                    }), "--选择代理商--")
-                </td>
-                }
-                else
-                {                    
-                    <td></td><td></td>
-                }
-            </tr>
+                    }), "--选择代理商--", new { @class = "input-control" })
+                        </td>
+                    }
+                    else
+                    {
+                        <td></td>
+                        <td></td>
+                    }
+                </tr>
             }
             <tr>
-                <td>发件人*</td>
+                <td class="tips">发件人<i>*</i></td>
                 <td>
-                    @if(Model.IsSenderAndReceiverReadOnly || Model.IsReadOnly)
+                    @if (Model.IsSenderAndReceiverReadOnly || Model.IsReadOnly)
                     {
                         <span>@Model.Bill.Sender</span>
                     }
                     else
-                    { 
-                        <input value="@Model.Bill.Sender" name="Sender" />
+                    {
+                        <input value="@Model.Bill.Sender" name="Sender" class="input-control" />
                     }
                 </td>
-                <td>发件人电话*</td>
+                <td class="tips">发件人电话<i>*</i></td>
                 <td>
                     @if (Model.IsSenderAndReceiverReadOnly || Model.IsReadOnly)
                     {
-                         <span>@Model.Bill.SenderTel</span>
+                        <span>@Model.Bill.SenderTel</span>
                     }
                     else
                     {
-                        <input value="@Model.Bill.SenderTel" name="SenderTel" />
+                        <input value="@Model.Bill.SenderTel" name="SenderTel" class="input-control" />
                     }
                 </td>
             </tr>
             <tr>
-                <td>收件人*</td>
+                <td class="tips">收件人<i>*</i></td>
                 <td>
                     @if (Model.IsSenderAndReceiverReadOnly || Model.IsReadOnly)
                     {
                         <span>@Model.Bill.Receiver</span>
                     }
                     else
-                    { 
-                        <input value="@Model.Bill.Receiver" name="Receiver" />
+                    {
+                        <input value="@Model.Bill.Receiver" name="Receiver" class="input-control" />
                     }
                 </td>
-                <td>收件人电话*</td>
+                <td class="tips">收件人电话<i>*</i></td>
                 <td>
                     @if (Model.IsSenderAndReceiverReadOnly || Model.IsReadOnly)
                     {
                         <span>@Model.Bill.ReceiverTel</span>
                     }
                     else
-                    { 
-                        <input value="@Model.Bill.ReceiverTel" name="ReceiverTel" />
+                    {
+                        <input value="@Model.Bill.ReceiverTel" name="ReceiverTel" class="input-control" />
                     }
                 </td>
             </tr>
             <tr>
-                <td>收件人地址*</td>
+                <td class="tips">收件人地址<i>*</i></td>
                 <td colspan="3">
                     @if (Model.IsSenderAndReceiverReadOnly || Model.IsReadOnly)
                     {
                         <span>@Model.Bill.ReceiverAddress</span>
                     }
                     else
-                    { 
-                        <input value="@Model.Bill.ReceiverAddress" name="ReceiverAddress" style="width:300px" />
+                    {
+                        <input value="@Model.Bill.ReceiverAddress" name="ReceiverAddress" style="width:640px" class="input-control" />
                     }
                 </td>
             </tr>
             <tr>
-                <td>保险</td>
+                <td class="tips">保险</td>
                 <td>
                     @if (Model.IsReadOnly)
                     {
                         <span>@Model.Bill.Insurance</span>
                     }
                     else
-                    { 
-                        <input value="@Model.Bill.Insurance" name="Insurance" />
+                    {
+                        <input value="@Model.Bill.Insurance" name="Insurance" class="input-control" />
                     }
                 </td>
-                <td>邮编</td>
+                <td class="tips">邮编</td>
                 <td>
                     @if (Model.IsSenderAndReceiverReadOnly || Model.IsReadOnly)
                     {
                         <span>@Model.Bill.Post</span>
                     }
                     else
-                    { 
-                        <input value="@Model.Bill.Post" name="Post" />
+                    {
+                        <input value="@Model.Bill.Post" name="Post" class="input-control" />
                     }
                 </td>
             </tr>
             <tr>
-                <td>物品(中文)</td>
+                <td class="tips">物品(中文)</td>
                 <td>
                     @if (Model.IsReadOnly)
                     {
                         <span>@Model.Bill.Goods</span>
                     }
                     else
-                    { 
-                        <textarea name="Goods">@Model.Bill.Goods</textarea>
+                    {
+                        <textarea name="Goods" class="textarea-control">@Model.Bill.Goods</textarea>
                     }
                 </td>
-                <td>备注</td>
+                <td class="tips">备注</td>
                 <td>
                     @if (Model.IsReadOnly)
                     {
                         <span>@Model.Bill.Remarks</span>
                     }
                     else
-                    { 
-                        <textarea name="Remarks">@Model.Bill.Remarks</textarea>
+                    {
+                        <textarea name="Remarks" class="textarea-control">@Model.Bill.Remarks</textarea>
                     }
                 </td>
             </tr>
-            @if(Model.IsAllowUpdateState)
-            { 
-            <tr>
-                <td>国内快递</td>
-                <td>
-                    <input value="@Model.Bill.InternalExpress" name="InternalExpress" />
-                </td>
-                <td>国内单号</td>
-                <td>
-                    <input value="@Model.Bill.InternalNo" name="InternalNo" />
-                </td>
-            </tr>
+            @if (Model.IsAllowUpdateState)
+            {
+                <tr>
+                    <td class="tips">国内快递</td>
+                    <td>
+                        <input value="@Model.Bill.InternalExpress" name="InternalExpress" class="input-control" />
+                    </td>
+                    <td class="tips">国内单号</td>
+                    <td>
+                        <input value="@Model.Bill.InternalNo" name="InternalNo" class="input-control" />
+                    </td>
+                </tr>
             }
             <tr>
-                <td colspan="3">
-                    <input id="j-submit" type="submit" value="提交" />
+                <td></td>
+                <td colspan="2">
+                    <input class="btn btn-primary" id="j-submit" type="submit" value="提 交" />
                 </td>
             </tr>
         </table>
