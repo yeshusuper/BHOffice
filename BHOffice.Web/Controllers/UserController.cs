@@ -41,7 +41,7 @@ namespace BHOffice.Web.Controllers
             catch (Exception ex)
             {
                 model.IsEroor = true;
-                model.ErrorMessage = ex.ToString();
+                model.ErrorMessage = ex.Message.ToString();
                 return View(model);
             }
         }
@@ -60,7 +60,7 @@ namespace BHOffice.Web.Controllers
         {
             Session.Login(_UserMangaer, userNo, password);
             if(Request.IsAjaxRequest())
-                return SuccessJsonResult();
+                return SuccessJsonResult(Request.GetBackUrl());
             else
             {
                 var backUrl = Request.GetBackUrl();
