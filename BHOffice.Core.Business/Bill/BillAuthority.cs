@@ -20,6 +20,15 @@ namespace BHOffice.Core.Business.Bill
             _Bill = bill;
         }
 
+        public bool AllowView
+        {
+            get
+            {
+                return _User.Role >= UserRoles.Admin || _User.Uid == _Bill.Creater ||
+                            (_Bill.AgentUid.HasValue && _User.Role >= UserRoles.Agent && _User.Uid == _Bill.AgentUid.Value);
+            }
+        }
+
         public bool AllowUpdateSenderOrReceiver
         {
             get

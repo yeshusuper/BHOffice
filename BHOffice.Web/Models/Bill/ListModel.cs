@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BHOffice.Core.Business;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -35,6 +36,9 @@ namespace BHOffice.Web.Models.Bill
             public DateTime Created { get; set; }
         }
 
+        public bool IsDisplayTrackButton { get; private set; }
+        public bool IsDisplayCreaterQuery { get; private set; }
+
         public SearchModel Query { get; set; }
         public Core.PageModel<ListItemModel> Items { get; set; }
 
@@ -42,6 +46,12 @@ namespace BHOffice.Web.Models.Bill
         {
             Query = new SearchModel();
             Items = new Core.PageModel<ListItemModel>(Enumerable.Empty<ListItemModel>(), 1, 0);
+        }
+
+        public ListModel(IUser user)
+            : this()
+        {
+            IsDisplayTrackButton = IsDisplayCreaterQuery = user.Role >= UserRoles.Agent;
         }
     }
 

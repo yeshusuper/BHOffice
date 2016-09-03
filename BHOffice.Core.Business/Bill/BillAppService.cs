@@ -142,6 +142,9 @@ namespace BHOffice.Core.Business.Bill
             var authority = new BillAuthority(user, bill);
             if (!authority.AllowUpdateState)
                 throw new BHException(ErrorCode.NotAllow, "没有权限更新运单状态");
+
+            IBillManagerUser manager = new BillUser(user, _BillRepository, _BillStateHistoryRepository);
+            manager.DeleteBillStateHistory(bill, bhid);
         }
 
         public void DeleteBill(long uid, long bid)

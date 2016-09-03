@@ -3,7 +3,9 @@
     ViewBag.Title = "创建单个运单";
     Layout = "../Layout/_ManagerLeft.cshtml"; 
 }
-
+@section head{
+    <link rel="stylesheet" type="text/css" href="/Resources/css/jquery.datetimepicker.min.css" />
+}
 <div>
     @if(!Model.IsSuccess)
     { 
@@ -16,16 +18,17 @@
     {
         <div style="color:green">保存运单成功</div>
     }
-    <form action="@Url.Action("Edit")" enctype="application/x-www-form-urlencoded" method="post">
+    <form id="j-form" action="@Url.Action("Edit")" enctype="application/x-www-form-urlencoded" method="post">
         <input type="hidden" name="Bid" value="@Model.Bill.Bid" />
         <h2>带“*”号的为必填项</h2>
         <table cellpadding="0" cellspacing="0">
+            @if (Model.Bill.Bid > 0) 
+            { 
             <tr>
                 <td>单号</td>
-                <td colspan="3">
-                    <input value="@Model.Bill.No" name="No" />
-                </td>
+                <td colspan="3">@Model.Bill.No</td>
             </tr>
+            }
             @if(Model.IsAllowSetAgent || Model.IsAllowSetCreateDate)
             { 
             <tr>
@@ -62,73 +65,109 @@
                 <td>发件人*</td>
                 <td>
                     @if(Model.IsSenderAndReceiverReadOnly || Model.IsReadOnly)
+                    {
                         <span>@Model.Bill.Sender</span>
+                    }
                     else
+                    { 
                         <input value="@Model.Bill.Sender" name="Sender" />
+                    }
                 </td>
                 <td>发件人电话*</td>
                 <td>
                     @if (Model.IsSenderAndReceiverReadOnly || Model.IsReadOnly)
+                    {
                          <span>@Model.Bill.SenderTel</span>
+                    }
                     else
+                    {
                         <input value="@Model.Bill.SenderTel" name="SenderTel" />
+                    }
                 </td>
             </tr>
             <tr>
                 <td>收件人*</td>
                 <td>
                     @if (Model.IsSenderAndReceiverReadOnly || Model.IsReadOnly)
+                    {
                         <span>@Model.Bill.Receiver</span>
+                    }
                     else
+                    { 
                         <input value="@Model.Bill.Receiver" name="Receiver" />
+                    }
                 </td>
                 <td>收件人电话*</td>
                 <td>
                     @if (Model.IsSenderAndReceiverReadOnly || Model.IsReadOnly)
+                    {
                         <span>@Model.Bill.ReceiverTel</span>
+                    }
                     else
+                    { 
                         <input value="@Model.Bill.ReceiverTel" name="ReceiverTel" />
+                    }
                 </td>
             </tr>
             <tr>
                 <td>收件人地址*</td>
                 <td colspan="3">
                     @if (Model.IsSenderAndReceiverReadOnly || Model.IsReadOnly)
+                    {
                         <span>@Model.Bill.ReceiverAddress</span>
+                    }
                     else
+                    { 
                         <input value="@Model.Bill.ReceiverAddress" name="ReceiverAddress" style="width:300px" />
+                    }
                 </td>
             </tr>
             <tr>
                 <td>保险</td>
                 <td>
                     @if (Model.IsReadOnly)
+                    {
                         <span>@Model.Bill.Insurance</span>
+                    }
                     else
+                    { 
                         <input value="@Model.Bill.Insurance" name="Insurance" />
+                    }
                 </td>
                 <td>邮编</td>
                 <td>
                     @if (Model.IsSenderAndReceiverReadOnly || Model.IsReadOnly)
+                    {
                         <span>@Model.Bill.Post</span>
+                    }
                     else
+                    { 
                         <input value="@Model.Bill.Post" name="Post" />
+                    }
                 </td>
             </tr>
             <tr>
                 <td>物品(中文)</td>
                 <td>
                     @if (Model.IsReadOnly)
+                    {
                         <span>@Model.Bill.Goods</span>
+                    }
                     else
+                    { 
                         <textarea name="Goods">@Model.Bill.Goods</textarea>
+                    }
                 </td>
                 <td>备注</td>
                 <td>
                     @if (Model.IsReadOnly)
+                    {
                         <span>@Model.Bill.Remarks</span>
+                    }
                     else
+                    { 
                         <textarea name="Remarks">@Model.Bill.Remarks</textarea>
+                    }
                 </td>
             </tr>
             @if(Model.IsAllowUpdateState)
@@ -146,9 +185,79 @@
             }
             <tr>
                 <td colspan="3">
-                    <input type="submit" value="提交" />
+                    <input id="j-submit" type="submit" value="提交" />
                 </td>
             </tr>
         </table>
     </form>
 </div>
+<script type="text/javascript">
+    $(function () {
+        var submiting = false, senderAndReceiverReadOnly = @(Model.IsSenderAndReceiverReadOnly?"true":"false");
+        $("#j-submit").click(function () {
+            if (submiting) return false;
+
+            var $form = $("#j-form"),
+                data = {
+                    bid: $("[name=Bid]", $form).val(),
+                    created: $("[name=Created]", $form).val(),
+                    agentUid: $("[name=AgentUid]", $form).val(),
+                    sender: $.trim($("[name=Sender]", $form).val()),
+                    senderTel: $.trim($("[name=SenderTel]", $form).val()),
+                    receiver: $.trim($("[name=Receiver]", $form).val()),
+                    receiverTel: $.trim($("[name=ReceiverTel]", $form).val()),
+                    receiverAddress: $.trim($("[name=ReceiverAddress]", $form).val()),
+                    insurance: $("[name=Insurance]", $form).val(),
+                    post: $("[name=Post]", $form).val(),
+                    goods: $("[name=Goods]", $form).val(),
+                    remarks: $("[name=Remarks]", $form).val(),
+                    internalExpress: $("[name=InternalExpress]", $form).val(),
+                    internalNo: $("[name=InternalNo]", $form).val()
+                }, checkEmpty = function(val, msg){
+                    if(!val){
+                        alert(msg);
+                        return false;
+                    }else{
+                        return true;
+                    }
+                };
+
+            var canSubmit = senderAndReceiverReadOnly
+                    || (checkEmpty(data.sender, "请输入寄件人姓名")
+                    && checkEmpty(data.senderTel, "请输入寄件人电话")
+                    && checkEmpty(data.receiver, "请输入收件人姓名")
+                    && checkEmpty(data.receiverTel, "请输入收件人电话")
+                    && checkEmpty(data.receiverAddress, "请输入收件人地址"));
+
+            if(!canSubmit)
+                return false;
+
+            submiting = true;
+            $.ajax({
+                url: $form.attr("action"),
+                type: $form.attr("method"),
+                data: data,
+                dataType: "json",
+                success: function (response) {
+                    if (response.code == 0) {
+                        alert(data.bid > 0 ? '更新成功' : '创建成功');
+                        if(response.data){
+                            location.href = response.data;
+                        }
+                    } else {
+                        alert(response.msg);
+                    }
+                },
+                error: function () { alert("出错啦，请重试") }
+            }).always(function () { submiting = false });
+            return false;
+        });
+
+
+        $.datetimepicker.setLocale('ch');
+        $("[name=Created]").datetimepicker({
+            format: 'Y/m/d H:i:s'
+        });
+    });
+</script>
+

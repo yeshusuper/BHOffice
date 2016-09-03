@@ -34,13 +34,17 @@ namespace BHOffice.Core.Business.Bill
                 var entity = new Data.Bill
                 {
                     bill_date = DateTime.Now,
-                    confirmed = false,
+                    confirmed = _User.Role >= UserRoles.Agent,
                     created = DateTime.Now,
                     creater = _User.Uid,
                     enabled = true,
                     last_state_updated = DateTime.Now,
+                    updated = DateTime.Now,
                     state = BillStates.None,
                 };
+                if (entity.confirmed)
+                    entity.confirmer = _User.Uid;
+
                 var bill = new BillService(entity);
                 bill.UpdateInfo(sender, receiver);
                 bill.UpdateInfo(insurance, goods, remarks);
@@ -77,6 +81,21 @@ namespace BHOffice.Core.Business.Bill
                 _BillRepository.SaveChanges();
 
                 InsertBillStateHistory(bill, state, remarks, date);
+
+                scope.Complete();
+            }
+        }
+
+        public void UpdateBillInternalState(IBill bill, InternalTrade trade, string remarks, DateTime? date = null)
+        {
+            ExceptionHelper.ThrowIfNull(bill, "bill");
+            using (var scope = new System.Transactions.TransactionScope())
+            {
+                bill.UpdateInternalState(_User, trade);
+                _BillRepository.SaveChanges();
+
+                if (BillStates.清关完毕国内派送中 != bill.State)
+                    InsertBillStateHistory(bill, BillStates.清关完毕国内派送中, remarks, date);
 
                 scope.Complete();
             }
@@ -128,19 +147,6 @@ namespace BHOffice.Core.Business.Bill
             _BillRepository.SaveChanges();
         }
 
-        public void UpdateBillInternalState(IBill bill, InternalTrade trade, string remarks, DateTime? date = null)
-        {
-            ExceptionHelper.ThrowIfNull(bill, "bill");
-            using (var scope = new System.Transactions.TransactionScope())
-            {
-                bill.UpdateInternalState(_User, trade);
-                _BillRepository.SaveChanges();
-
-                InsertBillStateHistory(bill, BillStates.清关完毕国内派送中, remarks, date);
-
-                scope.Complete();
-            }
-        }
 
         public void UpdateAgent(IBill bill, long? agentUid)
         {

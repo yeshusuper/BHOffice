@@ -13,6 +13,7 @@ namespace BHOffice.Core.Business.Inject
         {
             Bind<IUserManager>().To<UserManager>();
             Bind<Bill.IBillManager>().To<Bill.BillManager>();
+            Bind<Bill.IBillAppService>().To<Bill.BillAppService>();
         }
     }
 }

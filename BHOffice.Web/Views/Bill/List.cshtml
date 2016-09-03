@@ -11,8 +11,15 @@
     <form action="@Url.Action("list")" enctype="application/x-www-form-urlencoded" method="get">
         <table class="common-form">
             <tr>
+                @if (Model.IsDisplayTrackButton)
+                {
                 <td>创建者：</td>
                 <td><input name="Creater" value="@Model.Query.Creater" class="form-control" /></td>
+                }
+                else
+                {
+                    <td></td><td></td>
+                }
                 <td>单号：</td>
                 <td><input name="No" value="@Model.Query.No" class="form-control" /></td>
                 <td>状态：</td>
@@ -47,7 +54,6 @@
             <th>收件地址</th>
             <th>状态</th>
             <th>功能</th>
-            <th>追踪</th>
         </tr>
     </thead>
     <tbody>
@@ -62,12 +68,14 @@
                 <td>@item.ReceiverAddr</td>
                 <td>@item.StateName</td>
                 <td>
-                    <a target="_blank" href="@Url.Action("Edit", new { bid = item.Bid })">编辑</a>
+                    <a target="_blank" href="@Url.Action("Edit", new { id = item.Bid })">编辑</a>                    
                     &nbsp;
-                    <a href="#" data-bid="@item.Bid" class="j-del">删除</a>
-                </td>
-                <td>
-                    <a target="_blank" href="@Url.Action("Track", new { bid = item.Bid })">追踪</a>
+                    <a href="#" data-bid="@item.Bid" class="j-del">删除</a>                    
+                    &nbsp;
+                    @if (Model.IsDisplayTrackButton) 
+                    {       
+                    <a target="_blank" href="@Url.Action("Track", new { id = item.Bid })">追踪</a>
+                    }
                 </td>
             </tr>
         }

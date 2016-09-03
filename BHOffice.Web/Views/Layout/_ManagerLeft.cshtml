@@ -143,7 +143,7 @@
     <li>
         <h3>运单管理</h3>
         <ul>
-            <li><a href="@Url.Action("edit", "bill")" @(Url.IsCurrent("edit", "bill") ? "class=\"current\"" : String.Empty)>创建单个运单</a></li>
+            <li><a href="@Url.Action("edit", "bill", new { id = String.Empty })" @(Url.IsCurrent("edit", "bill") ? "class=\"current\"" : String.Empty)>创建单个运单</a></li>
             <li><a href="@Url.Action("list", "bill")" @(Url.IsCurrent("list", "bill") ? "class=\"current\"" : String.Empty)>运单列表</a></li>
         </ul>
     </li>

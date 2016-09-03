@@ -31,22 +31,39 @@ namespace BHOffice.Web.Controllers
         public ActionResult Edit(long? id)
         {
             var user = _UserManager.GetUser(CurrentUser.Uid);
+            Models.Bill.EditModel model;
+            var canSetAgent = false;
             if(id.HasValue && id.Value > 0)
             {
                 var bill =_BillManager.GetBill(id.Value);
                 var auth = new BillAuthority(user, bill);
-                return View(new Models.Bill.EditModel(auth, bill));
+                canSetAgent = auth.AllowSetAgent;
+                if (auth.AllowView)
+                   model = new Models.Bill.EditModel(auth, bill);
+                else
+                    throw new BHException(ErrorCode.NotAllow, "没有此运单查看权限");
             }
             else
             {
-                return View(new Models.Bill.EditModel(user));
+                canSetAgent = user.Role >= UserRoles.Admin;
+                model = new Models.Bill.EditModel(user);
             }
+            if(canSetAgent)
+            {
+                model.Agents = _UserManager.GetAgents()
+                                    .OrderBy(a => a.uid)
+                                    .Select(a => new { a.uid, a.name })
+                                    .ToArray()
+                                    .ToDictionary(a => a.uid, a => a.name);
+            }
+            return View(model);
         }
 
         [HttpPost]
         [BHAuthorize]
         public ActionResult Edit(Models.Bill.BillEditModel model)
         {
+            var redirect = String.Empty;
             if (model.Bid > 0)
             {
                 _BillAppService.UpdateBill(CurrentUser.Uid, model.Bid,
@@ -58,14 +75,16 @@ namespace BHOffice.Web.Controllers
             }
             else
             {
-                _BillAppService.CreateBill(CurrentUser.Uid,
+                var bill = _BillAppService.CreateBill(CurrentUser.Uid,
                    model.Sender, model.SenderTel,
                    model.Receiver, model.ReceiverTel, model.ReceiverAddress, model.Post,
                    model.Insurance, model.Goods, model.Remarks,
                    model.AgentUid, model.Created,
-                    model.InternalNo, model.InternalExpress);
+                   model.InternalNo, model.InternalExpress);
+
+                redirect = this.Url.Action("Edit", new { id = bill.Bid });
             }
-            return SuccessJsonResult();
+            return SuccessJsonResult(redirect);
         }
 
         [HttpPost]
@@ -94,7 +113,7 @@ namespace BHOffice.Web.Controllers
             var uids = models.SelectMany(b => b.agent_uid.HasValue ? new[] { b.creater, b.agent_uid.Value } : new[] { b.creater }).ToArray();
             var names = _UserManager.GetUsersName(uids);
 
-            var model = new Models.Bill.ListModel
+            var model = new Models.Bill.ListModel(user)
             {
                 Query = query,
                 Items = new Web.Core.PageModel<Models.Bill.ListModel.ListItemModel>(models.Select(m => new Models.Bill.ListModel.ListItemModel
@@ -155,9 +174,9 @@ namespace BHOffice.Web.Controllers
 
         [HttpPost]
         [BHAuthorize]
-        public ActionResult DelHistory(long id, long bhid)
+        public ActionResult DelHistory(long bid, long bhid)
         {
-            _BillAppService.DeleteBillStateHistory(CurrentUser.Uid, id, bhid);
+            _BillAppService.DeleteBillStateHistory(CurrentUser.Uid, bid, bhid);
             return SuccessJsonResult();
         }
 
@@ -165,7 +184,7 @@ namespace BHOffice.Web.Controllers
         public ActionResult Way(string nos)
         {
             var noArr = nos
-                        .Split(new []{ ",", " ", "\r\n" }, StringSplitOptions.RemoveEmptyEntries)
+                        .Split(new[] { ",", " ", "\r\n" }, StringSplitOptions.RemoveEmptyEntries)
                         .Take(20)
                         .ToArray();
 
@@ -180,15 +199,13 @@ namespace BHOffice.Web.Controllers
                             }).ToArray();
             var histories = _BillManager.GetBillHistories(bills.Select(b => b.bid).ToArray()).ToArray();
 
-            var model = new Models.Bill.WayModel
+            return SuccessJsonResult(bills.Select(b => new Models.Bill.WayModel.WayItemModel
             {
-                Items = bills.Select(b => new Models.Bill.WayModel.WayItemModel
-                {
-                    No = b.no,
-                    State = b.state,
-                    InternalExpress = b.i_express,
-                    InternalNo = b.i_no,
-                    Histories = histories.Where(h => h.bid == b.bid).OrderByDescending(h => h.created)
+                No = b.no,
+                State = b.state,
+                InternalExpress = b.i_express,
+                InternalNo = b.i_no,
+                Histories = histories.Where(h => h.bid == b.bid).OrderByDescending(h => h.created)
                                     .Select(h => new Models.Bill.TrackModel.HistoryItem
                                     {
                                         Bhid = h.bhid,
@@ -196,10 +213,7 @@ namespace BHOffice.Web.Controllers
                                         Remarks = h.remarks,
                                         State = h.state
                                     }).ToArray()
-                }).ToArray()
-            };
-
-            return View(model);
+            }).ToArray());
         }
     }
 }
