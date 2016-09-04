@@ -152,7 +152,7 @@ namespace BHOffice.Core.Business.Bill
             var user = _UserManager.GetUser(uid);
             var bill = _BillManager.GetBill(bid);
             var authority = new BillAuthority(user, bill);
-            if (!authority.AllowUpdateMinorInfo)
+            if (!authority.AllowDelete)
                 throw new BHException(ErrorCode.NotAllow, "没有权限删除运单");
 
             IBillManagerUser manager = new BillUser(user, _BillRepository, _BillStateHistoryRepository);

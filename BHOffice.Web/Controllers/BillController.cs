@@ -100,10 +100,15 @@ namespace BHOffice.Web.Controllers
         public ActionResult List(Models.Bill.ListModel.SearchModel query)
         {
             var pageSize = 30;
+            var maxCreated = query.MaxCreated;
+            if (query.MaxCreated.HasValue)
+            {
+                query.MaxCreated = query.MaxCreated.Value.AddDays(1);
+            }
 
             var user = _UserManager.GetUser(CurrentUser.Uid);
             var result = _BillManager.Search(user, query);
-
+            
             double count = result.Count();
             var models = result
                             .OrderByDescending(b => b.bid)
@@ -112,6 +117,8 @@ namespace BHOffice.Web.Controllers
 
             var uids = models.SelectMany(b => b.agent_uid.HasValue ? new[] { b.creater, b.agent_uid.Value } : new[] { b.creater }).ToArray();
             var names = _UserManager.GetUsersName(uids);
+
+            query.MaxCreated = maxCreated;
 
             var model = new Models.Bill.ListModel(user)
             {
@@ -126,6 +133,7 @@ namespace BHOffice.Web.Controllers
                     ReceiverAddr = m.receiver_addr,
                     ReceiverName = m.receiver,
                     StateName = m.state == BillStates.None ? "--" : m.state.ToString(),
+                    IsDisplayDeleteButton = new BillAuthority(user, m).AllowDelete,
                 }), query.PageIndex, (int)Math.Ceiling(count / (double)pageSize))
             };
 

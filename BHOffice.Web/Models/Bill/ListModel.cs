@@ -34,10 +34,12 @@ namespace BHOffice.Web.Models.Bill
 
             [DisplayFormat(DataFormatString = "yyyy/MM/dd HH:mm:ss")]
             public DateTime Created { get; set; }
+            public bool IsDisplayDeleteButton { get; set; }
         }
 
         public bool IsDisplayTrackButton { get; private set; }
         public bool IsDisplayCreaterQuery { get; private set; }
+        public bool IsDisplayAgent { get; private set; }
 
         public SearchModel Query { get; set; }
         public Core.PageModel<ListItemModel> Items { get; set; }
@@ -52,6 +54,7 @@ namespace BHOffice.Web.Models.Bill
             : this()
         {
             IsDisplayTrackButton = IsDisplayCreaterQuery = user.Role >= UserRoles.Agent;
+            IsDisplayAgent = user.Role >= UserRoles.Admin;
         }
     }
 

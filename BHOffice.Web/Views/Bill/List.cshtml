@@ -1,9 +1,82 @@
 ﻿@model BHOffice.Web.Models.Bill.ListModel
 @{
     ViewBag.Title = "运单列表";
-    Layout = "../Layout/_ManagerLeft.cshtml"; 
+    Layout = "../Layout/_ManagerLeft.cshtml";
+    var itemIndex = 0;
 }
 @section head{
+    <style>
+        .common-form{
+            width:1000px;
+        } 
+        .common-form .input-control, .common-form .time-control {
+            width: 210px;
+            height: 28px;
+            padding: 3px 8px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 2px;
+            box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+            transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+            -webkit-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+            -moz-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+            -ms-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+            -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+        }
+        .common-form .time-control {
+            width: 80px;
+        }
+        .common-form td {
+            padding: 2px 20px 2px 0;
+        }
+        .common-form .tips {
+            color: #474646;
+            text-align: right;
+            vertical-align: middle;
+            padding-right:2px;
+            width:83px;
+        }
+        body .common-form .btn-primary{
+            font-size:14px;
+            width:150px;
+            height:36px;
+            line-height:36px;
+            padding:0;
+            margin-left:34px
+        }
+
+        .bill-list {
+            font-size: 14px;
+            width: 100%;
+            margin-top: 20px;
+            color: #333;
+        }
+        .bill-list td{
+            padding:5px;
+            border-bottom:1px solid #ddd;
+            line-height:27px;
+            text-align:center;
+        }
+        .bill-list thead th {
+            background: #ddd;
+            font-weight: bold;
+            line-height: 36px;
+            color: #666;
+        }
+        .bill-list .addr{
+            text-align:left
+        }
+        .bill-list .action {
+            text-align: left;
+        }
+        .bill-list .action a {
+            margin-right:6px;
+            color:#369            
+        }
+        .bill-list .bc-row{
+            background-color:#f5f5f5;
+        }
+    </style>
     <link rel="stylesheet" type="text/css" href="/Resources/css/jquery.datetimepicker.min.css" />
 }
 <script type="text/javascript" src="/Resources/Js/jquery.datetimepicker.full.min.js"></script>
@@ -11,73 +84,80 @@
     <form action="@Url.Action("list")" enctype="application/x-www-form-urlencoded" method="get">
         <table class="common-form">
             <tr>
-                @if (Model.IsDisplayTrackButton)
-                {
-                <td>创建者：</td>
-                <td><input name="Creater" value="@Model.Query.Creater" class="form-control" /></td>
-                }
-                else
-                {
-                    <td></td><td></td>
-                }
-                <td>单号：</td>
-                <td><input name="No" value="@Model.Query.No" class="form-control" /></td>
-                <td>状态：</td>
+                <td class="tips">单号：</td>
+                <td><input name="No" value="@Model.Query.No" class="input-control" /></td>
+                <td class="tips">收件人：</td>
+                <td><input name="Receiver" value="@Model.Query.Receiver" class="input-control" /></td>
+                <td class="tips">状态：</td>
                 <td>
-                    @Html.DropDownList("State", Util.GetBillStateSelectList(Model.Query.State), "--运单状态--")
+                    @Html.DropDownList("State", Util.GetBillStateSelectList(Model.Query.State), "--运单状态--", new { @class = "input-control" })
                 </td>
             </tr>
             <tr>
-                <td>收件人：</td>
-                <td><input name="Receiver" value="@Model.Query.Receiver" class="form-control" /></td>
-                <td>创建时间：</td>
+                <td class="tips">创建时间：</td>
                 <td>
-                    <input name="MinCreated" value="@Html.DisplayFor(m => m.Query.MinCreated)" class="form-control" />
+                    <input name="MinCreated" value="@Html.DisplayFor(m => m.Query.MinCreated)" class="time-control" />
                     到
-                    <input name="MaxCreated" value="@Html.DisplayFor(m => m.Query.MaxCreated)" class="form-control" />
-                </td>
+                    <input name="MaxCreated" value="@Html.DisplayFor(m => m.Query.MaxCreated)" class="time-control" />
+                </td>                
+                @if (Model.IsDisplayTrackButton)
+                {
+                    <td class="tips">创建者：</td>
+                    <td><input name="Creater" value="@Model.Query.Creater" class="input-control" /></td>
+                }
+                else
+                {
+                    <td></td>
+                    <td></td>
+                }
                 <td colspan="2">
-                    <input value="搜索" type="submit" class="btn btn-primary" />
+                    <input value="搜 索" type="submit" class="btn btn-primary" />
                 </td>
             </tr>
         </table>
     </form>
 </div>
-<table class="common_table">
+<table class="bill-list">
     <thead>
         <tr>
-            <th>代理商</th>
-            <th>订单号</th>
-            <th>创建者</th>
-            <th>创建时间</th>
-            <th>收件人</th>
+            @if (Model.IsDisplayAgent)
+            {
+            <th style="width:5%">代理商</th>
+            }
+            <th style="width:10%">订单号</th>
+            <th style="width:5%">创建者</th>
+            <th style="width:12%">创建时间</th>
+            <th style="width:5%">收件人</th>
             <th>收件地址</th>
-            <th>状态</th>
-            <th>功能</th>
+            <th style="width:10%">状态</th>
+            <th style="width:12%">功能</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model.Items)
-        {            
-            <tr>
-                <td>@item.AgentName</td>
+        {
+            <tr class="@(itemIndex++%2!=0 ? "bc-row" : String.Empty)">
+                @if (Model.IsDisplayAgent)
+                {
+                    <td>@item.AgentName</td>
+                }
                 <td>@item.No</td>
                 <td>@item.CreaterName</td>
                 <td>@item.Created.ToString("yyyy/MM/dd HH:mm:ss")</td>
                 <td>@item.ReceiverName</td>
-                <td>@item.ReceiverAddr</td>
+                <td class="addr">@item.ReceiverAddr</td>
                 <td>@item.StateName</td>
-                <td>
-                    <a target="_blank" href="@Url.Action("Edit", new { id = item.Bid })">编辑</a>                    
-                    &nbsp;
-                    <a target="_blank" href="@Url.Action("Print", new { id = item.Bid })">打印</a>                    
-                    &nbsp;
+                <td class="action">
+                    <a target="_blank" href="@Url.Action("Edit", new { id = item.Bid })">编辑</a>
+                    <a target="_blank" href="@Url.Action("Print", new { id = item.Bid })">打印</a>
                     @if (Model.IsDisplayTrackButton)
                     {
                         <a target="_blank" href="@Url.Action("Track", new { id = item.Bid })">追踪</a>
                     }
-                    &nbsp;
-                    <a href="#" data-bid="@item.Bid" class="j-del">删除</a>             
+                    @if (item.IsDisplayDeleteButton)
+                    {
+                        <a href="#" data-bid="@item.Bid" class="j-del">删除</a>
+                    }
                 </td>
             </tr>
         }
