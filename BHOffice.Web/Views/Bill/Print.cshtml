@@ -55,12 +55,17 @@
             .barcode-list {
                 width: 998px;
                 margin: 0 auto;
+                overflow:hidden;
             }
             .barcode-list li{
                 float:left;
                 line-height:25px;
-                padding-bottom:15px;
+                padding:10px 0 8px 0;
                 width:490px;
+                border-bottom:1px dashed #000;
+            }
+            .barcode-list li.r{                
+                border-left:1px dashed #000;
             }
             .barcode-list img {
                 float:left;
@@ -133,9 +138,9 @@
         <br />
         }        
         <ul class="barcode-list">
-        @for (int i = 0; i < 10; i++)
+        @for (int i = 0; i < 8; i++)
         {
-            <li>
+            <li class="@(i%2==0?"l":"r")">
                 <img src="@Url.Action("barcode", new { id = Model.No })" alt="@Model.No" />
                 <span>@Model.Receiver&nbsp;*@Model.No*</span>                
             </li>
