@@ -85,5 +85,19 @@ namespace BHOffice.Web.Controllers
             else
                 return RedirectToAction("index", "index");
         }
+
+        [HttpGet]
+        public ActionResult Password()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [BHAuthorize]
+        public ActionResult Password(string oldPwd, string newPwd)
+        {
+            _UserMangaer.ResetPassword(CurrentUser.Uid, oldPwd, newPwd);
+            return SuccessJsonResult();
+        }
     }
 }

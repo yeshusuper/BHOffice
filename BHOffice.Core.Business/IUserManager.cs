@@ -12,6 +12,7 @@ namespace BHOffice.Core.Business
         IUser Login(string userNo, string password);
         IUser GetUser(long uid);
         IUser Register(string userNo, string password, string username);
+        void ResetPassword(long uid, string oldPassword, string newPassword);
         bool IsUsable(ref string userNo);
         Dictionary<long, string> GetUsersName(long[] uids);
         IQueryable<Data.User> GetAgents();
@@ -24,6 +25,26 @@ namespace BHOffice.Core.Business
         public UserManager(Core.Data.IRepository<Data.User> userRepository)
         {
             _UserRepository = userRepository;
+        }
+
+
+        public void ResetPassword(long uid, string oldPassword, string newPassword)
+        {
+            ExceptionHelper.ThrowIfNotId(uid, "uid");
+            ExceptionHelper.ThrowIfNullOrWhiteSpace(oldPassword, "oldPassword", "旧密码不能为空");
+            ExceptionHelper.ThrowIfNullOrWhiteSpace(newPassword, "newPassword", "新密码不能为空");
+            oldPassword = oldPassword.Trim();
+            newPassword = newPassword.Trim();
+            ExceptionHelper.ThrowIfTrue(!StringRule.VerifyPassword(newPassword), "newPassword", "新密码格式不正确");
+
+            var entity = _UserRepository.Entities.FirstOrDefault(u => u.uid == uid);
+            ExceptionHelper.ThrowIfNull(entity, "uid", "账号不存在");
+
+            if (!VerifyPassword(oldPassword, entity.pwd))
+                throw new BHException(ErrorCode.ErrorUserNoOrPwd, "旧密码错误");
+
+            entity.pwd = EncryptPassword(newPassword);
+            _UserRepository.SaveChanges();
         }
 
         public IUser Login(string userNo, string password)

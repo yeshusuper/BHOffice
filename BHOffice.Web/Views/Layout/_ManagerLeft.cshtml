@@ -168,6 +168,7 @@
     <ul class="sidebar">
         <li><a href="@Url.Action("edit", "bill", new { id = String.Empty })" @(Url.IsCurrent("edit", "bill") ? "class=\"current\"" : String.Empty)>创建单个运单</a></li>
         <li><a href="@Url.Action("list", "bill")" @(Url.IsCurrent("list", "bill") ? "class=\"current\"" : String.Empty)>运单列表</a></li>
+        <li><a href="@Url.Action("password", "user")" @(Url.IsCurrent("password", "user") ? "class=\"current\"" : String.Empty)>修改密码</a></li>
     </ul>
     <div class="manager_content">
         @RenderBody()
