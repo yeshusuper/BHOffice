@@ -121,15 +121,18 @@
         </table>
     </form>
 </div>
+@if (Model.IsDisplayAgent)
+{
 <div class="batch-options">
     <a class="btn btn-primary j-batch-track" href="#j-batch-track-popup">批量追踪</a>
 </div>
+}
 <table class="bill-list">
     <thead>
         <tr>
             @if (Model.IsDisplayAgent)
             {
-            <th style="width: 2%"><input type="checkbox" class="j-batch-all" /></th>
+            <th style="width:2%"><input type="checkbox" class="j-batch-all" /></th>
             <th style="width:5%">代理商</th>
             }
             <th style="width:10%">订单号</th>
