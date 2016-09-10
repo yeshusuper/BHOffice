@@ -11,8 +11,8 @@ namespace BHOffice.Core.Business.Bill
         IBill CreateBill(long uid, string sender, string senderTel, string receiver, string receiverTel, string address, string post, decimal insurance, string goods, string remarks, long? agentUid, DateTime? created, string internalNo, string internalExpress);
         IBill UpdateBill(long uid, long bid, string sender, string senderTel, string receiver, string receiverTel, string address, string post, decimal insurance, string goods, string remarks, long? agentUid, DateTime? created, string internalNo, string internalExpress);
         void UpdateInternalState(long uid, long bid, InternalTrade trade, string remarks, DateTime? date);
-        void UpdateState(long uid, long bid, BillStates state, string remarks, DateTime? date);
-        void InsertStateHistory(long uid, long bid, BillStates state, string remarks, DateTime? date);
+        void UpdateState(long uid, long[] bids, BillStates state, string remarks, DateTime? date);
+        void InsertStateHistory(long uid, long[] bids, BillStates state, string remarks, DateTime? date);
         void DeleteBill(long uid, long bid);
         void DeleteBillStateHistory(long uid, long bid, long bhid);
     }
@@ -111,28 +111,46 @@ namespace BHOffice.Core.Business.Bill
             manager.UpdateBillInternalState(bill, trade, remarks, date);
         }
 
-        public void UpdateState(long uid, long bid, BillStates state, string remarks, DateTime? date)
+        public void UpdateState(long uid, long[] bids, BillStates state, string remarks, DateTime? date)
         {
-            var user = _UserManager.GetUser(uid);
-            var bill = _BillManager.GetBill(bid); 
-            var authority = new BillAuthority(user, bill);
-            if (!authority.AllowUpdateState)
-                throw new BHException(ErrorCode.NotAllow, "没有权限更新运单状态");
+            ExceptionHelper.ThrowIfNullOrEmptyIds(ref bids, "bids");
 
+            var user = _UserManager.GetUser(uid);
             IBillManagerUser manager = new BillUser(user, _BillRepository, _BillStateHistoryRepository);
-            manager.UpdateBillState(bill, state, remarks, date);
+            
+            using (var scope = new System.Transactions.TransactionScope())
+            {
+                foreach (var bid in bids)
+                {
+                    var bill = _BillManager.GetBill(bid); 
+                    var authority = new BillAuthority(user, bill);
+                    if (!authority.AllowUpdateState)
+                        throw new BHException(ErrorCode.NotAllow, "没有权限更新运单状态,单号：" + bill.No);
+                    manager.UpdateBillState(bill, state, remarks, date);
+                }
+                scope.Complete();
+            }
         }
 
-        public void InsertStateHistory(long uid, long bid, BillStates state, string remarks, DateTime? date)
+        public void InsertStateHistory(long uid, long[] bids, BillStates state, string remarks, DateTime? date)
         {
-            var user = _UserManager.GetUser(uid);
-            var bill = _BillManager.GetBill(bid);
-            var authority = new BillAuthority(user, bill);
-            if (!authority.AllowUpdateState)
-                throw new BHException(ErrorCode.NotAllow, "没有权限更新运单状态");
+            ExceptionHelper.ThrowIfNullOrEmptyIds(ref bids, "bids");
 
+            var user = _UserManager.GetUser(uid);
             IBillManagerUser manager = new BillUser(user, _BillRepository, _BillStateHistoryRepository);
-            manager.InsertBillStateHistory(bill, state, remarks, date);
+            using (var scope = new System.Transactions.TransactionScope())
+            {
+                foreach (var bid in bids)
+                {
+                    var bill = _BillManager.GetBill(bid);
+                    var authority = new BillAuthority(user, bill);
+                    if (!authority.AllowUpdateState)
+                        throw new BHException(ErrorCode.NotAllow, "没有权限更新运单状态,单号：" + bill.No);
+                    manager.InsertBillStateHistory(bill, state, remarks, date);
+                }
+
+                scope.Complete();
+            }
         }
 
         public void DeleteBillStateHistory(long uid, long bid, long bhid)

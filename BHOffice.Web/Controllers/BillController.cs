@@ -9,6 +9,7 @@ using System.Web.Mvc;
 using BHOffice.Core.Linq;
 using BHOffice.Core;
 
+
 namespace BHOffice.Web.Controllers
 {
     public class BillController : BaseController
@@ -152,12 +153,13 @@ namespace BHOffice.Web.Controllers
         [BHAuthorize]
         public ActionResult Track(Models.Bill.TrackEditModel model)
         {
+            var ids = model.Bids.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries).Select(id => Convert.ToInt64(id)).ToArray();
             if (model.UpdateState)
-                _BillAppService.UpdateState(CurrentUser.Uid, model.Bid, model.State, model.Remarks, model.Created);
+                _BillAppService.UpdateState(CurrentUser.Uid, ids, model.State, model.Remarks, model.Created);
             else
-                _BillAppService.InsertStateHistory(CurrentUser.Uid, model.Bid, model.State, model.Remarks, model.Created);
+                _BillAppService.InsertStateHistory(CurrentUser.Uid, ids, model.State, model.Remarks, model.Created);
 
-            return RedirectToAction("Track", new { id = model.Bid });
+            return SuccessJsonResult();
         }
 
         private ActionResult ViewTask(IBill bill)

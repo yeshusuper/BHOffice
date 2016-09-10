@@ -48,7 +48,7 @@
         .bill-list {
             font-size: 14px;
             width: 100%;
-            margin-top: 20px;
+            margin-top: 8px;
             color: #333;
         }
         .bill-list td{
@@ -75,6 +75,10 @@
         }
         .bill-list .bc-row{
             background-color:#f5f5f5;
+        }
+
+        .batch-options{
+            margin-top:15px;
         }
     </style>
     <link rel="stylesheet" type="text/css" href="/Resources/css/jquery.datetimepicker.min.css" />
@@ -117,11 +121,15 @@
         </table>
     </form>
 </div>
+<div class="batch-options">
+    <a class="btn btn-primary j-batch-track" href="#j-batch-track-popup">批量追踪</a>
+</div>
 <table class="bill-list">
     <thead>
         <tr>
             @if (Model.IsDisplayAgent)
             {
+            <th style="width: 2%"><input type="checkbox" class="j-batch-all" /></th>
             <th style="width:5%">代理商</th>
             }
             <th style="width:10%">订单号</th>
@@ -139,6 +147,7 @@
             <tr class="@(itemIndex++%2!=0 ? "bc-row" : String.Empty)">
                 @if (Model.IsDisplayAgent)
                 {
+                    <td><input type="checkbox" value="@item.Bid" class="j-batch-item" /></td>
                     <td>@item.AgentName</td>
                 }
                 <td>@item.No</td>
@@ -163,6 +172,40 @@
         }
     </tbody>
 </table>
+<div class="white-popup mfp-hide" id="j-batch-track-popup" style="width:400px;padding:15px 20px">
+    <table class="common-form" style="width:100%">
+        <tr>
+            <td>状态：</td>
+            <td>
+                @Html.DropDownList("State", Util.GetBillStateSelectList(null), "--运单状态--")
+            </td>
+        </tr>
+        <tr>
+            <td>操作时间：</td>
+            <td>
+                <input name="Created" class="form-control" />
+            </td>
+        </tr>
+        <tr>
+            <td>备注：</td>
+            <td>
+                <textarea name="Remarks" class="form-control"></textarea>
+            </td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td>
+                <input value="True" name="UpdateState" checked="checked" type="checkbox" />更新运单状态
+            </td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td>
+                <input value="保存" type="button" class="btn btn-primary" style="margin-top:15px;" />
+            </td>
+        </tr>
+    </table>
+</div>
 <script>
     (function () {
         $(".j-del").click(function () {
@@ -188,6 +231,76 @@
             }
         });
         $.datetimepicker.setLocale('ch');
-        $("[name=MinCreated],[name=MaxCreated]").datetimepicker({ timepicker: false, format:'Y/m/d' });
+        $("[name=MinCreated],[name=MaxCreated]").datetimepicker({ timepicker: false, format: 'Y/m/d' });
+    })();
+    (function () {
+        var $all = $(".j-batch-all"), $items = $(".j-batch-item");
+        $all.click(function () {
+            $items.prop("checked", $(this).prop("checked"));
+        });
+        var $trackPopup = $("#j-batch-track-popup"),
+            $trackState = $trackPopup.find("[name=State]"),
+            $trackCreated = $trackPopup.find("[name=Created]"),
+            $trackRemarks = $trackPopup.find("[name=Remarks]"),
+            $trackUpdateState = $trackPopup.find("[name=UpdateState]"),
+            $trackButton = $trackPopup.find(".btn-primary");
+        $(".j-batch-track").magnificPopup({
+            type: 'inline',
+            closeOnBgClick: false,
+            disableOn:function(){
+                if ($items.filter(":checked").length > 0)
+                    return true;
+                alert("没有选择运单");
+                return false;
+            },
+            callbacks: {
+                beforeOpen: function () {
+                    var now = new Date();
+                    $trackCreated.val(now.getFullYear() + '/' + (now.getMonth() + 1) + '/' + now.getDate() + ' ' + now.getHours() + ':' + now.getMinutes() + ":" + now.getSeconds());
+                }
+            }
+        });
+        var trackSubming = false;
+        $trackButton.click(function () {
+            var data = {
+                State: $.trim($trackState.val()),
+                Created: $.trim($trackCreated.val()),
+                Remarks: $.trim($trackRemarks.val()),
+                UpdateState: $trackUpdateState.is(":checked") ? $.trim($trackUpdateState.val()) : null,
+                Bids: []
+            };
+            $items.filter(":checked").each(function (i, elem) {
+                data.Bids.push($(elem).val());
+            });
+            if (!data.Bids.length)
+                alert("没有选择运单");
+            else if (!data.State)
+                alert("没有选择运单状态");
+            else if (!data.Created)
+                alert("没有设置运单状态更新时间");
+            else {
+                trackSubming = true;
+                data.Bids = data.Bids.join(",");
+                $.ajax({
+                    url: '@Url.Action("track", "bill")',
+                    type: 'post',
+                    dataType: 'json',
+                    data: data,
+                    success: function (data) {
+                        if (data.code == 0) {
+                            location.reload();
+                        } else {
+                            alert(data.msg);
+                        }
+                    },
+                    error: function () {
+                        alert("出错了，请重试！");
+                    }
+                }).always(function () { trackSubming = false; });
+            }
+            return false;
+        });
+
+        $trackCreated.datetimepicker({ timepicker: false, format: 'Y/m/d' });
     })();
 </script>

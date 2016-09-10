@@ -31,7 +31,7 @@
 </div>
 <div style="border-top:1px solid #000;margin-top:20px;padding-top:20px;">
     <form enctype="application/x-www-form-urlencoded" method="post" action="@Url.Action("Track")">
-        <input type="hidden" name="Bid" value="@Model.Bid" />
+        <input type="hidden" name="Bids" value="@Model.Bid" />
         <table class="common-form">
             <tr>
                 <td>状态：</td>
@@ -90,5 +90,47 @@
                 return false;
             }
         });
+
+        var $track = $("form"),
+            $trackBids = $track.find("[name=Bids]"),
+            $trackState = $track.find("[name=State]"),
+            $trackCreated = $track.find("[name=Created]"),
+            $trackRemarks = $track.find("[name=Remarks]"),
+            $trackUpdateState = $track.find("[name=UpdateState]"),
+            $trackButton = $track.find(".btn-primary");
+        var trackSubming = false;
+        $trackButton.click(function () {
+            var data = {
+                State: $.trim($trackState.val()),
+                Created: $.trim($trackCreated.val()),
+                Remarks: $.trim($trackRemarks.val()),
+                UpdateState: $trackUpdateState.is(":checked") ? $.trim($trackUpdateState.val()) : null,
+                Bids: $trackBids.val()
+            };
+            if (!data.State)
+                alert("没有选择运单状态");
+            else if (!data.Created)
+                alert("没有设置运单状态更新时间");
+            else {
+                trackSubming = true;
+                $.ajax({
+                    url: $track.attr("action"),
+                    type: 'post',
+                    dataType: 'json',
+                    data: data,
+                    success: function (data) {
+                        if (data.code == 0) {
+                            location.reload();
+                        } else {
+                            alert(data.msg);
+                        }
+                    },
+                    error: function () {
+                        alert("出错了，请重试！");
+                    }
+                }).always(function () { trackSubming = false; });
+            }
+            return false;
+        })
     })();
 </script>

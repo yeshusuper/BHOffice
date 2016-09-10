@@ -144,7 +144,7 @@
         <br />
         }        
         <ul class="barcode-list">
-        @for (int i = 0; i < 15; i++)
+        @for (int i = 0; i < 12; i++)
         {
             <li class="@(i%3==0?"l":"r")">
                 <img src="@Url.Action("barcode", new { id = Model.No })" alt="@Model.No" />

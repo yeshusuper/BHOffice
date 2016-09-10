@@ -24,7 +24,7 @@ namespace BHOffice.Web.Models.Bill
 
     public class TrackEditModel
     {
-        public long Bid { get; set; }
+        public string Bids { get; set; }
         public DateTime Created { get; set; }
         public BHOffice.Core.Business.Bill.BillStates State { get; set; }
         public string Remarks { get; set; }
