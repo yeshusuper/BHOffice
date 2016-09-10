@@ -8,10 +8,12 @@ namespace BHOffice.Core.Business.Bill
 {
     public class BillTradeNo
     {
+        private const long START = 9461200000;
+
         private string _InternalTradeNo;
         public BillTradeNo(long billId)
         {
-            _InternalTradeNo = String.Format("GD94612{0}", billId.ToString().PadLeft(9, '0'));
+            _InternalTradeNo = String.Format("GD{0}", START + billId);
         }
 
         private BillTradeNo(string no)
