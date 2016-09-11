@@ -126,6 +126,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\Bill\BillEditModel.cs" />
+    <Compile Include="Models\Bill\ConfirmImportInternalNoModel.cs" />
     <Compile Include="Models\Bill\EditModel.cs" />
     <Compile Include="Models\Bill\ListModel.cs" />
     <Compile Include="Models\Bill\TrackModel.cs" />
@@ -221,6 +222,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\User\Password.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\templates\gd-internal-no-template.csv" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Bill\ConfirmImportInternalNo.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

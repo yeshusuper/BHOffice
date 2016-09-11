@@ -10,7 +10,7 @@ namespace BHOffice.Core.Business.Bill
     {
         IBill CreateBill(long uid, string sender, string senderTel, string receiver, string receiverTel, string address, string post, decimal insurance, string goods, string remarks, long? agentUid, DateTime? created, string internalNo, string internalExpress);
         IBill UpdateBill(long uid, long bid, string sender, string senderTel, string receiver, string receiverTel, string address, string post, decimal insurance, string goods, string remarks, long? agentUid, DateTime? created, string internalNo, string internalExpress);
-        void UpdateInternalState(long uid, long bid, InternalTrade trade, string remarks, DateTime? date);
+        void UpdateInternalState(long uid, BatchInternalTrade batchInternalTrade);
         void UpdateState(long uid, long[] bids, BillStates state, string remarks, DateTime? date);
         void InsertStateHistory(long uid, long[] bids, BillStates state, string remarks, DateTime? date);
         void DeleteBill(long uid, long bid);
@@ -99,16 +99,26 @@ namespace BHOffice.Core.Business.Bill
             return bill;
         }
 
-        public void UpdateInternalState(long uid, long bid, InternalTrade trade, string remarks, DateTime? date)
+        public void UpdateInternalState(long uid, BatchInternalTrade batchInternalTrade)
         {
-            var user = _UserManager.GetUser(uid);
-            var bill = _BillManager.GetBill(bid);
-            var authority = new BillAuthority(user, bill);
-            if (!authority.AllowUpdateState)
-                throw new BHException(ErrorCode.NotAllow, "没有权限更新运单状态");
+            ExceptionHelper.ThrowIfNull(batchInternalTrade, "batchInternalTrade");
 
+            var user = _UserManager.GetUser(uid);
             IBillManagerUser manager = new BillUser(user, _BillRepository, _BillStateHistoryRepository);
-            manager.UpdateBillInternalState(bill, trade, remarks, date);
+
+            using (var scope = new System.Transactions.TransactionScope())
+            {
+                foreach (var item in batchInternalTrade)
+                {
+                    var bill = _BillManager.GetBill(item.Key);
+                    var authority = new BillAuthority(user, bill);
+                    if (!authority.AllowUpdateState)
+                        throw new BHException(ErrorCode.NotAllow, "没有权限更新运单状态");
+
+                    manager.UpdateBillInternalState(bill, item.Value.InternalTrade, item.Value.Remarks, item.Value.Date);
+                }
+                scope.Complete();
+            }
         }
 
         public void UpdateState(long uid, long[] bids, BillStates state, string remarks, DateTime? date)

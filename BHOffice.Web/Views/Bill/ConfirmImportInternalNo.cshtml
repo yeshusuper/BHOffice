@@ -1,0 +1,95 @@
+﻿@model BHOffice.Web.Models.Bill.ConfirmImportInternalNoModel
+@{
+    ViewBag.Title = "确认国内订单导入信息";
+    Layout = "../Layout/_ManagerLeft.cshtml";
+    var itemIndex = 0;
+}
+@section head{
+    <style>
+        .bill-list {
+            font-size: 14px;
+            width: 100%;
+            margin-top: 8px;
+            color: #333;
+        }
+
+            .bill-list td {
+                padding: 5px;
+                border-bottom: 1px solid #ddd;
+                line-height: 27px;
+                text-align: center;
+            }
+
+            .bill-list thead th {
+                background: #ddd;
+                font-weight: bold;
+                line-height: 36px;
+                color: #666;
+            }
+            .bill-list .bc-row {
+                background-color: #f5f5f5;
+            }
+        body .common-form .btn-primary {
+            font-size: 14px;
+            width: 150px;
+            height: 36px;
+            line-height: 36px;
+            padding: 0;
+            margin-left: 34px;
+        }
+    </style>
+}
+<h3>将要导入 @Model.EnabledItemsLength 条数据，请检查</h3>
+<table class="bill-list">
+    <thead>
+        <tr>
+            <th style="width:10%">订单号</th>
+            <th style="width:15%">国内单号</th>
+            <th style="width:10%">国内快递</th>
+            <th style="width:15%">备注</th>
+            <th style="width:12%">更新时间</th>
+            <th>异常原因</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Items.OrderBy(i => i.IsEnabled).ThenBy(i => i.No))
+        {
+            <tr style="@(!item.IsEnabled ? "background:#fa7d7d" : itemIndex++%2!=0 ? "bc-row" : String.Empty)">
+                <td>@item.No</td>
+                <td>@item.InternalNo</td>
+                <td>@item.InternalExpress</td>
+                <td>@item.Remarks</td>
+                <td>@(item.UpdateStateDate.HasValue ? item.UpdateStateDate.Value.ToString("yyyy/MM/dd HH:mm:ss") : "当前时间")</td>
+                <td>@item.ErrorMessage</td>
+            </tr>
+        }
+    </tbody>
+</table>
+<div>
+    <input value="确认并导入数据" type="button" class="btn btn-primary j-submit" />（自动排除有问题的数据）
+</div>
+<script>
+    (function () {
+        var data = JSON.stringify(@(new MvcHtmlString(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Items.Where(i => i.IsEnabled)))));
+        var submiting = false;
+        $(".j-submit").click(function () {
+            submiting = true;
+            $.ajax({
+                url: '@Url.Action("ImportInternalNo", "bill")',
+                type: 'post',
+                dataType: 'json',
+                data: { model: data },
+                success: function (data) {
+                    if (data.code == 0) {
+                        alert("导入成功");
+                    } else {
+                        alert(data.msg);
+                    }
+                },
+                error: function () {
+                    alert("出错了，请重试！");
+                }
+            }).always(function () { submiting = false; });
+        })
+    })();
+</script>

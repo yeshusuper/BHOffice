@@ -255,5 +255,107 @@ namespace BHOffice.Web.Controllers
             }
 
         }
+
+        [HttpPost]
+        [BHAuthorize]
+        public ActionResult ConfirmImportInternalNo()
+        {
+            if (Request.Files.Count == 0)
+                return Content("没有上传文件");
+            else
+            {
+                var file = Request.Files[0];
+                if (file.ContentLength == 0)
+                    return Content("不能上传空文件");
+                else if (System.IO.Path.GetExtension(file.FileName).ToLower() != ".csv")
+                    return Content("上传文件格式不正确，应上传csv文件");
+                else
+                {
+                    var items = new List<Models.Bill.ConfirmImportInternalNoModel.Item>();
+                    using (var reader = new System.IO.StreamReader(file.InputStream, System.Text.Encoding.GetEncoding("GB2312")))
+                    {
+                        reader.ReadLine();//标题；
+                        while (!reader.EndOfStream)
+                        {
+                            var line = reader.ReadLine();
+                            if (!String.IsNullOrWhiteSpace(line))
+                            {
+                                var arr = line.Split(',');
+                                var item = new Models.Bill.ConfirmImportInternalNoModel.Item
+                                {
+                                    No = GetImportCol(arr, 0),
+                                    InternalNo = GetImportCol(arr, 1),
+                                    InternalExpress = GetImportCol(arr, 2),
+                                    Remarks = GetImportCol(arr, 3)
+                                };
+                                var stateDateString = GetImportCol(arr, 4);
+                                if (!String.IsNullOrWhiteSpace(stateDateString))
+                                {
+                                    var stateDate = DateTime.MinValue;
+                                    if (DateTime.TryParse(stateDateString, out stateDate))
+                                    {
+                                        item.UpdateStateDate = stateDate;
+                                    }
+                                }
+                                if (item.No != null)
+                                    items.RemoveAll(i => i.No == item.No);
+                                items.Add(item);
+                            }
+                        }
+                    }
+                    if (items.Count == 0)
+                        return Content("文件中不包含数据");
+
+                    var nos = items.Where(i => !String.IsNullOrEmpty(i.No)).Select(i => i.No).Distinct().ToArray();
+                    if(nos.Length > 0)
+                    {
+                        var user = _UserManager.GetUser(CurrentUser.Uid);
+                        var existsNos = _BillManager.Search(user, null).Where(b => nos.Contains(b.no)).Select(b => new { b.no, b.bid }).ToArray();
+                        foreach (var item in items)
+                        {
+                            if (item.No != null)
+                                item.Bid = existsNos.Where(e => e.no == item.No).Select(e => e.bid).FirstOrDefault();
+                        }
+                    }
+                    return View(new Models.Bill.ConfirmImportInternalNoModel
+                    {
+                        Items = items.ToArray()
+                    });
+                }
+            }
+        }
+
+        [HttpPost]
+        [BHAuthorize]
+        public ActionResult ImportInternalNo(string model)
+        {
+            var data = Newtonsoft.Json.JsonConvert.DeserializeObject<Models.Bill.ConfirmImportInternalNoModel.Item[]>(model);
+            var batchInternalTrade = new BatchInternalTrade();
+            foreach (var item in data)
+            {
+                batchInternalTrade[item.Bid] = new BatchInternalTrade.Item(new InternalTrade(item.InternalNo, item.InternalExpress), item.Remarks, item.UpdateStateDate);
+            }
+            if (batchInternalTrade.Count > 0)
+                _BillAppService.UpdateInternalState(CurrentUser.Uid, batchInternalTrade);
+            return SuccessJsonResult();
+        }
+
+        [ChildActionOnly]
+        private string GetImportCol(string[] arr, int index)
+        {
+            if (arr != null && arr.Length > index)
+            {
+                var val = arr[index];
+                if(val != null){
+                    val = val.Trim();
+                    if (val.StartsWith("\"") && val.EndsWith("\""))
+                    {
+                        val = val.Substring(1, val.Length - 2);
+                    }
+                }
+                return val;
+            }
+            return null;
+        }
     }
 }

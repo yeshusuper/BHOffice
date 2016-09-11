@@ -80,6 +80,12 @@
         .batch-options{
             margin-top:15px;
         }
+        #import-internal-no-form{
+            display:inline
+        }
+        #import-internal-no-form .internal-file{
+            width:180px;
+        }
     </style>
     <link rel="stylesheet" type="text/css" href="/Resources/css/jquery.datetimepicker.min.css" />
 }
@@ -125,6 +131,13 @@
 {
 <div class="batch-options">
     <a class="btn btn-primary j-batch-track" href="#j-batch-track-popup">批量追踪</a>
+    <div style="display:inline;;margin-left:15px">
+        <form id="import-internal-no-form" action="@Url.Action("ConfirmImportInternalNo")" method="post" enctype="multipart/form-data" target="_blank">
+            <input type="file" value="选择国内单号文件" name="InternalFile" class="internal-file"/>
+            <input value="导入国内单号" type="submit" class="btn btn-primary" />
+        </form>
+        <a target="_blank" href="/Resources/templates/gd-internal-no-template.csv">国内单号导入模板</a>
+    </div>
 </div>
 }
 <table class="bill-list">
@@ -211,6 +224,8 @@
 </div>
 <script>
     (function () {
+        confirm
+
         $(".j-del").click(function () {
             var bid = $(this).data("bid");
             if (confirm("删除后不可恢复，确定要删除么？")) {
@@ -305,5 +320,7 @@
         });
 
         $trackCreated.datetimepicker({ timepicker: false, format: 'Y/m/d' });
+
+
     })();
 </script>

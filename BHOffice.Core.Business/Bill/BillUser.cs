@@ -91,10 +91,12 @@ namespace BHOffice.Core.Business.Bill
             ExceptionHelper.ThrowIfNull(bill, "bill");
             using (var scope = new System.Transactions.TransactionScope())
             {
+                var oldState = bill.State;
+
                 bill.UpdateInternalState(_User, trade);
                 _BillRepository.SaveChanges();
 
-                if (BillStates.清关完毕国内派送中 != bill.State)
+                if (BillStates.清关完毕国内派送中 != oldState)
                     InsertBillStateHistory(bill, BillStates.清关完毕国内派送中, remarks, date);
 
                 scope.Complete();
