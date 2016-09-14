@@ -113,7 +113,7 @@ namespace BHOffice.Web.Controllers
             double count = result.Count();
             var models = result
                             .OrderByDescending(b => b.bid)
-                            .TakePage(query.PageIndex, pageSize)
+                            .TakePage(query.Page, pageSize)
                             .ToArray();
 
             var uids = models.SelectMany(b => b.agent_uid.HasValue ? new[] { b.creater, b.agent_uid.Value } : new[] { b.creater }).ToArray();
@@ -135,7 +135,7 @@ namespace BHOffice.Web.Controllers
                     ReceiverName = m.receiver,
                     StateName = m.state == BillStates.None ? "--" : m.state.ToString(),
                     IsDisplayDeleteButton = new BillAuthority(user, m).AllowDelete,
-                }), query.PageIndex, (int)Math.Ceiling(count / (double)pageSize))
+                }), query.Page, (int)Math.Ceiling(count / (double)pageSize))
             };
 
             return View(model);

@@ -92,6 +92,7 @@
     <Compile Include="ActionResultExtension.cs" />
     <Compile Include="BHAuthorizeAttribute.cs" />
     <Compile Include="BaseController.cs" />
+    <Compile Include="HtmlHelperExtension.cs" />
     <Compile Include="Pager.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="ControllerExtension.cs" />

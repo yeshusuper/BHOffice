@@ -19,7 +19,7 @@ namespace BHOffice.Web.Models.Bill
             [DisplayFormat(NullDisplayText = "", DataFormatString = "{0:yyyy/MM/dd}")]
             public DateTime? MaxCreated { get; set; }
             public BHOffice.Core.Business.Bill.BillStates? State { get; set; }
-            public int PageIndex { get; set; }
+            public int Page { get; set; }
         }
 
         public class ListItemModel
