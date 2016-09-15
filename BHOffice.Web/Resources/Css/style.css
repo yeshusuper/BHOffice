@@ -364,3 +364,121 @@ a.btn.disabled, fieldset[disabled] a.btn {
     background-color: #fff
 }
 
+
+.common-form .input-control, .common-form .time-control {
+    width: 210px;
+    height: 28px;
+    padding: 3px 8px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 2px;
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+    transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+    -webkit-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+    -moz-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+    -ms-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+    -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+}
+.common-form .textarea-control {
+    width: 260px;
+    height: 120px;
+    padding: 3px 8px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 2px;
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+    transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+    -webkit-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+    -moz-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+    -ms-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+    -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+}
+.common-form .time-control {
+    width: 80px;
+}
+.common-form td {
+    padding: 2px 20px 2px 0;
+}
+.common-form .tips {
+    color: #474646;
+    text-align: right;
+    vertical-align: middle;
+    padding-right:2px;
+    width:83px;
+}
+body .common-form .btn-primary{
+    font-size:14px;
+    width:150px;
+    height:36px;
+    line-height:36px;
+    padding:0;
+    margin-left:34px
+}
+
+.common-list {    
+    font-size: 14px;
+    width: 100%;
+    color: #333;
+}
+.common-list td{
+    padding:5px;
+    border-bottom:1px solid #ddd;
+    line-height:27px;
+    text-align:center;
+}
+.common-list thead th {
+    background: #ddd;
+    font-weight: bold;
+    line-height: 36px;
+    color: #666;
+}
+.common-list .bc-row{
+    background-color:#f5f5f5;
+}
+
+/*分页样式*/
+.page {
+margin: 20px 0;
+line-height: 20px;
+text-align: center;
+}
+
+.page a, .page b {
+    display: inline-block;
+    *display: inline;
+    *zoom: 1;
+    border: 1px #8CA9CC solid;
+    background-color: #FFF;
+    padding-left: 7px;
+    padding-right: 7px;
+    height: 20px;
+    color: #1f366d;
+    cursor: pointer;
+    margin-right: 5px;
+    font-weight: 400;
+    border-radius: 2px;
+}
+.page b, .page a.current, .page a:hover {
+    border: 1px #4C6A8C solid;
+    background-color: #8BBBE9;
+    color: #fff;
+}
+
+.page input {
+box-sizing: content-box;
+line-height: 22px;
+height: 22px;
+border: 1px solid #8CA9CC;
+border-radius: 2px;
+height: 16px;
+width: 40px;
+line-height: 16px;
+border-right: 0;
+vertical-align: top;
+border-radius: 2px 0 0 2px;
+}
+
+.page input:focus {
+    box-shadow: 0 0 5px #A4C6FD;
+    outline: -webkit-focus-ring-color auto 5px;
+}

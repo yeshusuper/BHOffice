@@ -3,17 +3,16 @@
     ViewBag.Title = "运单追踪";
     Layout = "../Layout/_ManagerLeft.cshtml"; 
 }
-<div>单号：@Model.No</div>
-<div>状态：@Model.State.ToString()</div>
+<div>单号：@Model.No &nbsp;&nbsp;&nbsp;状态：@Model.State.ToString()</div>
 <div>
-    历史状态：
-    <table class="common_table">
+    <h3 style="margin:8px 0 5px;font-size:12px;font-weight:normal">历史状态：</h3> 
+    <table class="common-list">
         <thead>
             <tr>
-                <th>操作时间</th>
-                <th>状态</th>
+                <th style="width:12%">操作时间</th>
+                <th style="width:12%">状态</th>
                 <th>备注</th>
-                <th>删除</th>
+                <th style="width:5%">删除</th>
             </tr>
         </thead>
         <tbody>
@@ -34,21 +33,21 @@
         <input type="hidden" name="Bids" value="@Model.Bid" />
         <table class="common-form">
             <tr>
-                <td>状态：</td>
+                <td class="tips">状态：</td>
                 <td>
                     @Html.DropDownList("State", Util.GetBillStateSelectList(null), "--运单状态--")
                 </td>
             </tr>
             <tr>
-                <td>操作时间：</td>
+                <td class="tips">操作时间：</td>
                 <td>
-                    <input name="Created" value="@(DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"))" class="form-control" />
+                    <input name="Created" value="@(DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"))" class="input-control" />
                 </td>
             </tr>
             <tr>
-                <td>备注：</td>
+                <td class="tips">备注：</td>
                 <td>
-                    <textarea name="Remarks" class="form-control"></textarea>
+                    <textarea name="Remarks" class="textarea-control"></textarea>
                 </td>
             </tr>
             <tr>
@@ -60,7 +59,7 @@
             <tr>
                 <td>&nbsp;</td>
                 <td>
-                    <input value="保存" type="submit" class="btn btn-primary" style="margin-top:15px;"  />
+                    <input value="保存" type="submit" class="btn btn-primary" style="margin:15px 0 0 0;"  />
                 </td>
             </tr>
         </table>
