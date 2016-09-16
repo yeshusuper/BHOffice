@@ -108,6 +108,10 @@ namespace BHOffice.Web.Controllers
 
             query.Page = Math.Max(1, query.Page);
 
+            var user = _UserMangaer.GetUser(CurrentUser.Uid);
+            if (user.Role < UserRoles.Admin)
+                return RedirectToAction("index", "index");
+
             var result = _UserMangaer.SearchUser(query);
             var count = result.Count();
             if (query.Page > 1)
