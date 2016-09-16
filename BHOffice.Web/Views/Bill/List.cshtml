@@ -22,8 +22,8 @@
             margin-right:6px;
             color:#369            
         }
-        .batch-options{
-            margin-top:15px;
+        .batch-options {
+            margin-top: 15px;
         }
         #import-internal-no-form{
             display:inline
@@ -174,8 +174,6 @@
 </div>
 <script>
     (function () {
-        confirm
-
         $(".j-del").click(function () {
             var bid = $(this).data("bid");
             if (confirm("删除后不可恢复，确定要删除么？")) {
@@ -205,6 +203,16 @@
         var $all = $(".j-batch-all"), $items = $(".j-batch-item");
         $all.click(function () {
             $items.prop("checked", $(this).prop("checked"));
+            $items.trigger("state-changed");
+        });
+        $items.click(function () {
+            $(this).trigger("state-changed");
+        }).on("state-changed", function () {
+            var parent = $(this).parents("tr").eq(0);
+            if ($(this).prop("checked"))
+                parent.addClass("bg-checked");
+            else
+                parent.removeClass("bg-checked");
         });
         var $trackPopup = $("#j-batch-track-popup"),
             $trackState = $trackPopup.find("[name=State]"),

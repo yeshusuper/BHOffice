@@ -171,7 +171,7 @@ a:hover {
 
 .common-header .logo {
     display: block;
-    width: 90px;
+    width: 100px;
     height: 35px;
     line-height: 35px;
     position: absolute;
@@ -435,7 +435,9 @@ body .common-form .btn-primary{
 .common-list .bc-row{
     background-color:#f5f5f5;
 }
-
+.common-list .bg-checked{
+    background-color:#fff2d7
+}
 /*分页样式*/
 .page {
 margin: 20px 0;
