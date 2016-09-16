@@ -13,6 +13,9 @@ namespace BHOffice.Core.Business
         UserRoles Role { get; }
         void ResetPassword(string oldPwd, string newPwd);
         void UpdateInfo(IUserInfoEditer editer);
+
+        void UpdateAgent(IUser user, bool open);
+        void UpdateLock(IUser user, bool enabled);
     }
 
     class UserService : IUser
@@ -72,6 +75,41 @@ namespace BHOffice.Core.Business
         public string Name
         {
             get { return _LazyUser.Value.name; }
+        }
+
+
+        public void UpdateAgent(IUser user, bool open)
+        {
+            ExceptionHelper.ThrowIfNull(user, "user");
+            ExceptionHelper.ThrowIfNull(user as UserService, "user not userservice");
+
+            if (Role < UserRoles.Admin)
+                throw new BHException(ErrorCode.NotAllow, "没有操作权限");
+
+            if (open && user.Role >= UserRoles.Agent)
+                return;
+            if (!open && user.Role < UserRoles.Agent)
+                return;
+
+            ((UserService)user)._LazyUser.Value.role = open ? UserRoles.Agent : UserRoles.User;
+            _UserRepository.SaveChanges();
+        }
+
+        public void UpdateLock(IUser user, bool enabled)
+        {
+            ExceptionHelper.ThrowIfNull(user, "user");
+            ExceptionHelper.ThrowIfNull(user as UserService, "user not userservice");
+
+            if (Role < UserRoles.Admin)
+                throw new BHException(ErrorCode.NotAllow, "没有操作权限");
+
+            UserService iUser = user as UserService;
+
+            if (enabled == iUser._LazyUser.Value.enabled)
+                return;
+
+            iUser._LazyUser.Value.enabled = enabled;
+            _UserRepository.SaveChanges();
         }
     }
 

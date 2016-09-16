@@ -16,6 +16,14 @@ namespace BHOffice.Core.Business
         bool IsUsable(ref string userNo);
         Dictionary<long, string> GetUsersName(long[] uids);
         IQueryable<Data.User> GetAgents();
+        IQueryable<Data.User> SearchUser(IUserSearchQuery query);
+    }
+
+    public interface IUserSearchQuery
+    {      
+        string Name { get; }
+        UserRoles? Role { get; }
+        bool? IsEnabled { get; }
     }
 
     class UserManager : IUserManager
@@ -133,6 +141,32 @@ namespace BHOffice.Core.Business
         public IQueryable<User> GetAgents()
         {
             return _UserRepository.Entities.Where(u => u.enabled && u.role >= UserRoles.Agent);
+        }
+
+        public IQueryable<User> SearchUser(IUserSearchQuery query)
+        {
+            var source = _UserRepository.Entities;
+            if (query != null)
+            {
+                if (!String.IsNullOrWhiteSpace(query.Name))
+                {
+                    var name = query.Name.Trim();
+                    source = source.Where(u => u.email == name || u.name == name);
+                }
+                if (query.Role.HasValue)
+                {
+                    UserRoles min;
+                    UserRoles? max;
+                    query.Role.Value.GetRange(out min, out max);
+
+                    source = source.Where(u => u.role >= min);
+                    if (max.HasValue)
+                        source = source.Where(u => u.role < max.Value);
+                }
+                if (query.IsEnabled.HasValue)
+                    source = source.Where(u => u.enabled == query.IsEnabled.Value);
+            }
+            return source;
         }
     }
 

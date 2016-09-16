@@ -99,5 +99,58 @@ namespace BHOffice.Web.Controllers
             _UserMangaer.ResetPassword(CurrentUser.Uid, oldPwd, newPwd);
             return SuccessJsonResult();
         }
+
+        [HttpGet]
+        [BHAuthorize]
+        public ActionResult List(Models.User.ListModel.SearchQuery query)
+        {
+            var size = 30;
+
+            query.Page = Math.Max(1, query.Page);
+
+            var result = _UserMangaer.SearchUser(query);
+            var count = result.Count();
+            if (query.Page > 1)
+                result = result.Skip((query.Page - 1) * size);
+            result = result.Take(size);
+                
+            var model = new Models.User.ListModel
+            {
+                Query = query,
+                Items = new Core.PageModel<Models.User.ListModel.Item>(result.Select(r => new Models.User.ListModel.Item
+                {
+                    Email = r.email,
+                    IsEnabled = r.enabled,
+                    Name = r.name,
+                    Uid = r.uid,
+                    Registered = r.created,
+                    Role = r.role
+                }), query.Page, (int)Math.Ceiling((double)count / (double)size), count)
+            };
+            return View(model);
+        }
+
+        [HttpPost]
+        [BHAuthorize]
+        public ActionResult UpdateAgent(long uid, bool state)
+        {
+            var @operator = _UserMangaer.GetUser(CurrentUser.Uid);
+            var target = _UserMangaer.GetUser(uid);
+            @operator.UpdateAgent(target, state);
+
+            return SuccessJsonResult();
+        }
+
+
+        [HttpPost]
+        [BHAuthorize]
+        public ActionResult UpdateLock(long uid, bool state)
+        {
+            var @operator = _UserMangaer.GetUser(CurrentUser.Uid);
+            var target = _UserMangaer.GetUser(uid);
+            @operator.UpdateLock(target, state);
+
+            return SuccessJsonResult();
+        }
     }
 }

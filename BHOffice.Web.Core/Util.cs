@@ -12,6 +12,15 @@ namespace BHOffice.Web.Core
 {
     public static class Util
     {
+        public static IEnumerable<SelectListItem> GetUserRoleSelectList(BHOffice.Core.Business.UserRoles? state)
+        {
+            return new[] { 
+                new SelectListItem { Text = "用户", Value = Convert.ToInt16(BHOffice.Core.Business.UserRoles.User).ToString(), Selected = state.HasValue && state.Value == BHOffice.Core.Business.UserRoles.User },
+                new SelectListItem { Text = "代理商", Value = Convert.ToInt16(BHOffice.Core.Business.UserRoles.Agent).ToString(), Selected = state.HasValue && state.Value == BHOffice.Core.Business.UserRoles.Agent },
+                new SelectListItem { Text = "管理员", Value = Convert.ToInt16(BHOffice.Core.Business.UserRoles.Admin).ToString(), Selected = state.HasValue && state.Value == BHOffice.Core.Business.UserRoles.Admin },
+            };
+        }
+
         public static IEnumerable<SelectListItem> GetBillStateSelectList(BHOffice.Core.Business.Bill.BillStates? state)
         {
             return new[] { 

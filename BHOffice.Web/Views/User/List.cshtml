@@ -1,0 +1,147 @@
+﻿@using BHOffice.Core.Business;
+@model BHOffice.Web.Models.User.ListModel
+@{
+
+    ViewBag.Title = "用户管理";
+    Layout = "../Layout/_ManagerLeft.cshtml";
+    int itemIndex = 0;
+}
+@section head{
+    <style>
+        .user-list{
+            margin-top:20px
+        }
+    </style>
+}
+<div>
+    <form action="@Url.Action("list")" enctype="application/x-www-form-urlencoded" method="get">
+        <table class="common-form">
+            <tr>
+                <td class="tips" style="width:auto">账号或姓名：</td>
+                <td><input name="Name" value="@Model.Query.Name" class="input-control" /></td>
+                <td class="tips">角色：</td>
+                <td>
+                    @Html.DropDownList("Role", Util.GetUserRoleSelectList(Model.Query.Role), "--角色--", new { @class = "input-control" })
+                </td>
+                <td class="tips">状态：</td>
+                <td>
+                    <input type="radio" name="IsEnabled" value="" id="state_all" @(!Model.Query.IsEnabled.HasValue ? "checked=\"checked\"" : String.Empty) />
+                    <label for="state_all">全部</label>
+                    <input type="radio" name="IsEnabled" value="True" id="state_enabled" @(Model.Query.IsEnabled.HasValue && Model.Query.IsEnabled.Value ? "checked=\"checked\"" : String.Empty) />
+                    <label for="state_enabled">正常</label>
+                    <input type="radio" name="IsEnabled" value="False" id="state_unenabled" @(Model.Query.IsEnabled.HasValue && !Model.Query.IsEnabled.Value ? "checked=\"checked\"" : String.Empty) />
+                    <label for="state_unenabled">锁定</label>
+                </td>
+                <td>
+                    <input value="搜 索" type="submit" class="btn btn-primary" />
+                </td>
+            </tr>
+        </table>
+    </form>
+    <table class="common-list user-list">
+        <thead>
+            <tr>
+                <th style="width:5%">用户Id</th>
+                <th style="width:15%">账号</th>
+                <th style="width:5%">姓名</th>
+                <th style="width:10%">角色</th>
+                <th style="width:5%">状态</th>
+                <th style="width:12%">注册时间</th>
+                <th>功能</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Items)
+            {
+                <tr class="@(itemIndex++%2!=0 ? "bc-row" : String.Empty)">
+                    <td>@item.Uid</td>
+                    <td>@item.Email</td>
+                    <td>@item.Name</td>
+                    <td>@item.Role.GetName()</td>
+                    <td>@item.StateName</td>
+                    <td>@item.Registered.ToString("yyyy/MM/dd HH:mm:ss")</td>
+                    <td>
+                        @if (item.Role < UserRoles.Agent)
+                        {
+                            <a href="#" class="j-update-agent" data-state="true" data-uid="@item.Uid">设置为代理商</a>
+                        }
+                        else if (item.Role >= UserRoles.Agent && item.Role < UserRoles.Admin)
+                        {
+                            <a href="#" class="j-update-agent" data-state="false" data-uid="@item.Uid">取消代理商</a>
+                        }
+                        @if (item.Role < UserRoles.Admin)
+                        {
+                            if (item.IsEnabled)
+                            {
+                                <a href="#" class="j-update-lock" data-state="false" data-uid="@item.Uid">锁定用户</a>
+                            }
+                            else
+                            {
+                                <a href="#" class="j-update-lock" data-state="true" data-uid="@item.Uid">取消锁定</a>
+                            }
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div style="margin:0 auto">
+        <div class="page">
+            @Html.Pager(Model.Items)
+        </div>
+    </div>
+</div>
+<script>
+    (function () {   
+        $(".j-update-agent").click(function () {
+            var $this = $(this);
+            var data = {
+                state: $this.data("state"),
+                uid: $this.data("uid")
+            };
+            $.ajax({
+                url: "@Url.Action("updateAgent", "user")",
+                type: "post",
+                data: data,
+                dataType: "json",
+                success: function (data) {
+                    if (data.code == 0) {
+                        location.reload();
+                    } else {
+                        alert(data.msg);
+                    }
+                },
+                error: function () {
+                    alert("出错了，请重试！");
+                }
+            });
+            return false;
+        });
+        
+        $(".j-update-lock").click(function () {
+            var $this = $(this);
+            var data = {
+                state: $this.data("state"),
+                uid: $this.data("uid")
+            };
+            $.ajax({
+                url: "@Url.Action("updateLock", "user")",
+                type: "post",
+                data: data,
+                dataType: "json",
+                success: function (data) {
+                    if (data.code == 0) {
+                        location.reload();
+                    } else {
+                        alert(data.msg);
+                    }
+                },
+                error: function () {
+                    alert("出错了，请重试！");
+                }
+            });
+            return false;
+        });
+    })();
+</script>
+
