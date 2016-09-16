@@ -31,12 +31,9 @@
     <header class="common-header">
         <div class="container">
             <div class="pc-nav">
-                <a class="logo" href="/">
-                    跟斗云快递
-                </a>
                 <nav>
                     <ul class="">
-                        <li @(Url.IsCurrent("index", "index") ? "class=\"active\"" : String.Empty)><a href="@Url.Action("index", "index")">首页</a></li>
+                        <li @(Url.IsCurrent("index", "index") ? "class=\"active\"" : String.Empty)><a href="@Url.Action("index", "index")">跟斗云快递</a></li>
                         @{ /* 
                         <li><a href="">关于我们</a></li>
                         <li><a href="">价格与服务</a></li>

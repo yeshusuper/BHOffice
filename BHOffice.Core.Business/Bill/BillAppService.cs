@@ -49,6 +49,7 @@ namespace BHOffice.Core.Business.Bill
                 {
                     IBillManagerUser manager = creater;
                     manager.UpdateAgent(bill, authority.AllowSetAgent ? agentUid ?? uid : uid);
+                    manager.UpdateBillState(bill, BillStates.到达分拣中心, String.Empty);
                 }
                 if (created.HasValue && authority.AllowSetCreateDate)
                 {
