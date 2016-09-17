@@ -9,7 +9,7 @@
     @if (Model.IsAdmin)
     {
         <li><a href="@Url.Action("list", "user")" @(Url.IsCurrent("list", "user") ? "class=\"current\"" : String.Empty)>用户管理</a></li>
-        <li style="display:none"><a href="@Url.Action("list", "notice")" @(Url.IsCurrent("list", "notice") ? "class=\"current\"" : String.Empty)>公告管理</a></li>
+        <li><a href="@Url.Action("list", "notice")" @(Url.IsCurrent("list", "notice") ? "class=\"current\"" : String.Empty)>公告管理</a></li>
         <li style="display:none"><a href="@Url.Action("about", "notice")" @(Url.IsCurrent("about", "notice") ? "class=\"current\"" : String.Empty)>关于我们</a></li>
     }
 </ul>

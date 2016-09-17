@@ -1,0 +1,86 @@
+﻿@model BHOffice.Web.Models.Notice.EditModel
+@{
+    ViewBag.Title = "公告编辑";
+    Layout = "../Layout/_ManagerLeft.cshtml";
+}
+@section head{
+   <style>
+       .common-form {
+           font-size:12px;
+       }
+        .common-form .notice_title {
+            width: 695px;
+        }
+       .notice_content_editor {
+           margin-left: 45px;
+       }
+       #ck_content{
+           width:800px;
+           height:500px;
+       }
+       #notice_submit{
+           margin-left:44px;
+       }
+    </style>
+}
+<script src="/Resources/Js/ckeditor/ckeditor.js"></script>
+<table class="common-form">
+    <tr>
+        <td class="tips">标题：</td>
+        <td><input class="input-control notice_title" value="@Model.Title" name="Title" /></td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <div class="notice_content_editor">
+                <textarea class="textarea-control" name="Content" id="ck_content">@Html.HtmlString(Model.Content)</textarea>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <input type="button" class="btn btn-primary" id="notice_submit" value="保存" />
+        </td>
+    </tr>
+</table>
+<script>
+    (function () {
+        CKEDITOR.replace("ck_content", {
+            height:'450px'
+        });
+    })();
+    (function () {
+        var $title = $("[name=Title]"), $content = $("[name=Content]");
+        var submiting = false;
+        $(".btn-primary").click(function () {
+            var data = {
+                Title: $.trim($title.val()),
+                Content: $.trim(CKEDITOR.instances.ck_content.getData())
+            };
+            if (!data.Title)
+                alert("请填写标题");
+            else if (!data.Content)
+                alert("请填写内容");
+            else {
+                submiting = true;
+                $.ajax({
+                    url: location.href,
+                    type: 'post',
+                    dataType: 'json',
+                    data: data,
+                    success: function (data) {
+                        if (data.code == 0) {
+                            alert("保存成功");
+                            if(location.pathname != data.data)
+                                location.href = data.data;  
+                        } else {
+                            alert(data.msg);
+                        }
+                    },
+                    error: function () {
+                        alert("出错了，请重试！");
+                    }
+                }).always(function () { submiting = false; });
+            }
+        });
+    })();
+</script>

@@ -40,6 +40,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BHException.cs" />
+    <Compile Include="Data\DataHelper.cs" />
     <Compile Include="Data\IRepository.cs" />
     <Compile Include="DictionaryExtension.cs" />
     <Compile Include="ExceptionHelper.cs" />

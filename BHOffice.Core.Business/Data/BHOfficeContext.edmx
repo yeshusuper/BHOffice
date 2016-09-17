@@ -47,6 +47,20 @@
           <Property Name="enabled" Type="bit" Nullable="false" />
           <Property Name="remarks" Type="nvarchar" MaxLength="500" />
         </EntityType>
+        <EntityType Name="Notice">
+          <Key>
+            <PropertyRef Name="nid" />
+          </Key>
+          <Property Name="nid" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="title" Type="nvarchar" MaxLength="200" Nullable="false" />
+          <Property Name="content" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="created" Type="datetime" Nullable="false" />
+          <Property Name="enabled" Type="bit" Nullable="false" />
+          <Property Name="uid" Type="bigint" Nullable="false" />
+          <Property Name="updated" Type="datetime" Nullable="false" />
+          <Property Name="top" Type="bit" Nullable="false" />
+          <Property Name="updater" Type="bigint" />
+        </EntityType>
         <EntityType Name="User">
           <Key>
             <PropertyRef Name="uid" />
@@ -95,9 +109,22 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Notice_User">
+          <End Role="User" Type="Self.User" Multiplicity="1" />
+          <End Role="Notice" Type="Self.Notice" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="uid" />
+            </Principal>
+            <Dependent Role="Notice">
+              <PropertyRef Name="uid" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <EntityContainer Name="BHOfficeModelStoreContainer">
           <EntitySet Name="Bill" EntityType="Self.Bill" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="BillStateHistory" EntityType="Self.BillStateHistory" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Notice" EntityType="Self.Notice" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="User" EntityType="Self.User" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK_Bill_User_AgentUid" Association="Self.FK_Bill_User_AgentUid">
             <End Role="User" EntitySet="User" />
@@ -110,6 +137,10 @@
           <AssociationSet Name="FK_BillStateHistory_BillStateHistory" Association="Self.FK_BillStateHistory_BillStateHistory">
             <End Role="Bill" EntitySet="Bill" />
             <End Role="BillStateHistory" EntitySet="BillStateHistory" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Notice_User" Association="Self.FK_Notice_User">
+            <End Role="User" EntitySet="User" />
+            <End Role="Notice" EntitySet="Notice" />
           </AssociationSet>
         </EntityContainer>
       </Schema></edmx:StorageModels>
@@ -175,6 +206,7 @@
           <Property Name="role" Type="BHOfficeModel.UserRoles" Nullable="false" />
           <NavigationProperty Name="Bill" Relationship="Self.FK_Bill_User_AgentUid" FromRole="User" ToRole="Bill" />
           <NavigationProperty Name="Bill1" Relationship="Self.FK_Bill_User_Creater" FromRole="User" ToRole="Bill" />
+          <NavigationProperty Name="Notice" Relationship="BHOfficeModel.FK_Notice_User" FromRole="User" ToRole="Notice" />
         </EntityType>
         <Association Name="FK_Bill_User_AgentUid">
           <End Role="User" Type="Self.User" Multiplicity="0..1" />
@@ -216,6 +248,11 @@
             <End Role="Bill" EntitySet="Bill" />
             <End Role="BillStateHistory" EntitySet="BillStateHistory" />
           </AssociationSet>
+          <EntitySet Name="Notice" EntityType="BHOfficeModel.Notice" />
+          <AssociationSet Name="FK_Notice_User" Association="BHOfficeModel.FK_Notice_User">
+            <End Role="User" EntitySet="User" />
+            <End Role="Notice" EntitySet="Notice" />
+          </AssociationSet>
         </EntityContainer>
         <Association Name="FK_BillStateHistory_BillStateHistory1">
           <End Type="BHOfficeModel.Bill" Role="Bill" Multiplicity="1" />
@@ -231,6 +268,33 @@
         </Association>
         <EnumType Name="BillStates" UnderlyingType="Byte" a:ExternalTypeName="BHOffice.Core.Business.Bill.BillStates" xmlns:a="http://schemas.microsoft.com/ado/2006/04/codegeneration" />
         <EnumType Name="UserRoles" UnderlyingType="Byte" a:ExternalTypeName="BHOffice.Core.Business.UserRoles" xmlns:a="http://schemas.microsoft.com/ado/2006/04/codegeneration" />
+        <EntityType Name="Notice">
+          <Key>
+            <PropertyRef Name="nid" />
+          </Key>
+          <Property Name="nid" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="title" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="content" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="created" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="enabled" Type="Boolean" Nullable="false" />
+          <Property Name="uid" Type="Int64" Nullable="false" />
+          <Property Name="updated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="top" Type="Boolean" Nullable="false" />
+          <Property Name="updater" Type="Int64" />
+          <NavigationProperty Name="User" Relationship="BHOfficeModel.FK_Notice_User" FromRole="Notice" ToRole="User" />
+        </EntityType>
+        <Association Name="FK_Notice_User">
+          <End Type="BHOfficeModel.User" Role="User" Multiplicity="1" />
+          <End Type="BHOfficeModel.Notice" Role="Notice" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="uid" />
+            </Principal>
+            <Dependent Role="Notice">
+              <PropertyRef Name="uid" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -291,6 +355,21 @@
                 <ScalarProperty Name="created" ColumnName="created" />
                 <ScalarProperty Name="enabled" ColumnName="enabled" />
                 <ScalarProperty Name="role" ColumnName="role" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Notice">
+            <EntityTypeMapping TypeName="BHOfficeModel.Notice">
+              <MappingFragment StoreEntitySet="Notice">
+                <ScalarProperty Name="updater" ColumnName="updater" />
+                <ScalarProperty Name="top" ColumnName="top" />
+                <ScalarProperty Name="updated" ColumnName="updated" />
+                <ScalarProperty Name="uid" ColumnName="uid" />
+                <ScalarProperty Name="enabled" ColumnName="enabled" />
+                <ScalarProperty Name="created" ColumnName="created" />
+                <ScalarProperty Name="content" ColumnName="content" />
+                <ScalarProperty Name="title" ColumnName="title" />
+                <ScalarProperty Name="nid" ColumnName="nid" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

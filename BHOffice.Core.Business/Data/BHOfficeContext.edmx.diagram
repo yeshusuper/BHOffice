@@ -11,6 +11,8 @@
         <AssociationConnector Association="BHOfficeModel.FK_Bill_User_AgentUid" ManuallyRouted="false" />
         <AssociationConnector Association="BHOfficeModel.FK_Bill_User_Creater" ManuallyRouted="false" />
         <AssociationConnector Association="BHOfficeModel.FK_BillStateHistory_BillStateHistory1" />
+        <EntityTypeShape EntityType="BHOfficeModel.Notice" Width="1.5" PointX="5.375" PointY="4.75" />
+        <AssociationConnector Association="BHOfficeModel.FK_Notice_User" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

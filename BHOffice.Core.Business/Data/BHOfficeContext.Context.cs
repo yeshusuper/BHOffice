@@ -28,5 +28,6 @@ namespace BHOffice.Core.Business.Data
         public virtual DbSet<Bill> Bill { get; set; }
         public virtual DbSet<BillStateHistory> BillStateHistory { get; set; }
         public virtual DbSet<User> User { get; set; }
+        public virtual DbSet<Notice> Notice { get; set; }
     }
 }

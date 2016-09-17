@@ -92,6 +92,9 @@
     </Compile>
     <Compile Include="Data\DbSetRepository.cs" />
     <Compile Include="Data\IBillRepository.cs" />
+    <Compile Include="Data\Notice.cs">
+      <DependentUpon>BHOfficeContext.tt</DependentUpon>
+    </Compile>
     <Compile Include="Data\User.cs">
       <DependentUpon>BHOfficeContext.tt</DependentUpon>
     </Compile>
@@ -101,6 +104,8 @@
     <Compile Include="IUserInfoEditer.cs" />
     <Compile Include="IUserManager.cs" />
     <Compile Include="Mobile.cs" />
+    <Compile Include="Notice\INotice.cs" />
+    <Compile Include="Notice\NoticeManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UserRoles.cs" />
   </ItemGroup>

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BHOffice.Core.Data;
 
 namespace BHOffice.Core.Business.Bill
 {
@@ -113,7 +114,7 @@ namespace BHOffice.Core.Business.Bill
                 created = DateTime.Now,
                 state_updated = date ?? DateTime.Now,
                 creater = _User.Uid,
-                remarks = remarks.SafeTrim(),
+                remarks = remarks.SafeTrim().GetSafeDbString(),
                 state = state,
                 enabled = true,
             };

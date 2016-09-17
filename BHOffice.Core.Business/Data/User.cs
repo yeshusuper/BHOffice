@@ -18,6 +18,7 @@ namespace BHOffice.Core.Business.Data
         {
             this.Bill = new HashSet<Bill>();
             this.Bill1 = new HashSet<Bill>();
+            this.Notice = new HashSet<Notice>();
         }
     
         public long uid { get; set; }
@@ -30,5 +31,6 @@ namespace BHOffice.Core.Business.Data
     
         public virtual ICollection<Bill> Bill { get; set; }
         public virtual ICollection<Bill> Bill1 { get; set; }
+        public virtual ICollection<Notice> Notice { get; set; }
     }
 }

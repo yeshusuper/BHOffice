@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BHOffice.Core.Data;
 
 namespace BHOffice.Core.Business.Bill
 {
@@ -58,8 +59,8 @@ namespace BHOffice.Core.Business.Bill
         public void UpdateInfo(decimal insurance, string goods, string remarks)
         {
             _LazyBill.Value.insurance = Math.Max(0, insurance);
-            _LazyBill.Value.goods = goods.SafeTrim() ?? String.Empty;
-            _LazyBill.Value.remarks = remarks.SafeTrim() ?? String.Empty;
+            _LazyBill.Value.goods = (goods.SafeTrim() ?? String.Empty).GetSafeDbString();
+            _LazyBill.Value.remarks = (remarks.SafeTrim() ?? String.Empty).GetSafeDbString();
         }
 
         public void Delete()
@@ -145,8 +146,8 @@ namespace BHOffice.Core.Business.Bill
         public void UpdateInternalState(IUser @operator, InternalTrade trade)
         {
             ExceptionHelper.ThrowIfNull(trade, "trade");
-            _LazyBill.Value.i_no = trade.No;
-            _LazyBill.Value.i_express = trade.Express;
+            _LazyBill.Value.i_no = trade.No.GetSafeDbString();
+            _LazyBill.Value.i_express = trade.Express.GetSafeDbString();
             UpdateState(@operator, BillStates.清关完毕国内派送中);
         }
 
@@ -179,12 +180,12 @@ namespace BHOffice.Core.Business.Bill
             ExceptionHelper.ThrowIfNull(sender, "sender");
             ExceptionHelper.ThrowIfNull(receiver, "receiver");
 
-            _LazyBill.Value.sender = sender.Name;
+            _LazyBill.Value.sender = sender.Name.GetSafeDbString();
             _LazyBill.Value.sender_tel = sender.Mobile;
-            _LazyBill.Value.receiver = receiver.Name;
-            _LazyBill.Value.receiver_addr = receiver.Address.Addr;
+            _LazyBill.Value.receiver = receiver.Name.GetSafeDbString();
+            _LazyBill.Value.receiver_addr = receiver.Address.Addr.GetSafeDbString();
             _LazyBill.Value.receiver_tel = receiver.Mobile;
-            _LazyBill.Value.post = receiver.Address.Post;
+            _LazyBill.Value.post = receiver.Address.Post.GetSafeDbString();
         }
 
         public void InitTradeNo()

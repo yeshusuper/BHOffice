@@ -127,7 +127,7 @@
     }
 
     .common-notice {
-        line-height: 26px;
+        line-height: 21px;
     }
 
         .common-notice ul {
@@ -135,7 +135,7 @@
         }
 
         .common-notice li {
-            margin-top: 15px;
+            margin-top: 12px;
             color: #3d464d;
             position: relative;
         }
@@ -153,6 +153,8 @@
                 padding-left: 30px;
                 font-size: 14px;
                 font-weight: 400;
+                width:300px;
+                overflow:hidden;
             }
 
             .common-notice li p {
@@ -302,17 +304,26 @@
                         公告
                     </h2>
                 </div>
+                @if(Model.NoticeItems.Length == 0)
+                { 
                 <div>暂无公告</div>
-                @{/*
+                }
+                else
+                {                    
                 <ul class="common-notice">
+                    @foreach (var item in Model.NoticeItems)
+                    {
                     <li>
                         <h3>
-                            <i class="iconfont icon-right"></i><span>发生大幅加快了速度阿福觉得少了附近的苏里科夫绝对是雷锋精神的浪费史蒂夫</span>
+                            <a href="@Url.Action("detail", "notice", new { id = item.Nid })" title="@item.Title" target="_blank">
+                                <i class="iconfont icon-right"></i><span>@item.Title</span>
+                            </a>
                         </h3>
-                        <p class="secondary-color">8分钟</p>
-                    </li>
+                        <p class="secondary-color">@item.Date.ToString("yyyy/MM/dd")</p>
+                    </li>                        
+                    }
                 </ul>
-                */}
+                }
             </div>
         </div>
     </div>

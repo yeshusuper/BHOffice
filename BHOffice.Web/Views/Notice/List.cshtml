@@ -1,0 +1,93 @@
+﻿@model BHOffice.Web.Models.Notice.ListModel
+@{
+    ViewBag.Title = "公告列表";
+    Layout = "../Layout/_ManagerLeft.cshtml";
+    var itemIndex = 0;
+}
+@section head{
+    <style>
+        .options {
+            margin-bottom: 8px;
+        }
+    </style>
+}
+<div class="options">
+    <a class="btn btn-primary" target="_blank" href="@Url.Action("Edit")">创建公告</a>
+</div>
+<table class="common-list">
+    <thead>
+        <tr>
+            <th style="width:5%">公告Id</th>
+            <th>公告标题</th>
+            <th style="width:12%">时间</th>
+            <th style="width:8%">是否置顶</th>
+            <th style="width:12%">功能</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Items)
+        {
+            <tr class="@(itemIndex++%2!=0 ? "bc-row" : String.Empty)">
+                <td>@item.Nid</td>
+                <td>@item.Title</td>
+                <td>@item.Date.ToString("yyyy/MM/dd HH:mm:ss")</td>
+                <td>@(item.IsTop ? "是" : "否")</td>
+                <td>
+                    <a href="@Url.Action("edit", new { id = item.Nid })" target="_blank">编辑</a>
+                    @if(item.IsTop)
+                    {                        
+                    <a href="#" class="j-update-top" data-state="false" data-nid="@item.Nid">取消置顶</a>
+                    }
+                    else
+                    {
+                    <a href="#" class="j-update-top" data-state="true" data-nid="@item.Nid">置顶</a>                        
+                    }
+                    <a href="#" class="j-del" data-nid="@item.Nid">删除</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<script>
+    (function () {
+        $(".j-update-top").click(function () {
+            $.ajax({
+                url: '@Url.Action("updateTop")' + '/' + $(this).data("nid"),
+                type: 'post',
+                dataType: 'json',
+                data: { top: $(this).data('state') },
+                success: function (data) {
+                    if (data.code == 0) {
+                        location.reload();
+                    } else {
+                        alert(data.msg);
+                    }
+                },
+                error: function () {
+                    alert("出错了，请重试！");
+                }
+            });
+            return false;
+        });
+        $(".j-del").click(function () {
+            if (confirm("确定要删除么？")) {
+                $.ajax({
+                    url: '@Url.Action("delete")' + '/' + $(this).data("nid"),
+                    type: 'post',
+                    dataType: 'json',
+                    success: function (data) {
+                        if (data.code == 0) {
+                            location.reload();
+                        } else {
+                            alert(data.msg);
+                        }
+                    },
+                    error: function () {
+                        alert("出错了，请重试！");
+                    }
+                })
+            }
+            return false;
+        })
+    })();
+</script>

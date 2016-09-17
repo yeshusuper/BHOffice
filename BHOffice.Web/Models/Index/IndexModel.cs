@@ -7,6 +7,15 @@ namespace BHOffice.Web.Models.Index
 {
     public class IndexModel
     {
+        public class NoticeItem
+        {
+            public long Nid { get; set; }
+            public string Title { get; set; }
+            public DateTime Date { get; set; }
+        }
+
+        public NoticeItem[] NoticeItems { get; set; }
+
         public bool IsLogin { get; set; }
     }
 }
