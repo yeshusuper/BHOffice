@@ -74,7 +74,10 @@ namespace BHOffice.Core.Business.Bill
             ExceptionHelper.ThrowIfNull(bill, "bill");
 
             if (state == bill.State)
+            {
+                UpdateLastStateHistoryRemarksIfMatchState(bill, state, remarks);
                 return;
+            }
 
             using (var scope = new System.Transactions.TransactionScope())
             {
@@ -104,6 +107,20 @@ namespace BHOffice.Core.Business.Bill
             }
         }
 
+        private void UpdateLastStateHistoryRemarksIfMatchState(IBill bill, BillStates currentState, string remarks)
+        {
+            if (String.IsNullOrWhiteSpace(remarks))
+                return;
+            var entity = _BillStateHistoryRepository.Entities
+                            .Where(h => h.enabled && h.bid == bill.Bid)
+                            .OrderByDescending(h => h.state_updated)
+                            .FirstOrDefault();
+            if (entity.state == currentState)
+            {
+                entity.remarks = remarks.Trim();
+                _BillStateHistoryRepository.SaveChanges();
+            }                                
+        }
         public void InsertBillStateHistory(IBill bill, BillStates state, string remarks, DateTime? date = null)
         {
             ExceptionHelper.ThrowIfNull(bill, "bill");

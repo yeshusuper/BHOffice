@@ -12,14 +12,16 @@
         .bill-list {
             margin-top: 8px;
         }
-        .bill-list .addr{
+        .bill-list a {
+            color: #369;
+        }
+        .bill-list .addr {
         }
         .bill-list .action {
             text-align: left;
         }
         .bill-list .action a {
-            margin-right:6px;
-            color:#369            
+            margin-right:6px;      
         }
         .batch-options {
             margin-top: 15px;
@@ -110,7 +112,9 @@
                     <td><input type="checkbox" value="@item.Bid" class="j-batch-item" /></td>
                     <td>@item.AgentName</td>
                 }
-                <td>@item.No</td>
+                <td>
+                    <a target="_blank" href="@Url.Action("Print", new { id = item.Bid })">@item.No</a>
+                </td>
                 <td>@item.CreaterName</td>
                 <td>@item.Created.ToString("yyyy/MM/dd HH:mm:ss")</td>
                 <td>@item.ReceiverName</td>
