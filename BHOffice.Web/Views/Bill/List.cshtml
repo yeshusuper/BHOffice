@@ -113,7 +113,7 @@
                     <td>@item.AgentName</td>
                 }
                 <td>
-                    <a target="_blank" href="@Url.Action("Print", new { id = item.Bid })">@item.No</a>
+                    <a target="_blank" href="@Url.Action("Index", "Index", new { nos = item.No })">@item.No</a>
                 </td>
                 <td>@item.CreaterName</td>
                 <td>@item.Created.ToString("yyyy/MM/dd HH:mm:ss")</td>

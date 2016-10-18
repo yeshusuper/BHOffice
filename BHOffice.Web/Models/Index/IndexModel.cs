@@ -16,6 +16,8 @@ namespace BHOffice.Web.Models.Index
 
         public NoticeItem[] NoticeItems { get; set; }
 
+        public string[] Nos { get; set; }
+
         public bool IsLogin { get; set; }
     }
 }

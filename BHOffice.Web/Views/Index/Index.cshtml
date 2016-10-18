@@ -268,6 +268,9 @@
             float:left;
             padding-left:70px;
         }
+        .common-footer .friendly-link {
+            color:#808080
+        }
 </style>
 }
 <div class="common-container">
@@ -342,7 +345,7 @@
             <p>
                 跟斗云快递（GD express）成立于2015年，公司成立至今热衷于服务湾区华人，我们拥有专业的团队以及丰富的国际贸易进出口经验，致力于空运，货代，报关等服务。本公司秉持“公平诚信”为重大原则，集中开发国际物流新航道，为广大客户提供稳健以及高品质服务，全方位保障客户权益最大化
             </p>
-            <p class="copyright">Copyright 2015-2016 跟斗云快递</p>
+            <p class="copyright">Copyright 2015-2016 跟斗云快递&nbsp;&nbsp;<a href="http://m.kuaidi100.com" target="_blank" class="friendly-link">快递查询</a></p>
         </div>
         <div class="symbiosis">
             <h3>合作伙伴</h3>
@@ -370,8 +373,7 @@
         var orders = [], searching = false;
 
         $input.on("keyup", function (event) {
-            if (event.which == 229 || event.which == 188 || event.which == 32 || event.which == 13)
-            {
+            if (event.which == 229 || event.which == 188 || event.which == 32 || event.which == 13) {
                 var val = $input.val();
                 val = $.trim(val.slice(0, val.length - 1));
                 createItem(val);
@@ -435,18 +437,18 @@
                 html += '<tr>' +
                             '<td colspan ="3" class="internal-express">' +
                                 '国内快递：' + data.InternalExpress + '，快递单号：' +
-                                '<a target="_blank" href="http://www.kuaidi100.com/chaxun?com=' + encodeURIComponent(data.InternalExpress || '') + '&nu='+ data.InternalNo +'">' + data.InternalNo + '</a>' +
+                                '<a target="_blank" href="http://www.kuaidi100.com/chaxun?com=' + encodeURIComponent(data.InternalExpress || '') + '&nu=' + data.InternalNo + '">' + data.InternalNo + '</a>' +
                             '</td>'
-                        '</tr>';
+                '</tr>';
             }
 
-            html +=             '<tr>' +
+            html += '<tr>' +
                                     '<th>处理时间</th>' +
                                     '<th>订单状态</th>' +
                                     '<th>备注</th>' +
                                 '</tr>';
 
-            if(data.Histories){
+            if (data.Histories) {
                 for (var i = 0; i < data.Histories.length; i++) {
                     html += '<tr>' +
                                 '<td>' + data.Histories[i].Created + '</td>' +
@@ -482,6 +484,14 @@
                 }
             }
             orders = newOrders;
+        }
+
+        var initNos = ['@String.Join("','", Model.Nos)'];
+        if (initNos.length > 0 && initNos[0]) {
+            for (var i = 0; i < initNos.length && i < 20; i++) {
+                createItem(initNos[i]);
+            }
+            $search.click();
         }
     });
 </script>
