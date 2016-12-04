@@ -22,6 +22,7 @@ namespace BHOffice.Core.Business.Data
         public BHOffice.Core.Business.Bill.BillStates state { get; set; }
         public bool enabled { get; set; }
         public string remarks { get; set; }
+        public bool c_auto { get; set; }
     
         public virtual Bill Bill { get; set; }
     }

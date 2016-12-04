@@ -43,6 +43,9 @@ namespace BHOffice.Core.Business.Data
         public long creater { get; set; }
         public System.DateTime updated { get; set; }
         public Nullable<long> updater { get; set; }
+        public bool finish { get; set; }
+        public Nullable<System.DateTime> next_pull_date { get; set; }
+        public bool error { get; set; }
     
         public virtual User Agenters { get; set; }
         public virtual User Creaters { get; set; }

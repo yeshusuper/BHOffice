@@ -35,6 +35,7 @@ namespace BHOffice.Web.Models.Bill
             [DisplayFormat(DataFormatString = "yyyy/MM/dd HH:mm:ss")]
             public DateTime Created { get; set; }
             public bool IsDisplayDeleteButton { get; set; }
+            public bool IsError { get; set; }
         }
 
         public bool IsDisplayTrackButton { get; private set; }

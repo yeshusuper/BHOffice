@@ -135,6 +135,7 @@ namespace BHOffice.Web.Controllers
                     ReceiverName = m.receiver,
                     StateName = m.state == BillStates.None ? "--" : m.state.ToString(),
                     IsDisplayDeleteButton = new BillAuthority(user, m).AllowDelete,
+                    IsError = m.error,
                 }), query.Page, (int)Math.Ceiling(count / (double)pageSize))
             };
 
@@ -215,7 +216,10 @@ namespace BHOffice.Web.Controllers
                 State = b.state,
                 InternalExpress = b.i_express,
                 InternalNo = b.i_no,
-                Histories = histories.Where(h => h.bid == b.bid).OrderByDescending(h => h.created)
+                Histories = histories.Where(h => h.bid == b.bid)
+                                    .OrderByDescending(h => h.state_updated)
+                                    .ThenByDescending(h => h.created)
+                                    .ThenByDescending(h => h.bhid)
                                     .Select(h => new Models.Bill.TrackModel.HistoryItem
                                     {
                                         Bhid = h.bhid,

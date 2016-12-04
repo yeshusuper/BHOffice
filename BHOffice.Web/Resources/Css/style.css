@@ -433,6 +433,9 @@ body .common-form .btn-primary{
 .common-list .bc-row{
     background-color:#f5f5f5;
 }
+.common-list .bc-error{
+    background-color:#ff9898;
+}
 .common-list .bg-checked{
     background-color:#fff2d7
 }

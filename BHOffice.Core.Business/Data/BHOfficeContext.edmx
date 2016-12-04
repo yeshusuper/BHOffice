@@ -33,6 +33,9 @@
           <Property Name="creater" Type="bigint" Nullable="false" />
           <Property Name="updated" Type="datetime" Nullable="false" />
           <Property Name="updater" Type="bigint" />
+          <Property Name="finish" Type="bit" Nullable="false" />
+          <Property Name="next_pull_date" Type="datetime" />
+          <Property Name="error" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="BillStateHistory">
           <Key>
@@ -46,6 +49,7 @@
           <Property Name="state" Type="tinyint" Nullable="false" />
           <Property Name="enabled" Type="bit" Nullable="false" />
           <Property Name="remarks" Type="nvarchar" MaxLength="500" />
+          <Property Name="c_auto" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="Notice">
           <Key>
@@ -178,6 +182,9 @@
           <NavigationProperty Name="Agenters" Relationship="Self.FK_Bill_User_AgentUid" FromRole="Bill" ToRole="User" />
           <NavigationProperty Name="Creaters" Relationship="Self.FK_Bill_User_Creater" FromRole="Bill" ToRole="User" />
           <NavigationProperty Name="BillStateHistory" Relationship="BHOfficeModel.FK_BillStateHistory_BillStateHistory1" FromRole="Bill" ToRole="BillStateHistory" />
+          <Property Name="finish" Type="Boolean" Nullable="false" />
+          <Property Name="next_pull_date" Type="DateTime" Precision="3" />
+          <Property Name="error" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="BillStateHistory">
           <Key>
@@ -192,6 +199,7 @@
           <Property Name="enabled" Type="Boolean" Nullable="false" />
           <Property Name="remarks" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Bill" Relationship="BHOfficeModel.FK_BillStateHistory_BillStateHistory1" FromRole="BillStateHistory" ToRole="Bill" />
+          <Property Name="c_auto" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="User">
           <Key>
@@ -304,6 +312,9 @@
           <EntitySetMapping Name="Bill">
             <EntityTypeMapping TypeName="BHOfficeModel.Bill">
               <MappingFragment StoreEntitySet="Bill">
+                <ScalarProperty Name="error" ColumnName="error" />
+                <ScalarProperty Name="next_pull_date" ColumnName="next_pull_date" />
+                <ScalarProperty Name="finish" ColumnName="finish" />
                 <ScalarProperty Name="bid" ColumnName="bid" />
                 <ScalarProperty Name="no" ColumnName="no" />
                 <ScalarProperty Name="sender" ColumnName="sender" />
@@ -334,6 +345,7 @@
           <EntitySetMapping Name="BillStateHistory">
             <EntityTypeMapping TypeName="BHOfficeModel.BillStateHistory">
               <MappingFragment StoreEntitySet="BillStateHistory">
+                <ScalarProperty Name="c_auto" ColumnName="c_auto" />
                 <ScalarProperty Name="bhid" ColumnName="bhid" />
                 <ScalarProperty Name="bid" ColumnName="bid" />
                 <ScalarProperty Name="creater" ColumnName="creater" />

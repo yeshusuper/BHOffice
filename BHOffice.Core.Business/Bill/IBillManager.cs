@@ -107,7 +107,78 @@ namespace BHOffice.Core.Business.Bill
             if (bids.Length == 0)
                 return Enumerable.Empty<Data.BillStateHistory>().AsQueryable();
 
-            return _BillStateHistoryRepository.Entities.Where(h => h.enabled && bids.Contains(h.bid));
+            var neetUpdate = _BillRepository
+                .Entities
+                .Where(b => b.enabled && bids.Contains(b.bid)
+                 && !b.finish && (b.next_pull_date == null || b.next_pull_date < DateTime.Now))
+                .ToArray()
+                .Where(b => !String.IsNullOrWhiteSpace(b.i_express) && !String.IsNullOrWhiteSpace(b.i_no))
+                .ToArray();
+
+            if (neetUpdate.Length > 0)
+            {
+                var updateHistory = new Dictionary<long, Kuaidi100.Kuaidi100Content>();
+                var updateHistoryEntities = new Dictionary<long, List<Data.BillStateHistory>>();
+                foreach (var item in neetUpdate)
+                {
+                    try
+                    {
+                        var result = Kuaidi100.Kuaidi100HistoryProvider.GetHistory(item.i_express, item.i_no);
+                        updateHistory.Add(item.bid, result);
+                        if (result != null && result.Data != null && result.Data.Length > 0)
+                        {
+                            updateHistoryEntities.Add(item.bid, result.Data.Select(r => new Data.BillStateHistory
+                            {
+                                bid = item.bid,
+                                c_auto = true,
+                                created = DateTime.Now,
+                                creater = item.creater,
+                                enabled = true,
+                                remarks = r.content,
+                                state = BillStates.清关完毕国内派送中,
+                                state_updated = r.Time
+                            }).ToList());
+                        }
+                    }
+                    catch {
+                        updateHistory.Add(item.bid, null);
+                    }
+                }
+
+                
+
+                using (var trans = new System.Transactions.TransactionScope())
+                {
+                    foreach (var item in neetUpdate)
+                    {
+                        var result = updateHistory[item.bid];
+                        item.finish = result != null && result.IsFinish;
+                        item.error = result == null;
+                        item.next_pull_date = DateTime.Now.AddHours(3);
+                    }
+                    _BillRepository.SaveChanges();
+
+                    if (updateHistoryEntities.Count > 0)
+                    {
+                        long[] delHistoryBids = updateHistoryEntities.Keys.ToArray();
+                        _BillStateHistoryRepository.Delete(h => delHistoryBids.Contains(h.bid) && h.c_auto);
+
+                        foreach (var item in updateHistoryEntities)
+                        {
+                            foreach (var history in item.Value)
+                            {
+                                _BillStateHistoryRepository.Add(history);
+                            }
+                        }
+                        _BillStateHistoryRepository.SaveChanges();
+                    }
+
+                    trans.Complete();
+                }
+            }
+
+            return _BillStateHistoryRepository
+                    .Entities.Where(h => h.enabled && bids.Contains(h.bid));
 
         }
     }
