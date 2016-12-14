@@ -230,18 +230,38 @@ namespace BHOffice.Web.Controllers
             }).ToArray());
         }
 
+        [ChildActionOnly]
+        private Models.Bill.BillPrintModel GetPrintModel(long[] ids)
+        {
+            var user = _UserManager.GetUser(CurrentUser.Uid);
+            var bills = _BillManager.GetBill(ids).ToArray();
+            var items = new List<Models.Bill.BillEditModel>();
+            if (bills.Length > 0)
+            {
+                foreach (var bill in bills)
+                {
+                    var auth = new BillAuthority(user, bill);
+                    if (!auth.AllowView)
+                        throw new BHException(ErrorCode.NotAllow, "你没有查看此运单的权限,单号：" + bill.no);
+                    items.Add(new Models.Bill.BillEditModel(_BillManager.GetBill(bill)));
+                }
+            }
+            return new Models.Bill.BillPrintModel() { Items = items.ToArray() };
+        }
+
         [HttpGet]
         [BHAuthorize]
         public ActionResult Print(long id)
         {
-            var user = _UserManager.GetUser(CurrentUser.Uid);
-            var bill = _BillManager.GetBill(id);
-            var auth = new BillAuthority(user, bill);
+            return View(GetPrintModel(new[] { id }));
+        }
 
-            if (!auth.AllowView)
-                throw new BHException(ErrorCode.NotAllow, "你没有查看此运单的权限");
-
-            return View(new Models.Bill.BillEditModel(bill));
+        [HttpGet]
+        [BHAuthorize]
+        public ActionResult BatchPrint(string ids)
+        {
+            long[] inputs = ids.Split(new []{","}, StringSplitOptions.RemoveEmptyEntries).Select(s => Int64.Parse(s)).ToArray();
+            return View("Print", GetPrintModel(inputs));
         }
 
         [HttpGet]

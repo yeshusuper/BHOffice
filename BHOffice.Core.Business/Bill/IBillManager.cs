@@ -11,8 +11,9 @@ namespace BHOffice.Core.Business.Bill
         IBill GetBill(long bid);
         IQueryable<Data.Bill> Search(IUser user, IBillSearchQuery query);
         IQueryable<Data.Bill> GetBill(string[] nos);
+        IQueryable<Data.Bill> GetBill(long[] ids);
         IQueryable<Data.BillStateHistory> GetBillHistories(long[] bids);
-
+        IBill GetBill(Data.Bill entity);
     }
 
     class BillManager : IBillManager
@@ -37,6 +38,12 @@ namespace BHOffice.Core.Business.Bill
                 ExceptionHelper.ThrowIfNull(entity, "bid", "运单不存在或已被删除");
                 return entity;
             }));
+        }
+
+        public IBill GetBill(Data.Bill entity)
+        {
+            ExceptionHelper.ThrowIfNull(entity, "entity");
+            return new BillService(entity);
         }
 
 
@@ -94,6 +101,19 @@ namespace BHOffice.Core.Business.Bill
                 return Enumerable.Empty<Data.Bill>().AsQueryable();
 
             return _BillRepository.EnableBills.Where(b => nos.Contains(b.no));
+
+        }
+        public IQueryable<Data.Bill> GetBill(long[] ids)
+        {
+            if (ids == null)
+                return Enumerable.Empty<Data.Bill>().AsQueryable();
+
+            ids = ids.Where(id => id > 0).Distinct().ToArray();
+
+            if (ids.Length == 0)
+                return Enumerable.Empty<Data.Bill>().AsQueryable();
+
+            return _BillRepository.EnableBills.Where(b => ids.Contains(b.bid));
 
         }
 

@@ -83,6 +83,7 @@
             <input value="导入国内单号" type="submit" class="btn btn-primary" />
         </form>
         <a target="_blank" href="/Resources/templates/gd-internal-no-template.csv">国内单号导入模板</a>
+        <a class="btn btn-primary j-batch-print" href="#j-batch-print">批量打印</a>
     </div>
 </div>
 }
@@ -241,17 +242,21 @@
             }
         });
         var trackSubming = false;
+        function getCheckBillIds() {
+            var ids = [];
+            $items.filter(":checked").each(function (i, elem) {
+                ids.push($(elem).val());
+            });
+            return ids;
+        }
         $trackButton.click(function () {
             var data = {
                 State: $.trim($trackState.val()),
                 Created: $.trim($trackCreated.val()),
                 Remarks: $.trim($trackRemarks.val()),
                 UpdateState: $trackUpdateState.is(":checked") ? $.trim($trackUpdateState.val()) : null,
-                Bids: []
+                Bids: getCheckBillIds()
             };
-            $items.filter(":checked").each(function (i, elem) {
-                data.Bids.push($(elem).val());
-            });
             if (!data.Bids.length)
                 alert("没有选择运单");
             else if (!data.State)
@@ -279,6 +284,14 @@
                 }).always(function () { trackSubming = false; });
             }
             return false;
+        });
+        $(".j-batch-print").click(function () {
+            var ids = getCheckBillIds();
+            if (!ids.length)
+                alert("没有选择运单");
+            else {
+                window.open('@Url.Action("BatchPrint", "Bill")?ids=' + ids.join(","));
+            }
         });
 
         $trackCreated.datetimepicker({ timepicker: false, format: 'Y/m/d' });

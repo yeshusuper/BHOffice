@@ -1,7 +1,8 @@
-﻿@model BHOffice.Web.Models.Bill.BillEditModel
+﻿@model BHOffice.Web.Models.Bill.BillPrintModel
 @{
     ViewBag.Title = "运单打印";
     Layout = null;
+    var index = 0;
 }
 <html>
     <head>
@@ -84,73 +85,80 @@
         </style>
     </head>
     <body>
-        @for (int i = 0; i < 2; i++)
-        {
-        <table class="print-table">
-            <tr>
-                <td class="site-info">
-                    <span class="site-info-wrapper">
-                        <b class="site-name">跟斗云快递</b>
-                        <b class="site-host">www.gdyunkd.com</b>
-                    </span>
-                </td>
-                <td colspan="3" class="barcode-info">
-                    <span class="barcode-info-wrapper">
-                        <img src="@Url.Action("barcode", new { id = Model.No })" alt="@Model.No" />
-                        <br />
-                        *@Model.No*
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td style="width:25%"><span class="tips">发件人/FROM：</span>@Model.Sender</td>
-                <td style="width:25%"><span class="tips">收件日期/DATE：</span>@(Model.Created.HasValue ? Model.Created.Value.ToString("yyyy-MM-dd") : String.Empty)</td>
-                <td style="width:25%"><span class="tips">收件人/TO：</span>@Model.Receiver</td>
-                <td style="width:25%"><span class="tips">电话/PHONE：</span>@Model.ReceiverTel</td>
-            </tr>
-            <tr>
-                <td colspan="2"><span class="tips">电话/PHONE：</span>@Model.SenderTel</td>
-                <td colspan="2" rowspan="2"><span class="tips">地址/ADDRESS：</span>@Model.ReceiverAddress</td>
-            </tr>
-            <tr>
-                <td colspan="2"><span class="tips">地址/ADDRESS：</span></td>
-            </tr>
-            <tr>
-                <td colspan="2"><span class="tips">体积/VOLUME ：</span>长LO X 高HO X宽WO = 立方厘米CM³</td>
-                <td><span class="tips">重量(磅)/WEIGHT：</span></td>
-                <td><span class="tips">邮编/POSTCODE：</span>@Model.Post</td>
-            </tr>
-            <tr>
-                <td><span class="tips">金额/TOTAL：</span></td>
-                <td><span class="tips">品牌/BRAND：</span></td>
-                <td><span class="tips">备注/NOTE：</span>@Model.Remarks</td>
-                <td><span class="tips">保险/ASSURANCE：</span>@Model.Insurance</td>
-            </tr>
-            <tr>
-                <td colspan="4"><span class="tips">物品详细/CONTENTS：</span>@Model.Goods</td>
-            </tr>
-            <tr>
-                <td colspan="4">
-                    <span class="tips">
-                        我保證上述向海關申報的內容的真實性及本订单內未夾寄禁寄和危險品，如有偽報瞞報必須承擔法律責任I ASSURE THE TRUTH OF THE ABOVE DECLARATION TO THE CUSTOMS AND I GUARANTEE THAT THE SHIPMENT DOES NOT CONTAIN ANY DANGEROUS AND PROHIBITED GOODS I SHALL BEAR ALL LEAGAL RESPONSIBILITY FOR ANY CONCEALED OR UNAUTHORIZED CONTENTS
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2"><span class="tips">寄件人签名/SENDER'S SIGNATURE：</span></td>
-                <td colspan="2"><span class="tips">日期/DATE：</span></td>
-            </tr>
-        </table>
-        <br />
-        }        
-        <ul class="barcode-list">
-        @for (int i = 0; i < 12; i++)
-        {
-            <li class="@(i%3==0?"l":"r")">
-                <img src="@Url.Action("barcode", new { id = Model.No })" alt="@Model.No" />
-                <span>@Model.Receiver&nbsp;*@Model.No*</span>                
-            </li>
+        @foreach(var item in Model.Items)
+        { 
+            if (index++ > 0)
+            {
+            <div style="page-break-after:always"></div>
+            }
+            for (int i = 0; i < 2; i++)
+            {
+            <table class="print-table">
+                <tr>
+                    <td class="site-info">
+                        <span class="site-info-wrapper">
+                            <b class="site-name">跟斗云快递</b>
+                            <b class="site-host">www.gdyunkd.com</b>
+                        </span>
+                    </td>
+                    <td colspan="3" class="barcode-info">
+                        <span class="barcode-info-wrapper">
+                            <img src="@Url.Action("barcode", new { id = item.No })" alt="@item.No" />
+                            <br />
+                            *@item.No*
+                        </span>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:25%"><span class="tips">发件人/FROM：</span>@item.Sender</td>
+                    <td style="width:25%"><span class="tips">收件日期/DATE：</span>@(item.Created.HasValue ? item.Created.Value.ToString("yyyy-MM-dd") : String.Empty)</td>
+                    <td style="width:25%"><span class="tips">收件人/TO：</span>@item.Receiver</td>
+                    <td style="width:25%"><span class="tips">电话/PHONE：</span>@item.ReceiverTel</td>
+                </tr>
+                <tr>
+                    <td colspan="2"><span class="tips">电话/PHONE：</span>@item.SenderTel</td>
+                    <td colspan="2" rowspan="2"><span class="tips">地址/ADDRESS：</span>@item.ReceiverAddress</td>
+                </tr>
+                <tr>
+                    <td colspan="2"><span class="tips">地址/ADDRESS：</span></td>
+                </tr>
+                <tr>
+                    <td colspan="2"><span class="tips">体积/VOLUME ：</span>长LO X 高HO X宽WO = 立方厘米CM³</td>
+                    <td><span class="tips">重量(磅)/WEIGHT：</span></td>
+                    <td><span class="tips">邮编/POSTCODE：</span>@item.Post</td>
+                </tr>
+                <tr>
+                    <td><span class="tips">金额/TOTAL：</span></td>
+                    <td><span class="tips">品牌/BRAND：</span></td>
+                    <td><span class="tips">备注/NOTE：</span>@item.Remarks</td>
+                    <td><span class="tips">保险/ASSURANCE：</span>@item.Insurance</td>
+                </tr>
+                <tr>
+                    <td colspan="4"><span class="tips">物品详细/CONTENTS：</span>@item.Goods</td>
+                </tr>
+                <tr>
+                    <td colspan="4">
+                        <span class="tips">
+                            我保證上述向海關申報的內容的真實性及本订单內未夾寄禁寄和危險品，如有偽報瞞報必須承擔法律責任I ASSURE THE TRUTH OF THE ABOVE DECLARATION TO THE CUSTOMS AND I GUARANTEE THAT THE SHIPMENT DOES NOT CONTAIN ANY DANGEROUS AND PROHIBITED GOODS I SHALL BEAR ALL LEAGAL RESPONSIBILITY FOR ANY CONCEALED OR UNAUTHORIZED CONTENTS
+                        </span>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2"><span class="tips">寄件人签名/SENDER'S SIGNATURE：</span></td>
+                    <td colspan="2"><span class="tips">日期/DATE：</span></td>
+                </tr>
+            </table>
+            <br />
+            }        
+            <ul class="barcode-list">
+            @for (int i = 0; i < 12; i++)
+            {
+                <li class="@(i%3==0?"l":"r")">
+                    <img src="@Url.Action("barcode", new { id = item.No })" alt="@item.No" />
+                    <span>@item.Receiver&nbsp;*@item.No*</span>                
+                </li>
+            }
+            </ul>
         }
-        </ul>
     </body>
 </html>
